@@ -20,8 +20,8 @@ SP500_EUR500 = load("SPXSX5Ereturns.mat").Returns;
 
 %% Prova punto 5
 
-[Gi, Gi_ask, Gi_bid] = Synthethic_Forward(data_USA.callBid, data_USA.callAsk, data_USA.putBid, data_USA.putAsk, 1);
-Ki = data_USA.strikes(1).value;
+[Gi, Gi_ask, Gi_bid] = Synthethic_Forward(data_EU.callBid, data_EU.callAsk, data_EU.putBid, data_EU.putAsk, 1);
+Ki = data_EU.strikes(1).value;
 
 B_bar = estimation_discount_factor(Gi, Ki);
 
