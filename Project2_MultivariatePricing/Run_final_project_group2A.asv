@@ -21,20 +21,12 @@ SP500_EUR500 = load("SPXSX5Ereturns.mat").Returns;
 %% 
 
 %% POINT 5: Forward Prices computation
-% Choice of the flags: flag = 0 [EUROPEAN], flag = 1 [AMERICAN]
-flag = 0;
 
-if flag
-    data = data_USA;
-else
-    data = data_EU;
-end
+for i = 1:length(data_USA.datesExpiry)
 
-for i = 1:length(data.datesExpiry)
+    date = data_USA.datesExpiry(i);
 
-    date = data.datesExpiry(i);
-
-    [F_vector, G_vector] = forward_prices(data, date);
+    [F_vector, G_vector] = forward_prices(data_USA, date);
 end
 
 

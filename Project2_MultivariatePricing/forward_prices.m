@@ -20,7 +20,7 @@ function [F_vector, G_vector] = forward_prices(dataset, date)
     %% Computation of the strikes and synthetic forwards
 
     % Strikes
-    Ki = data_EU.strikes(index).value;
+    Ki = dataset.strikes(index).value;
 
     % Synthetic forwards
     [Gi, Gi_ask, Gi_bid] = synthethic_forward(dataset.callBid, dataset.callAsk, ...
@@ -31,7 +31,6 @@ function [F_vector, G_vector] = forward_prices(dataset, date)
     B_bar = estimation_discount_factor(Gi, Ki);
     
     %% Computation of the forward prices
-
     F = Gi/B_bar + Ki;
     F_ask = Gi_ask/B_bar + Ki;
     F_bid = Gi_bid/B_bar + Ki;
@@ -43,10 +42,16 @@ function [F_vector, G_vector] = forward_prices(dataset, date)
     plot(Ki, F, 'o-');
     plot(Ki, F_bid, '*-'); 
 
-    title('Forward prices at Expiry %s', date);
+    title('Forward prices at Expiry', date);
     xlabel('Strikes'); ylabel('Forwards prices');
     legend('Ask', 'Mid', 'Bid')
     grid on; hold off;
+
+    %% Computation of the slope
+
+    p = polyfit(Ki, F - Ki, 1);
+    slope = p(1);
+    disp(['Estimated Slope: ', num2str(slope)]);
 
     %% Creation vectors to return
     F_vector = [F; F_ask; F_bid];
