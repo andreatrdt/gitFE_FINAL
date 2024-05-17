@@ -17,3 +17,7 @@ data_USA = load("OptionData.mat").mkt;
 data_EU = load("OptionData.mat").mkt_EU;
 
 SP500_EUR500 = load("SPXSX5Ereturns.mat").Returns;
+
+%% Prova punto 5
+
+Gi = Synthethic_Forward(data_EU.callBid, data_EU.callAsk, data_EU.putBid, data_EU.putAsk, 1);
