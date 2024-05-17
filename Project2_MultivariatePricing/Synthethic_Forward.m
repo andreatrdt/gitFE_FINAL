@@ -1,4 +1,4 @@
-function Gi = Synthethic_Forward(call_bid, call_ask, put_bid, put_ask, index)
+function [Gi, Gi_ask, Gi_bid] = Synthethic_Forward(call_bid, call_ask, put_bid, put_ask, index)
 % Computation of the Synthetic Forward Gi for each of the required
 % horizons, the SF is the building block of the Forward computation
 % 
