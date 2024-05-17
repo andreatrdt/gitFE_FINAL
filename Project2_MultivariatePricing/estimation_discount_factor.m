@@ -15,6 +15,6 @@ function B_bar = estimation_discount_factor(Gi, Ki)
     K_hat = mean(Ki);
 
     %% Final computation of B_bar(0, T)
-    B_bar =  (Ki - K_hat) * (Gi - G_hat)' / ((Ki - K_hat) * (Ki - K_hat)');
+    B_bar =  - (Ki - K_hat) * (Gi - G_hat)' / ((Ki - K_hat) * (Ki - K_hat)');
 
 end % function estimation_discount_factor

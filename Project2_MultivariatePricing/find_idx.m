@@ -8,6 +8,6 @@ function idx = find_idx(data, date)
 % OUTPUT:
 % idx: index of the date in the struct
 
-    idx = find(data.datesExpiry == date);
+    idx = find(data == date);
 
 end % function find_idx
