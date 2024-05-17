@@ -10,6 +10,10 @@
 
 clear all; close all; clc;
 
+%% load folders
+addpath('data');
+addpath('forward price');
+
 %% Loading of the matrices
 % Loading of the matrices necessary for the projects
 
@@ -36,6 +40,8 @@ for i = 1:length(data.datesExpiry)
 
     [F_vector, G_vector] = forward_prices(data, date);
 end
+
+%% POINT 6: Model calibration
 
 
 
