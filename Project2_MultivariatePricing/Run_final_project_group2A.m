@@ -28,24 +28,28 @@ SP500_EUR500 = load("SPXSX5Ereturns.mat").Returns;
 % Choice of the flags: flag = 0 [EUROPEAN], flag = 1 [AMERICAN]
 flag = 0;
 
-if flag
+if flag == 1
     data = data_USA;
 else
     data = data_EU;
 end
 
-for i = 1:length(data.datesExpiry)
+% for i = 1:length(data.datesExpiry)
 
-    date = data.datesExpiry(i);
+%     date = data.datesExpiry(i);
 
-    [F_vector, G_vector] = forward_prices(data, date);
-end
+%     [F_vector, G_vector] = forward_prices(data, date);
+% end
 
 %% POINT 6: Model calibration
 
+date = data.datesExpiry(1);
 
+% compute correlation coefficient between the two series
+rho_mkt = compute_corr_coeff(data_EU,data_USA,date);
 
+% parameters for the calibration
+% sigma , kappa , vega
 
-
-
+rho = @(vega_1, vega_2 , vega_z) sqrt(vega_1*vega_2/((vega_z+vega_1)*(vega_z+vega_2)));
 

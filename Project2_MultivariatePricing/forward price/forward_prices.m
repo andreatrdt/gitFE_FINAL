@@ -42,7 +42,7 @@ function [F_vector, G_vector] = forward_prices(dataset, date)
     plot(Ki, F, 'o-');
     plot(Ki, F_bid, '*-'); 
 
-    title('Forward prices at Expiry', date);
+    % title('Forward prices at Expiry ', date);
     xlabel('Strikes'); ylabel('Forwards prices');
     legend('Ask', 'Mid', 'Bid')
     grid on; hold off;
