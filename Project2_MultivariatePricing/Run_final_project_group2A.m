@@ -6,4 +6,4 @@
 
 % Marco Maspes
 % Matteo Torba
-% Andrea Traditi
+% Andrea Tarditi
