@@ -37,15 +37,15 @@ function [F_vector, G_vector] = forward_prices(dataset, date)
     
     %% Plot of the figures
 
-    figure();
-    plot(Ki, F_ask, '*-'); hold on;
-    plot(Ki, F, 'o-');
-    plot(Ki, F_bid, '*-'); 
-
-    % title('Forward prices at Expiry ', date);
-    xlabel('Strikes'); ylabel('Forwards prices');
-    legend('Ask', 'Mid', 'Bid')
-    grid on; hold off;
+%     figure();
+%     plot(Ki, F_ask, '*-'); hold on;
+%     plot(Ki, F, 'o-');
+%     plot(Ki, F_bid, '*-'); 
+% 
+%     % title('Forward prices at Expiry ', date);
+%     xlabel('Strikes'); ylabel('Forwards prices');
+%     legend('Ask', 'Mid', 'Bid')
+%     grid on; hold off;
 
     %% Computation of the slope
 

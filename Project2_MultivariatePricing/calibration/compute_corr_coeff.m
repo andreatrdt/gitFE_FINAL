@@ -17,10 +17,11 @@ function rho = compute_corr_coeff(data_EU,data_USA,date)
 
     % find the index of the date
 
-    idx = find_idx(data_EU.datesExpiry,date);
+    idx_EU = find_idx(data_EU.datesExpiry,date);
+    idx_USA = find_idx(data_USA.datesExpiry,date);
 
     % interpolate data for the mising strikes
-    F_EU = interp1(data_EU.strikes(idx).value,F_EU,data_USA.strikes(idx).value,"linear","extrap");
+    F_EU = interp1(data_EU.strikes(idx_EU).value,F_EU,data_USA.strikes(idx_USA).value,"linear","extrap");
     
     % compute the correlation coefficient
 

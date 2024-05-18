@@ -49,7 +49,7 @@ for i = 1:length(data.datesExpiry)
     date = data.datesExpiry(i);
 
     % compute correlation coefficient between the two series
-    rho_mkt = compute_corr_coeff(data_EU,data_USA,date)
+    rho_mkt = compute_corr_coeff(data_EU,data_USA,date);
 
     % parameters for the calibration
     % sigma , kappa , vega
