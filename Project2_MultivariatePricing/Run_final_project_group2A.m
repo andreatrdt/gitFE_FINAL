@@ -14,6 +14,7 @@ clear all; close all; clc;
 addpath('data');
 addpath('forward price');
 addpath('calibration');
+addpath('Assignment5')
 
 %% Loading of the matrices
 % Loading of the matrices necessary for the projects
