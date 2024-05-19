@@ -10,7 +10,7 @@
 
 clear all; close all; clc;
 
-%% load folders
+%% load fol
 addpath('data');
 addpath('forward price');
 addpath('calibration');
@@ -44,16 +44,41 @@ end
 
 %% POINT 6: Model calibration
 
-for i = 1:length(data.datesExpiry)
+rho_mkt = zeros(length(data_EU.datesExpiry), 1);
 
-    date = data.datesExpiry(i);
+for i = 1:length(data_EU.datesExpiry)
+
+    date = data_EU.datesExpiry(i);
 
     % compute correlation coefficient between the two series
-    rho_mkt = compute_corr_coeff(data_EU,data_USA,date);
-
-    % parameters for the calibration
-    % sigma , kappa , vega
-
-    rho = @(vega_1, vega_2 , vega_z) sqrt(vega_1*vega_2/((vega_z+vega_1)*(vega_z+vega_2)));
+    rho_mkt(i) = compute_corr_coeff(data_EU,data_USA,date);
 end
+
+%% Creation of the constraints for the simulations
+
+% General function handles for the writing
+
+sigma2_i = @(gamma2_i, a_i) gamma2_i + a_i^2 * gamma_z;
+theta_i = @(beta_i, a_i) beta_i + a_i * beta_z;
+k_i = @(nu_i) (nu_i * nu_z)/(nu_i + nu_z)
+
+% Calibrationà
+
+fun = @(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, ...
+    beta_z, nu_z, gamma_z) a_1*a_2*(gamma_z + beta_z^2 * nu_z)/ ...
+    (sqrt(sigma2_i(gamma_1, a_1) + k_i(nu_1) * (theta_i(beta_1, a_1)^2)) * ...
+     sqrt(sigma2_i(gamma_2, a_2) + k_i(nu_2) * (theta_i(beta_2, a_2)^2)));
+
+x0 = zeros(11, 1);
+lb = [-Inf; -Inf; -Inf, 0, 0, -Inf, 0, 0, -Inf, 0, 0];
+ub = [];
+options = optimset('Display', 'Off');
+
+params = lsqnonlin(@(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, beta_z, nu_z, gamma_z) fun(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, ...
+    beta_z, nu_z, gamma_z) - rho_mkt(1), x0, lb, ub, [], [], [], [], ...
+    @(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, beta_z, nu_z, gamma_z) nonlinconstr(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, ...
+    beta_z, nu_z, gamma_z), options);
+
+%
+
 
