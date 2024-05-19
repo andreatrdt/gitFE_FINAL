@@ -1,4 +1,4 @@
-function [F_vector, G_vector] = forward_prices(dataset, date)
+function [F_vector, G_vector , B_bar] = forward_prices(dataset, date)
 % Computation of the forward prices following the Baviera, Azzone paper
 % 
 % INPUT:

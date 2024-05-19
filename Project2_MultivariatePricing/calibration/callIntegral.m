@@ -39,7 +39,8 @@ else
     error('Flag not recognized');
 end
 
+
 % apply the lewis formula
-callPrices = B0 * F0 * (1 - exp(-log_moneyness/2) .* I);
+callPrices = B0 .* F0 .* (1 - exp(-log_moneyness/2) .* I);
     
 end
