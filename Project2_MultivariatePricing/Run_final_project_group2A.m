@@ -77,7 +77,7 @@ F_0 = F_vector(1,:);
 log_moneyness = log( F_0 ./ data.strikes(idx).value);
 
 % create the distance function to minimize
-dist = @(x) sum((callIntegral(discount_1y, F_0, alpha, x(1), x(2), x(3), t, log_moneyness, M, dz, 'quad') - data.callAsk(idx).prices).^2);
+dist = @(x) abs(sum((E3_callPriceLewis(discount_1y, F_0, alpha, log_moneyness, x(1), x(2), x(3), t, 2) - data.callAsk(idx).prices)));
 
 % create the constraint
 const = @(x) constraint(x, alpha);
@@ -96,9 +96,9 @@ b = [
 ];
 
 % calibration
-options = optimoptions('fmincon', 'Display', 'off');
+options = optimoptions('fmincon', 'Display', 'iter');
 
-[x, fval] = fmincon(dist, x0, A, b, [], [], [], [], const, options);
+[x, fval] = fmincon(dist, x0, A, b, [], [], [], [], const, options)
 
 
 
@@ -108,7 +108,7 @@ options = optimoptions('fmincon', 'Display', 'off');
 % theta_i = @(beta_i, a_i, bz) beta_i + a_i * bz;
 % k_i = @(nu_i, nz) (nu_i * nz)/(nu_i + nz);
 
-% % Calibrationà
+% % Calibration
 
 % fun = @(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) ...
 %     a1*a2*(gz + bz^2 * nz)/ (sqrt(sigma2_i(g1, a1, gz) + k_i(n1, nz) * (theta_i(b1, a1, bz)^2)) * ...

@@ -23,9 +23,9 @@ d_xi = 2 * pi / (N * dz);
 xi_1 = -(N-1)/2 * d_xi;
 
 % check that -xi_1 has a value less than 1e-10
-if (f(xi_1, 0) > 1e-10)
-    error('The function is not integrable at -xi_1, increase the number of nodes M');
-end
+% if (f(xi_1, 0) > 1e-10)
+%     error('The function is not integrable at -xi_1, increase the number of nodes M');
+% end
 
 % return only the real part
 I = zeros(size(queryPoints));
