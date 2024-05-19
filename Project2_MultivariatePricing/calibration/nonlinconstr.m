@@ -1,26 +1,34 @@
-function [c, ceq] = nonlinconstr(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, ...
-    beta_z, nu_z, gamma_z)
-% Computation of the non linear constraints for the solver
+function [c, ceq] = nonlinconstr(x, rho_mkt, eps_th)
+% Computation of the non linear constraints for the solver, both the
+% equality and the inequality ones
 % 
 % INPUT:
+% x:            [VEC] [K1, T1, S1, K2, T2, S2, Nz, Bz, Gz, a1, a2]
+% rho_mkt:      correlation coefficients of the market
+% eps:          arbitrary threshold
 % 
 % OUTPUT:
+% c:            inequality constraints
+% ceq:          equality constraints
 % 
+% USES:
 
-    %% General function handles for the writing
+    %% Constraints on the equalities
 
-    sigma2_i = @(gamma2_i, a_i) gamma2_i + a_i^2 * gamma_z;
-    theta_i = @(beta_i, a_i) beta_i + a_i * beta_z;
-    k_i = @(nu_i) (nu_i * nu_z)/(nu_i + nu_z)
+    % Constraint to create the entire equality given on the final
+    % parameters
 
-    %% Constraints on conditions 10
-    
-    constraint_1 = sigma2_i(gamma_1, a_1)/(k_i(nu_1) * (theta_i(beta_1, a_1)^2)) - gamma_z/(nu_z * beta_z^2);
-    constraint_2 = sigma2_i(gamma_2, a_2)/(k_i(nu_2) * (theta_i(beta_2, a_2)^2)) - gamma_z/(nu_z * beta_z^2);
+    % ceq = [ x(3)^2/(x(1)*x(2)^2) - x(6)^2/(x(4)*x(5)^2); ...
+    %     x(3^2)/(x(1)*x(2)^2) - x(9)^2/(x(7)*x(8)^2); ...
+    %     x(6)^2/(x(4)*x(5)^2) - x(9)^2/(x(7)*x(8)^2)];
 
-    %% Creation of the final vectors on inequalities
+    ceq = [ x(3)^2/(x(1)*x(2)^2) - x(6)^2/(x(4)*x(5)^2)];
+    %% Constraints on the inequalities
 
+    % Constraints to set the correlation cefficients
+
+    % rho_model = x(10) * x(11) * (x(9)^2 + x(8)^2 * x(7)) ...
+    %     /(sqrt((x(3)^2 + x(2)^2 * x(1))) * sqrt((x(6)^2 + x(5)^2 * x(4))));
+    % c = abs(rho_model - rho_mkt) - eps_th;
     c = [];
-    ceq = constraint_1;
-
 end

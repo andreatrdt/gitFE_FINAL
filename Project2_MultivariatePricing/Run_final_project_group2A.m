@@ -24,6 +24,13 @@ data_EU = load("OptionData.mat").mkt_EU;
 
 SP500_EUR500 = load("SPXSX5Ereturns.mat").Returns;
 
+% Settlement date:
+formatData = 'YYYY-MM-DD';
+date_settlement = datenum('2023-07-09',formatData);
+
+% Dates Vector:
+dates_EU = datenum(data_EU.datesExpiry);
+dates_USA = datenum(data_USA.datesExpiry);
 %% 
 
 %% POINT 5: Forward Prices computation
@@ -36,24 +43,24 @@ else
     data = data_EU;
 end
 
-% for i = 1:length(data.datesExpiry)
+for i = 1:length(data.datesExpiry)
 
-%     date = data.datesExpiry(i);
+    date = data.datesExpiry(i);
 
-%     [F_vector, G_vector , ~] = forward_prices(data, date);
-% end
+    [F_vector, G_vector , ~] = forward_prices(data, date);
+end
 
 %% POINT 6: Model calibration
 
-% rho_mkt = zeros(length(data_EU.datesExpiry), 1);
+rho_mkt = zeros(length(data_EU.datesExpiry), 1);
 
-% for i = 1:length(data_EU.datesExpiry)
+for i = 1:length(data_EU.datesExpiry)
 
-%     date = data_EU.datesExpiry(i);
+    date = data_EU.datesExpiry(i);
 
-%     % compute correlation coefficient between the two series
-%     rho_mkt(i) = compute_corr_coeff(data_EU,data_USA,date);
-% end
+    % compute correlation coefficient between the two series
+    rho_mkt(i) = compute_corr_coeff(data_EU,data_USA,date);
+end
 
 %% Creation of the constraints for the simulations
 
@@ -80,4 +87,94 @@ end
 %     x0, lb, ub, [], [], [], [], @(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) nonlinconstr(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz), options);
 
 
+%% Joint calibration
+alpha = 1/2; % (NIG model)
+
+idx = 1;
+% EU:
+data = data_EU;
+date = data.datesExpiry(idx);
+
+% compute the forward in 0:
+[F_0, ~ , discount_at_expiry] = forward_prices(data, date);
+
+% compute the log moneyess from the strikes
+log_moneyness = log(F_0(1) ./ data.strikes(idx).value);
+
+% time to maturity
+t = yearfrac(date_settlement,dates_EU(idx));
+
+%
+M_FFT = 15;
+dz = 0.1;
+
+% create a function that the prices of the call options given the strikes
+prices_EU = @(p) callIntegral(discount_at_expiry, F_0(1), alpha, p(1), p(2), p(3), t, log_moneyness, M_FFT, dz, 'quad');
+
+% compute the implied volatilities:
+volatility_EU = @(p) blkimpv(F_0(1), data.strikes(idx).value, -log(discount_at_expiry)/t, t, prices_EU(p));
+
+% USA:
+data = data_USA;
+date = data.datesExpiry(idx);
+
+% compute the forward in 0:
+[F_0, ~ , discount_at_expiry] = forward_prices(data, date);
+
+% compute the log moneyess from the strikes
+log_moneyness = log(F_0(1) ./ data.strikes(idx).value);
+
+% time to maturity
+t = yearfrac(date_settlement,dates_EU(idx));
+
+%
+M_FFT = 15;
+dz = 0.1;
+
+% create a function that the prices of the call options given the strikes
+prices_USA = @(p) callIntegral(discount_at_expiry, F_0(1), alpha, p(1), p(2), p(3), t, log_moneyness, M_FFT, dz, 'quad');
+
+% compute the implied volatilities:
+volatility_USA = @(p) blkimpv(F_0(1), data.strikes(idx).value, -log(discount_at_expiry)/t, t, prices_USA(p));
+
+% compute the lower bound for eta
+% omega_down = (1 - alpha) / (kappa * sigma^2)
+
+% create the distance function to minimize
+dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).impvol)*sum((volatility_EU(p_EU)' - data_EU.callAsk(idx).impvol).^2) + 1/length(data_USA.callAsk(idx).impvol)*sum((volatility_USA(p_USA)' - data_USA.callAsk(idx).impvol).^2);
+
+% calibrate the model using fmincon
+% initial guess
+% Quantities of interest
+esp_thr = 1e-1;
+
+% Initial values for the initialization
+% x0 = ones(11, 1);
+x0 = ones(6, 1);
+
+% Linear inequality constraints on the theta_i
+% A = [0 -1 -1 0 0 0 0 0 0 0 0; ...
+%      0 1 -1 0 0 0 0 0 0 0 0; ...
+%      0 0 0 0 -1 -1 0 0 0 0 0; ...
+%      0 0 0 0 1 -1 0 0 0 0 0]
+A = [0 -1 -1 0 0 0; ...
+      0 1 -1 0 0 0; ...
+      0 0 0 0 -1 -1; ...
+      0 0 0 0 1 -1];
+
+% Plain term for the previous matrix
+b = zeros(4, 1);
+
+% Unused inequality matrixies
+Aeq = []; beq = [];
+
+% Bounds for the single parameter, no ub required
+% lb = [0; -Inf; 0; 0; -Inf; 0; 0; -Inf; 0; -Inf; -Inf];
+lb = [0; -Inf; 0; 0; -Inf; 0];
+ub = [];
+
+% Options for the visualization
+options = optimset('Display', 'iter');
+
+x = fmincon(@(x) dist([x(1) x(2) x(3)],[x(4) x(5) x(6)]), x0, A, b, Aeq, beq, lb, ub, @(x) nonlinconstr(x, rho_mkt(1), esp_thr), options);
 
