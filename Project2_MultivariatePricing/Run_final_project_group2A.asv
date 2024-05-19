@@ -58,26 +58,25 @@ end
 
 % General function handles for the writing
 
-sigma2_i = @(gamma2_i, a_i) gamma2_i + a_i^2 * gamma_z;
-theta_i = @(beta_i, a_i) beta_i + a_i * beta_z;
-k_i = @(nu_i) (nu_i * nu_z)/(nu_i + nu_z)
+sigma2_i = @(g2_i, a_i, gz) g2_i + a_i^2 * gz;
+theta_i = @(beta_i, a_i, bz) beta_i + a_i * bz;
+k_i = @(nu_i, nz) (nu_i * nz)/(nu_i + nz);
 
 % Calibrationà
 
-fun = @(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, ...
-    beta_z, nu_z, gamma_z) a_1*a_2*(gamma_z + beta_z^2 * nu_z)/ ...
-    (sqrt(sigma2_i(gamma_1, a_1) + k_i(nu_1) * (theta_i(beta_1, a_1)^2)) * ...
-     sqrt(sigma2_i(gamma_2, a_2) + k_i(nu_2) * (theta_i(beta_2, a_2)^2)));
+fun = @(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) ...
+    a1*a2*(gz + bz^2 * nz)/ (sqrt(sigma2_i(g1, a1, gz) + k_i(n1, nz) * (theta_i(b1, a1, bz)^2)) * ...
+     sqrt(sigma2_i(g2, a2, gz) + k_i(n2, nz) * (theta_i(b2, a2, bz)^2)));
 
 x0 = zeros(11, 1);
-lb = [-Inf; -Inf; -Inf, 0, 0, -Inf, 0, 0, -Inf, 0, 0];
+lb = [-Inf; -Inf; -Inf; 0; 0; -Inf; 0; 0; -Inf; 0; 0];
 ub = [];
 options = optimset('Display', 'Off');
 
-params = lsqnonlin(@(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, beta_z, nu_z, gamma_z) fun(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, ...
-    beta_z, nu_z, gamma_z) - rho_mkt(1), x0, lb, ub, [], [], [], [], ...
-    @(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, beta_z, nu_z, gamma_z) nonlinconstr(a_1, a_2, beta_1, nu_1, gamma_1, beta_2, nu_2, gamma_2, ...
-    beta_z, nu_z, gamma_z), options);
+params = lsqnonlin(@(a) fun(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) - rho_mkt(1), ...
+%     x0, lb, ub
+% params = lsqnonlin(@(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) fun(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) - rho_mkt(1), ...
+%     x0, lb, ub, [], [], [], [], @(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) nonlinconstr(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz), options);
 
 %
 

@@ -73,10 +73,8 @@ lb = [-Inf; -Inf; -Inf; 0; 0; -Inf; 0; 0; -Inf; 0; 0];
 ub = [];
 options = optimset('Display', 'Off');
 
-params = lsqnonlin(@(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) fun(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) - rho_mkt(1), ...
-    x0, lb, ub, [], [], [], [], ...
-    @(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) nonlinconstr(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz), options);
+params = fmincon(@(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) fun(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) - rho_mkt(1), ...
+    x0, lb, ub, [], [], [], [], @(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) nonlinconstr(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz), options);
 
-%
 
 
