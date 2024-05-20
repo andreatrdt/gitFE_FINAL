@@ -51,7 +51,7 @@ function [F_vector, G_vector , B_bar] = forward_prices(dataset, date)
 
     p = polyfit(Ki, F - Ki, 1);
     slope = p(1);
-    disp(['Estimated Slope: ', num2str(slope)]);
+%   disp(['Estimated Slope: ', num2str(slope)]);
 
     %% Creation vectors to return
     F_vector = [F; F_ask; F_bid];
