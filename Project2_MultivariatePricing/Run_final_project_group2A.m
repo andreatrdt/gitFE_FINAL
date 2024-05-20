@@ -99,19 +99,19 @@ data = data_EU;
 date = data.datesExpiry(idx);
 
 % compute the forward in 0:
-[F_0, ~ , discount_at_expiry] = forward_prices(data, date);
+[F_0_EU, ~ , discount_at_expiry_EU] = forward_prices(data, date);
 
 % compute the log moneyess from the strikes
-log_moneyness = log(F_0(1,:) ./ data.strikes(idx).value);
+log_moneyness = log(F_0_EU(1,:) ./ data.strikes(idx).value);
 
 % time to maturity
 t = yearfrac(date_settlement,dates_EU(idx),Act365);
 
 % create a function that the prices of the call options given the strikes
-prices_EU = @(p) callIntegral(discount_at_expiry, F_0(1,:), p(1), p(2), p(3), t, log_moneyness); % CORRECT and use integral
+prices_EU = @(p) callIntegral(discount_at_expiry_EU, F_0_EU(1,:), p(1), p(2), p(3), t, log_moneyness); % CORRECT and use integral
 
 % compute the implied volatilities:
-volatility_EU = @(p) blkimpv(F_0(1,:), data.strikes(idx).value, -log(discount_at_expiry)/t, t, prices_EU(p));
+volatility_EU = @(p) blkimpv(F_0_EU(1,:), data.strikes(idx).value, -log(discount_at_expiry_EU)/t, t, prices_EU(p));
 
 
 % USA:
@@ -119,25 +119,30 @@ data = data_USA;
 date = data.datesExpiry(idx);
 
 % compute the forward in 0:
-[F_0, ~ , discount_at_expiry] = forward_prices(data, date);
+[F_0_USA, ~ , discount_at_expiry_USA] = forward_prices(data, date);
 
 % compute the log moneyess from the strikes
-log_moneyness = log(F_0(1,:) ./ data.strikes(idx).value);
+log_moneyness = log(F_0_USA(1,:) ./ data.strikes(idx).value);
 
 % time to maturity
 t = yearfrac(date_settlement,dates_USA(idx),Act365);
 
 % create a function that the prices of the call options given the strikes
-prices_USA = @(p) callIntegral(discount_at_expiry, F_0(1,:), p(1), p(2), p(3), t, log_moneyness);
+prices_USA = @(p) callIntegral(discount_at_expiry_USA, F_0_USA(1,:), p(1), p(2), p(3), t, log_moneyness);
 
 % compute the implied volatilities:
-volatility_USA = @(p) blkimpv(F_0(1,:), data.strikes(idx).value, -log(discount_at_expiry)/t, t, prices_USA(p));
+volatility_USA = @(p) blkimpv(F_0_USA(1,:), data.strikes(idx).value, -log(discount_at_expiry_USA)/t, t, prices_USA(p));
 
 % compute the lower bound for eta
 % omega_down = (1 - alpha) / (kappa * sigma^2)
 
 % create the distance function to minimize
-dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).impvol)*sum((volatility_EU(p_EU)' - data_EU.callAsk(idx).impvol).^2) + 1/length(data_USA.callAsk(idx).impvol)*sum((volatility_USA(p_USA)' - data_USA.callAsk(idx).impvol).^2);
+% dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).impvol)*sum((volatility_EU(p_EU)' - data_EU.callAsk(idx).impvol).^2) + 1/length(data_USA.callAsk(idx).impvol)*sum((volatility_USA(p_USA)' - data_USA.callAsk(idx).impvol).^2);
+mean_call_price_EU = (data_EU.callAsk(idx).prices+data_EU.callBid(idx).prices)/2;
+mean_call_price_USA = (data_USA.callAsk(idx).prices+data_USA.callBid(idx).prices)/2;
+
+dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).impvol)*sum((prices_EU(p_EU) - mean_call_price_EU).^2) + 1/length(data_USA.callAsk(idx).prices)*sum((prices_USA(p_USA) - mean_call_price_USA).^2);
+
 % USIAMO SOLO LE CALL ASK???
 
 
@@ -147,29 +152,27 @@ dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).impvol)*sum((volatility_EU(p_
 esp_thr = 1e-1;
 
 % Initial values for the initialization
-% x0 = ones(11, 1);
+x0 = ones(11, 1);
 % x0 = ones(6, 1);
-x0 = 0.01*ones(6,1);
+% x0 = 0.01*ones(6,1);
 
 % Linear inequality constraints on the theta_i
-% A = [0 -1 -1 0 0 0 0 0 0 0 0; ...
-%      0 1 -1 0 0 0 0 0 0 0 0; ...
-%      0 0 0 0 -1 -1 0 0 0 0 0; ...
-%      0 0 0 0 1 -1 0 0 0 0 0]
-A = [0 -1 -1 0 0 0; ...
-      0 1 -1 0 0 0; ...
-      0 0 0 0 -1 -1; ...
-      0 0 0 0 1 -1];
+A = [0 -1 -1 0 0 0 0 0 0 0 0; ...
+     0 1 -1 0 0 0 0 0 0 0 0; ...
+     0 0 0 0 -1 -1 0 0 0 0 0; ...
+     0 0 0 0 1 -1 0 0 0 0 0];
+% A = [];
 
 % Plain term for the previous matrix
 b = zeros(4, 1);
+% b = [];
 
 % Unused inequality matrixies
 Aeq = []; beq = [];
 
 % Bounds for the single parameter, no ub required
-% lb = [0; -Inf; 0; 0; -Inf; 0; 0; -Inf; 0; -Inf; -Inf];
-lb = [0; -Inf; 0; 0; -Inf; 0];
+lb = [0; -Inf; 0; 0; -Inf; 0; 0; -Inf; 0; -Inf; -Inf];
+% lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
