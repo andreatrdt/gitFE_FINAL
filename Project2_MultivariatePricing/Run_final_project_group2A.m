@@ -48,7 +48,7 @@ for i = 1:length(data.datesExpiry)
 
     date = data.datesExpiry(i);
 
-    [F_vector, G_vector , ~] = forward_prices(data, date);
+    [F_vector, G_vector , ~] = forward_prices(data, date, 0);
 end
 
 %% POINT 6: Model calibration
