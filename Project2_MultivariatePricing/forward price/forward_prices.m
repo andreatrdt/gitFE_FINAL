@@ -71,7 +71,7 @@ function [F_vector, G_vector , B_bar] = forward_prices(dataset, date, flag)
     end
 
     %% Creation vectors to return
-    F_vector = [F; F_max; F_min];
+    F_vector = [F_vector; F_ask_vector; F_bid_vector];
     G_vector = [Gi; Gi_ask; Gi_bid];
 
 end % function forward_prices

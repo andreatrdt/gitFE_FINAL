@@ -37,6 +37,7 @@ Act365 = 3;
 
 %% POINT 5: Forward Prices computation
 % Choice of the flags: flag = 0 [EUROPEAN], flag = 1 [AMERICAN]
+
 flag = 0;
 
 if flag == 1
@@ -66,7 +67,10 @@ for i = 1:length(data_EU.datesExpiry)
 end
 
 %% Joint calibration
-alpha = 1/2; % (NIG model)
+
+% Quantities of interest
+
+alpha = 1/2;       % NIG model
 idx = 1;
 
 % EU:
