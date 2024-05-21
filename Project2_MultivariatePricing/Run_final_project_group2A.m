@@ -10,7 +10,8 @@
 
 clear all; close all; clc;
 
-%% load fol
+%% Load folders
+
 addpath('data');
 addpath('forward price');
 addpath('calibration');
@@ -53,15 +54,16 @@ end
 
 %% POINT 6: Model calibration
 
-% rho_mkt = zeros(length(data_EU.datesExpiry), 1);
-% 
-% for i = 1:length(data_EU.datesExpiry)
-% 
-%     date = data_EU.datesExpiry(i);
-% 
-%     % compute correlation coefficient between the two series
-%     rho_mkt(i) = compute_corr_coeff(data_EU,data_USA,date); % NOTA: Extrapolation correct???
-% end
+% Computation of the correlation of the market to impose the non linear
+% constraint in the calibration
+
+rho_mkt = zeros(length(data_EU.datesExpiry), 1);
+
+for i = 1:length(data_EU.datesExpiry)
+
+    date = data_EU.datesExpiry(i);
+    rho_mkt(i) = compute_corr_coeff(SP500_EUR500, date_settlement, date); 
+end
 
 %% Joint calibration
 alpha = 1/2; % (NIG model)
@@ -115,8 +117,8 @@ mean_call_price_USA = (data_USA.callAsk(idx).prices+data_USA.callBid(idx).prices
 weights_EU = data_EU.Volume_call(idx).volume./sum(data_EU.Volume_call(idx).volume);
 weights_USA = data_USA.Volume_call(idx).volume./sum(data_USA.Volume_call(idx).volume);
 
-dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).prices)*sum(weights_EU' .* (prices_EU(p_EU) - mean_call_price_EU)) + ...
-    1/length(data_USA.callAsk(idx).prices)*sum(weights_USA' .* (prices_USA(p_USA) - mean_call_price_USA));
+dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).prices)*sum(weights_EU' .* (prices_EU(p_EU) - mean_call_price_EU).^2) + ...
+    1/length(data_USA.callAsk(idx).prices)*sum(weights_USA' .* (prices_USA(p_USA) - mean_call_price_USA).^2);
 
 
 % calibrate the model using fmincon
@@ -147,7 +149,7 @@ ub = [];
 % Options for the visualization
 options = optimset('Display', 'iter');
 
-x = fmincon(@(x) dist([x(1) x(2) x(3)],[x(4) x(5) x(6)]), x0, A, b, Aeq, beq, lb, ub, @(x) nonlinconstr(x, 0.8, esp_thr), options);
+x = fmincon(@(x) dist([x(1) x(2) x(3)],[x(4) x(5) x(6)]), x0, A, b, Aeq, beq, lb, ub, @(x) nonlinconstr(x, rho_mkt(1), esp_thr), options);
 
 % 
 %     0.0094
