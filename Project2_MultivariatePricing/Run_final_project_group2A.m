@@ -63,31 +63,6 @@ end
 %     rho_mkt(i) = compute_corr_coeff(data_EU,data_USA,date); % NOTA: Extrapolation correct???
 % end
 
-%% Creation of the constraints for the simulations
-
-%% calibration 
-
-% % General function handles for the writing
-
-% sigma2_i = @(g2_i, a_i, gz) g2_i + a_i^2 * gz;
-% theta_i = @(beta_i, a_i, bz) beta_i + a_i * bz;
-% k_i = @(nu_i, nz) (nu_i * nz)/(nu_i + nz);
-
-% % Calibration
-
-% fun = @(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) ...
-%     a1*a2*(gz + bz^2 * nz)/ (sqrt(sigma2_i(g1, a1, gz) + k_i(n1, nz) * (theta_i(b1, a1, bz)^2)) * ...
-%      sqrt(sigma2_i(g2, a2, gz) + k_i(n2, nz) * (theta_i(b2, a2, bz)^2)));
-
-% x0 = zeros(11, 1);
-% lb = [-Inf; -Inf; -Inf; 0; 0; -Inf; 0; 0; -Inf; 0; 0];
-% ub = [];
-% options = optimset('Display', 'Off');
-
-% params = fmincon(@(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) fun(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) - rho_mkt(1), ...
-%     x0, lb, ub, [], [], [], [], @(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz) nonlinconstr(a1, a2, b1, n1, g1, b2, n2, g2, bz, nz, gz), options);
-
-
 %% Joint calibration
 alpha = 1/2; % (NIG model)
 idx = 1;
@@ -140,8 +115,8 @@ mean_call_price_USA = (data_USA.callAsk(idx).prices+data_USA.callBid(idx).prices
 weights_EU = data_EU.Volume_call(idx).volume./sum(data_EU.Volume_call(idx).volume);
 weights_USA = data_USA.Volume_call(idx).volume./sum(data_USA.Volume_call(idx).volume);
 
-dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).prices)*sum((prices_EU(p_EU) - mean_call_price_EU).^2) + ...
-    1/length(data_USA.callAsk(idx).prices)*sum((prices_USA(p_USA) - mean_call_price_USA).^2);
+dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).prices)*sum(weights_EU' .* (prices_EU(p_EU) - mean_call_price_EU)) + ...
+    1/length(data_USA.callAsk(idx).prices)*sum(weights_USA' .* (prices_USA(p_USA) - mean_call_price_USA));
 
 
 % calibrate the model using fmincon

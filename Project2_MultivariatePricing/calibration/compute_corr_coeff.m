@@ -1,19 +1,18 @@
 function rho = compute_corr_coeff(data_EU,data_USA,date)
-% compute_corr_coeff: compute the correlation coefficient between two series
+% Compute the correlation coefficient between two series [EU and USA]
 %
-%   INPUTS
-%   F_EU: forward prices of the European options
-%   F_USA: forward prices of the American options
-%
-%   OUTPUTS
-%   rho: correlation coefficient between the two series
+% INPUTS
+% data_EU: data of the European market
+% data_USA: data of the American market
+% date: date until to compute the correlation
+% 
+% OUTPUTS
+% rho: correlation coefficient between the two series
+
+    %% 
 
     % load data
 
-    [F_vector, ~] = forward_prices(data_USA, date, 1);
-    F_USA = F_vector(1,:);
-    [F_vector, ~] = forward_prices(data_EU, date, 1);
-    F_EU = F_vector(1,:);
 
     % find the index of the date
 
