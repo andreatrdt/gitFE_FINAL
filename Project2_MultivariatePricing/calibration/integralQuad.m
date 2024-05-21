@@ -13,7 +13,7 @@ function I = integralQuad(phi, queryPoints)
 f = @(xi,x) exp(-1i * xi .* x) / (2 * pi) .* phi(-xi-1i/2) .* 1 ./ (xi.^2 + 1/4);
 
 % Define the function I(x) which computes the integral with respect to u
-Integral_function = @(x) integral(@(u) f(u, x), -100, 100); 
+Integral_function = @(x) integral(@(u) f(u, x), -200, 200); 
 
 % Compute the function I(x) for a specific value of x
 I = real((arrayfun(@(x) Integral_function(x), queryPoints)));

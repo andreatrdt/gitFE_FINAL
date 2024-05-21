@@ -137,7 +137,11 @@ volatility_USA = @(p) blkimpv(F_0_USA(1,:), data.strikes(idx).value, -log(discou
 mean_call_price_EU = (data_EU.callAsk(idx).prices+data_EU.callBid(idx).prices)/2;
 mean_call_price_USA = (data_USA.callAsk(idx).prices+data_USA.callBid(idx).prices)/2;
 
-dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).prices)*sum((prices_EU(p_EU) - mean_call_price_EU).^2) + 1/length(data_USA.callAsk(idx).prices)*sum((prices_USA(p_USA) - mean_call_price_USA).^2);
+weights_EU = data_EU.Volume_call(idx).volume./sum(data_EU.Volume_call(idx).volume);
+weights_USA = data_USA.Volume_call(idx).volume./sum(data_USA.Volume_call(idx).volume);
+
+dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).prices)*sum((prices_EU(p_EU) - mean_call_price_EU).^2) + ...
+    1/length(data_USA.callAsk(idx).prices)*sum((prices_USA(p_USA) - mean_call_price_USA).^2);
 
 
 % calibrate the model using fmincon
@@ -146,7 +150,7 @@ dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).prices)*sum((prices_EU(p_EU) 
 esp_thr = 1e-1;
 
 % Initial values for the initialization
-x0 = ones(11, 1);
+x0 = 1 * ones(11, 1);
 % x0 = ones(6, 1);
 % x0 = 0.01*ones(6,1);
 
