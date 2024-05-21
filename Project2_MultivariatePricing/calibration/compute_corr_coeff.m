@@ -10,9 +10,9 @@ function rho = compute_corr_coeff(data_EU,data_USA,date)
 
     % load data
 
-    [F_vector, ~] = forward_prices(data_USA, date);
+    [F_vector, ~] = forward_prices(data_USA, date, 1);
     F_USA = F_vector(1,:);
-    [F_vector, ~] = forward_prices(data_EU, date);
+    [F_vector, ~] = forward_prices(data_EU, date, 1);
     F_EU = F_vector(1,:);
 
     % find the index of the date
