@@ -12,12 +12,11 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 % OUTPUT:
 % dataset:            modified version of the dataset
 
-    strike_ATM = dataset.spot;
-
     for ii=1:length(dataset.datesExpiry)
 
         %% Quantities of interest
-
+        
+        strike_ATM = dataset.spot/B0(ii);
         strikes = dataset.strikes(ii).value;
 
         TTM = yearfrac(date_settlement, dataset.datesExpiry(ii));

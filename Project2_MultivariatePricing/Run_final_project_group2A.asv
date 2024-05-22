@@ -56,10 +56,11 @@ data_USA = OTM_preprocessing(data_USA, B_bar_USA);
 data_EU = dataset_preprocessing(data_EU, F0_EU, B_bar_EU, date_settlement, 0);
 data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0);
 
+distance = 
 %% Calibration of the model parameters
 
 % Quantities of interest
-x0 = [10 2 0.5 10 2 0.5];
+x0 = ones(6, 1);
 
 % Linear inequality constraints 
 A = []; b = [];
@@ -75,7 +76,7 @@ ub = [];
 options = optimset('Display', 'iter');
 
 % Calibration
-params = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
+params = fmincon(@(params) new_calibration(param, data_EU, data_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
 
 

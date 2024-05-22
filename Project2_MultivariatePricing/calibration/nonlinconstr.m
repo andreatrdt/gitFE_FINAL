@@ -3,7 +3,7 @@ function [c, ceq] = nonlinconstr(x)
 % equality and the inequality ones
 % 
 % INPUT:
-% x:            [VEC] [K1, T1, S1, K2, T2, S2, Nz, Bz, Gz, a1, a2]
+% x:            [VECTOR] [K1, T1, S1, K2, T2, S2]
 % 
 % OUTPUT:
 % c:            inequality constraints
