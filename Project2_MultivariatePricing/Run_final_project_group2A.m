@@ -57,13 +57,12 @@ data_EU = dataset_preprocessing(data_EU, F0_EU, B_bar_EU, date_settlement, 0);
 data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0);
 
 
-%% calibration
+%% Calibration of the model parameters
 
 % Quantities of interest
 
 alpha = 1/2;       % NIG model
 idx = 1;
-
 
 % EU:
 data = data_EU;
