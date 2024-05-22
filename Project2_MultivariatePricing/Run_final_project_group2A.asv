@@ -46,15 +46,13 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
 %% Options selection
 
-% Choice of only OTM options for the further calibration
-data_EU = OTM_preprocessing(data_EU);
-data_USA = OTM_preprocessing(data_USA);
-
+% Choice of only OTM options for
 % Computing the Delta of Black & Scholes over the OTM Call/Put in order to
 % clean dataset from too far from the ATM point prices
 
+
 data_EU = dataset_preprocessing(data_EU, F0_EU, B_bar_EU, date_settlement, 0);
-data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 1);
+data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0);
 
 a = 1
 

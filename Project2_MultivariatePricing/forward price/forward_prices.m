@@ -4,7 +4,7 @@ function [F_vector, B_bar_vector] = forward_prices(dataset, flag)
 % INPUT:
 % dataset:           data containing all the required tables
 % date:              date to consider for the computation
-% flag:              [0: with plots & slope; 1: without plots & slope]
+% flag:              [0: without plots & slope; 1: with plots & slope]
 % 
 % OUTPUT:
 % F_vector:          [VECTOR] forwards value F(0, T)
