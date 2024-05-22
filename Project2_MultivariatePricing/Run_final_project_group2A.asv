@@ -69,16 +69,13 @@ end
 %% Selection of the options for which the calibration must be done
 data = data_EU;
 for ii=1:length(data.datesExpiry)
-    for jj=1:length(data.strikes(ii).value)
      % Compute the Black implied volatilities
-     impvol = blkimpv(F_0_EU(1,:),data.strikes(ii).value)
-     % Keep only the options with Delta which fall in the interval [10% , 90%]
-     
-     % Consider only the OTM options
-     
+    
+     % Fil
+
      % 
 
-    end
+    
 end
 
 
