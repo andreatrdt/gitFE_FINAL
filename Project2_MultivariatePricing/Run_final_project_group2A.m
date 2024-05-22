@@ -47,8 +47,8 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 %% Options selection
 
 % Choice of only OTM options for the further calibration
-data_EU = OTM_preprocessing(data_EU);
-data_USA = OTM_preprocessing(data_USA);
+data_EU = OTM_preprocessing(data_EU, B0_EU);
+data_USA = OTM_preprocessing(data_USA, B0_USA);
 
 % Computing the Delta of Black & Scholes over the OTM Call/Put in order to
 % clean dataset from too far from the ATM point prices
@@ -58,89 +58,3 @@ data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0
 
 
 %% Calibration of the model parameters
-
-% Quantities of interest
-
-alpha = 1/2;       % NIG model
-idx = 1;
-
-% EU:
-data = data_EU;
-
-% compute the log moneyess from the strikes
-log_moneyness = log(F_0_EU(1) ./ data.strikes(idx).value);
-
-% time to maturity
-t = yearfrac(date_settlement,dates_EU(idx),conv_ACT365);
-
-% create a function that the prices of the call options given the strikes
-prices_EU = @(p) callIntegral(discount_at_expiry_EU(idx), F_0_EU(1), p(1), p(2), p(3), t, log_moneyness); % CORRECT and use integral
-
-
-% USA:
-data = data_USA;
-
-% compute the log moneyess from the strikes
-log_moneyness = log(F_0_USA(1) ./ data.strikes(idx).value);
-
-% time to maturity
-t = yearfrac(date_settlement,dates_USA(idx),conv_ACT365);
-
-% create a function that the prices of the call options given the strikes
-prices_USA = @(p) callIntegral(discount_at_expiry_USA(idx), F_0_USA(1), p(1), p(2), p(3), t, log_moneyness);
-
-
-
-% create the distance function to minimize
-% dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).impvol)*sum((volatility_EU(p_EU)' - data_EU.callAsk(idx).impvol).^2) + 1/length(data_USA.callAsk(idx).impvol)*sum((volatility_USA(p_USA)' - data_USA.callAsk(idx).impvol).^2);
-mean_call_price_EU = (data_EU.callAsk(idx).prices+data_EU.callBid(idx).prices)/2;
-
-idx_EU = find(mean_call_price_EU >= 0);
-
-mean_call_price_EU = mean_call_price_EU(idx_EU);
-
-mean_call_price_USA = (data_USA.callAsk(idx).prices+data_USA.callBid(idx).prices)/2;
-
-idx_USA = find(mean_call_price_USA >= 0);
-
-mean_call_price_USA = mean_call_price_USA(idx_USA);
-
-% weights
-
-
-
-
-
-dist = @(p_EU,p_USA) 1/length(data_EU.callAsk(idx).prices)*sum(weights_EU' .* (prices_EU(p_EU) - mean_call_price_EU).^2) + ...
-    1/length(data_USA.callAsk(idx).prices)*sum(weights_USA' .* (prices_USA(p_USA) - mean_call_price_USA).^2);
-
-
-% calibrate the model using fmincon
-% initial guess
-% Quantities of interest
-esp_thr = 1e-1;
-
-% Initial values for the initialization
-x0 = 1 * ones(11, 1);
-% x0 = ones(6, 1);
-% x0 = 0.01*ones(6,1);
-
-% Linear inequality constraints on the theta_i
-A = [];
-
-% Plain term for the previous matrix
-% b = zeros(4, 1);
-b = [];
-
-% Unused inequality matrixies
-Aeq = []; beq = [];
-
-% Bounds for the single parameter, no ub required
-lb = [0; -Inf; 0; 0; -Inf; 0; 0; -Inf; 0; -Inf; -Inf];
-% lb = [0; -Inf; 0; 0; -Inf; 0];
-ub = [];
-
-% Options for the visualization
-options = optimset('Display', 'iter');
-
-x = fmincon(@(x) dist([x(1) x(2) x(3)],[x(4) x(5) x(6)]), x0, A, b, Aeq, beq, lb, ub, @(x) nonlinconstr(x, rho_mkt(1), esp_thr), options);
