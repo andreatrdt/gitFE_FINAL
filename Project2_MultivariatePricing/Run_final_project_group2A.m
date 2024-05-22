@@ -78,5 +78,7 @@ options = optimset('Display', 'iter');
 params = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
 
-
+% params (T=1) =   0.1300   19.3334    0.1200    0.0257   42.8258    0.1182
+% params(T=2) =    1.1832   10.0741    0.1473    0.3111   17.4346    0.1307
+% CAMBIO DELLA FUNZIONE OBJ (prima avevo dimenticato la radice, quindi era un MSE pesato)
 
