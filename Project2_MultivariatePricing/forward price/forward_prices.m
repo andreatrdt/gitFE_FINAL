@@ -1,4 +1,4 @@
-function [F_vector, G_vector , B_bar] = forward_prices(dataset, date, flag)
+function [F_vector, B_bar_vector] = forward_prices(dataset, flag)
 % Computation of the forward prices following the Baviera, Azzone paper
 % 
 % INPUT:
@@ -7,71 +7,65 @@ function [F_vector, G_vector , B_bar] = forward_prices(dataset, date, flag)
 % flag:              [0: with plots & slope; 1: without plots & slope]
 % 
 % OUTPUT:
-% F_vector:          [MATRIX] data regarding forward prices
-% G_vector:          [MATRIX] data regarding synthetic forward prices
+% F_vector:          [VECTOR] forwards value F(0, T)
+% B_bar_vector:      [VECTOR] market calibrated discount B(0, T)
 % 
 % USES:
 % function synthethic_forward()
 % function 
 
-    %% Computation of the date index
-    % Passing a date from input, we ghet the related value of the index
+    %% Introduction of the return vectors
 
-    index = find_idx(dataset.datesExpiry, date);
+    F_vector = zeros(length(dataset.datesExpiry), 1);
+    B_bar_vector = zeros(length(dataset.datesExpiry), 1);
 
-    %% Control about penny options and liquidity
+    %% Computation of the forwards
 
-    % Necessary to create
+    for ii = 1:length(dataset.datesExpiry)
 
-    %% Computation of the strikes and synthetic forwards
+        %% Computation of the strikes and synthetic forwards
 
-    % Strikes
-    Ki = dataset.strikes(index).value;
-
-    % Synthetic forwards
-    [Gi, Gi_ask, Gi_bid] = synthethic_forward(dataset.callBid, dataset.callAsk, ...
-        dataset.putBid, dataset.putAsk, index);
+        % Strikes
+        Ki = dataset.strikes(ii).value;
     
-    %% Computation of the estimated discount factor
+        % Synthetic forwards
+        [Gi, Gi_ask, Gi_bid] = synthethic_forward(dataset.callBid(ii).prices, dataset.callAsk(ii).prices, ...
+            dataset.putBid(ii).prices, dataset.putAsk(ii).prices);
 
-    B_bar = estimation_discount_factor(Gi, Ki);
-    
-    %% Computation of the forward prices
-    F_vector = Gi/B_bar + Ki;
-    F_ask_vector = Gi_ask/B_bar + Ki;
-    F_bid_vector = Gi_bid/B_bar + Ki;
-    
-    % We're required to compute the minimum and the maximum in order to
-    % find the only F0 for the maturity
-    F_max = min(F_ask_vector);
-    F_min = max(F_bid_vector);
+        %% Computation of the estimated discount factor
 
-    F = (F_min + F_max)/2;
+        B_bar_vector(ii) = estimation_discount_factor(Gi, Ki);
 
-    %% Plot of the figures
-    
-    if ~flag
-        figure();
-        plot(Ki, F_ask_vector, '*-'); hold on;
-        plot(Ki, F_vector, 'o-');
-        plot(Ki, F_bid_vector, '*-'); grid on;
-    
-        % title('Forward prices at Expiry ', date);
-        xlabel('Strikes'); ylabel('Forwards prices');
-        legend('Ask', 'Mid', 'Bid')
-        grid on; hold off;
+        %% Computation of the forward prices
+        F_i_vector = Gi/B_bar_vector(ii) + Ki;
+        F_ask__i_vector = Gi_ask/B_bar_vector(ii) + Ki;
+        F_bid__i_vector = Gi_bid/B_bar_vector(ii) + Ki;
+        
+        % Computation of the required Forwards
+        F_vector(ii) = mean(F_i_vector);
+
+        %% Eventual plot
+
+        if flag
+            figure();
+            plot(Ki, F_ask__i_vector, '*-'); hold on;
+            plot(Ki, F_i_vector, 'o-');
+            plot(Ki, F_bid__i_vector, '*-'); grid on;
+        
+            % title('Forward prices at Expiry ', date);
+            xlabel('Strikes'); ylabel('Forwards prices');
+            legend('Ask', 'Mid', 'Bid')
+            grid on; hold off;
+        end
+        
+        %% Computation of the slope
+
+        if flag
+            p = polyfit(Ki, F_i_vector - Ki, 1);
+            slope = p(1);
+            disp(['Estimated Slope: ', num2str(slope)]);
+        end
+
     end
-
-    %% Computation of the slope
-
-    if ~flag
-        p = polyfit(Ki, F_vector - Ki, 1);
-        slope = p(1);
-        disp(['Estimated Slope: ', num2str(slope)]);
-    end
-
-    %% Creation vectors to return
-    F_vector = [F_vector; F_ask_vector; F_bid_vector];
-    G_vector = [Gi; Gi_ask; Gi_bid];
 
 end % function forward_prices
