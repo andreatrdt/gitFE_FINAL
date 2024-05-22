@@ -1,8 +1,19 @@
-function rho = hist_corr(data)
+function rho = hist_corr(dataset)
+% Computation of the historical correlation
+% 
+% INPUT:
+% dataset:        initial dataset of the returns
+% 
+% OUTPUT:
+% rho:            correlation coefficient between USA and EU
 
-returns_EU = data.Annually(:,1);
+    %% Computation of the returns
 
-returns_USA = data.Annually(:,2);
+    returns_USA = dataset.Annually(:,1);
+    returns_EU = dataset.Annually(:,2);
+    
+    %% Computation of the correlation coefficient
 
-rho = corr(returns_EU,returns_USA);
-end
+    rho = corr(returns_EU,returns_USA);
+
+end % function hist_corr
