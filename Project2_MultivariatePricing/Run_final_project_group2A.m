@@ -38,8 +38,27 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
 %% POINT 5: Forward Prices 
 
-[F_EU, B_bar_EU] = forward_prices(data_EU, 0);
-[F_USA, B_bar_USA] = forward_prices(data_USA, 0);
+[F0_EU, B_bar_EU] = forward_prices(data_EU, 0);
+[F0_USA, B_bar_USA] = forward_prices(data_USA, 0);
+
+%% POINT 6: Calibration
+
+%% Options selection
+% Computing the Delta of Black & Scholes over the OTM Call/Put in order to
+% clean dataset from too far from the ATM point prices
+
+
+dataset_preprocessing(data_EU, F0_EU, B_bar_EU, date_settlement);
+
+
+
+
+
+
+
+
+
+
 
 
 %% POINT 6: Model calibration
@@ -55,20 +74,7 @@ for i = 1:length(data_EU.datesExpiry)
     rho_mkt(i) = compute_corr_coeff(SP500_EUR500, date_settlement, date); 
 end
 
-%% Selection of the options for which the calibration must be done
-data = data_EU;
-for ii=1:length(data.datesExpiry)
-    for jj=1:length(data.strikes(ii).value)
-     % Compute the Black implied volatilities
-     impvol = blkimpv(F_0_EU(1,:),data.strikes(ii).value)
-     % Keep only the options with Delta which fall in the interval [10% , 90%]
-     
-     % Consider only the OTM options
-     
-     % 
 
-    end
-end
 
 
 %% Joint calibration

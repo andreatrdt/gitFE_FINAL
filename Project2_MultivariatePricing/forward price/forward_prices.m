@@ -12,7 +12,7 @@ function [F_vector, B_bar_vector] = forward_prices(dataset, flag)
 % 
 % USES:
 % function synthethic_forward()
-% function 
+% function estimation_discount_factor()
 
     %% Introduction of the return vectors
 
