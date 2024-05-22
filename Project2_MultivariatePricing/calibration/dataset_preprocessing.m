@@ -39,7 +39,11 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         if flag
             figure();
             plot(strikes(idx_call_OTM), impvol_call_i, 'o-'); hold on;
-            plot(strikes(idx_put_OTM), impvol_put_i, '*-');
+            plot(strikes(idx_put_OTM), impvol_put_i, '*-'); grid on;
+
+            title('Implied volatilities');
+            xlabel('Strikes'); ylabel('Volatilities');
+            legend('Implied vol Call', 'Implied vol Put');
         end
 
         %% Computation of the delta
@@ -48,13 +52,6 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 
         %% Restructuring of the dataset
 
-        % Find the indexes to cut for the call
-        indicator_10 = delta_call >= 0.1;
-        indicator_90 = delta_call <= 0.9;
-        indicator = indicator_10 .* indicator_90;
-
-        idx_call = find(indicator > 0) + length(delta_put);
-
         % Find the indexes to cut for the put
         indicator_10 = delta_put <= -0.1;
         indicator_90 = delta_put >= -0.9;
@@ -62,14 +59,23 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 
         idx_put = find(indicator > 0);
 
+        % Find the indexes to cut for the call
+        indicator_10 = delta_call >= 0.1;
+        indicator_90 = delta_call <= 0.9;
+        indicator = indicator_10 .* indicator_90;
+
+        idx_call = find(indicator > 0) + length(delta_put);
+
         % Cut of the structs
         dataset.callBid(ii).prices = dataset.callBid(ii).prices(idx_call);
         dataset.callAsk(ii).prices = dataset.callAsk(ii).prices(idx_call);
         dataset.callAsk(ii).impvol = dataset.callAsk(ii).impvol(idx_call);
+        dataset.callAsk(ii).impvol = impvol_call_i;
 
         dataset.putAsk(ii).prices = dataset.putAsk(ii).prices(idx_put);
         dataset.putBid(ii).prices = dataset.putBid(ii).prices(idx_put);
         dataset.putBid(ii).impvol = dataset.putBid(ii).impvol(idx_put);
+        dataset.putBid(ii).impvol = impvol_put_i;
 
         idx_combined = unique([idx_put idx_call]);
         dataset.strikes(ii).value = dataset.strikes(ii).value(idx_combined);
