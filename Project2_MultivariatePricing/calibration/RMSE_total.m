@@ -26,6 +26,12 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     RMSE = 0;
     N_options = 0;
 
+%     M = 19;
+%     dz = 0.0048;
+
+    M = 15;
+    dz = 0.0025;
+
     for ii = 1:length(dataset.datesExpiry)
 
         %% Initialization
@@ -41,8 +47,7 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
         %% Pricing 
         % Price of Call/Puts through the FFT and Lewis formula
 
-%         prices = callIntegral(B0(ii), F0(ii), k, theta, sigma, TTM, log_moneyness);
-        prices = E3_callPriceLewis(B0(ii), F0(ii), 1/2, log_moneyness, sigma, k, theta, TTM, 1, 19, 0.0048);
+        prices = callPriceLewis(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
         
         call_prices = prices(put_length+1:end);
         put_prices = prices(1:put_length) - F0(ii) + dataset.strikes(ii).value(1:put_length) .* B0(ii); 
