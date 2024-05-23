@@ -22,7 +22,7 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     %% Conventions
     conv_ACT365 = 3;
 
-    %% Computations
+    %% Initial parameters
     RMSE = 0;
     N_options = 0;
 
@@ -32,6 +32,8 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     M = 15;
     dz = 0.0025;
 
+    %% Computation 
+    
     for ii = 1:length(dataset.datesExpiry)
 
         %% Initialization
