@@ -66,10 +66,10 @@ data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0
 
 %% Calibration of the model parameters
 
-x0 = [20 0.2 0.1 30 0.5 0.3];
+% x0 = [5 0.1 0.1 5 0.1 0.1];
 
 % % Quantities of interest
-% x0 = [10 2 0.5 10 2 0.5];
+x0 = [10 2 0.5 10 2 0.5];
 
 % Linear inequality constraints 
 A = []; b = [];
@@ -88,10 +88,10 @@ options = optimset('Display', 'iter');
 params_marginals = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
-% log_moneyness = log(F0_EU(1) ./ data_EU.strikes(1).value);
-% TTM = yearfrac(date_settlement, datenum(data_EU.datesExpiry(1)), conv_ACT365);
-% prices = callPriceLewis(B_bar_EU(1), F0_EU(1), log_moneyness, params(6), params(4), params(5), TTM, 15, 0.0025)
-% mean_call_price = (data_EU.callAsk(1).prices + data_EU.callBid(1).prices)/2
+% log_moneyness = log(F0_EU(2) ./ data_EU.strikes(2).value);
+% TTM = yearfrac(date_settlement, datenum(data_EU.datesExpiry(2)), conv_ACT365);
+% prices = callPriceLewis(B_bar_EU(2), F0_EU(2), log_moneyness, params_marginals(6), params_marginals(4), params_marginals(5), TTM, 15, 0.0025)
+% mean_call_price = (data_EU.callAsk(2).prices + data_EU.callBid(2).prices)/2
 
 %% 2nd Calibration over the rho
 
@@ -106,7 +106,7 @@ x0 = 0;
 k1 = params_marginals(1); k2 = params_marginals(4);
 
 % Calibration of the nuZ parameter
-nu_z = fmincon(@(nu_z) (sqrt(k1 * k2 / nu_z)- rho)^2, ...
+nu_z = fmincon(@(nu_z) (sqrt(k1 * k2) / nu_z - rho)^2, ...
     x0, A, b, Aeq, beq, lb, ub, [], options)
 
 % % Initialization of the parameters
