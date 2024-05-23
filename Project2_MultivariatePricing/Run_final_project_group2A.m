@@ -106,7 +106,6 @@ x0 = 0;
 k1 = params_marginals(1); k2 = params_marginals(4);
 
 % Calibration of the nuZ parameter
-<<<<<<< Updated upstream
 nu_z = fmincon(@(nu_z) (sqrt(k1 * k2 / nu_z)- rho)^2, ...
     x0, A, b, Aeq, beq, lb, ub, [], options)
 
@@ -118,9 +117,3 @@ nu_z = fmincon(@(nu_z) (sqrt(k1 * k2 / nu_z)- rho)^2, ...
 % % Calibration of the nuZ parameter
 % params = fmincon(@(params) sqrt(params(1) * params(2) / ((params(1) + params(3)) * (params(2) + params(3)))) - rho, ...
 %     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options)
-=======
-nu_Z = fmincon(@(nu_Z) abs(sqrt(params(1) * params(4))/nu_Z - rho), x0, A, b, Aeq, beq, lb, ub, @(x) nonlinconstr_corr(x), options)
-
-% end run time
-toc;
->>>>>>> Stashed changes
