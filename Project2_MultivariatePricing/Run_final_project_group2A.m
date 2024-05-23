@@ -7,6 +7,10 @@
 % Matteo Torba
 % Andrea Tarditi
 
+% start run time
+tic;
+
+%% Clearing the workspace
 clear all; close all; clc;
 
 %% Load folders
@@ -14,7 +18,7 @@ clear all; close all; clc;
 addpath('data');
 addpath('forward price');
 addpath('calibration');
-addpath('general')
+addpath('general');
 
 %% Loading of the matrices
 % Loading of the matrices necessary for the projects
@@ -37,11 +41,10 @@ dates_USA = datenum(data_USA.datesExpiry);
 
 conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
-%% plot
+%% plot of the returns
  
 % plot_returns(SP500_EUR500,date_settlement)
 
-%%
 %% POINT 5: Forward Prices 
 
 [F0_EU, B_bar_EU] = forward_prices(data_EU, 0);
@@ -85,7 +88,6 @@ options = optimset('Display', 'iter');
 params_marginals = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
-
 % log_moneyness = log(F0_EU(1) ./ data_EU.strikes(1).value);
 % TTM = yearfrac(date_settlement, datenum(data_EU.datesExpiry(1)), conv_ACT365);
 % prices = callPriceLewis(B_bar_EU(1), F0_EU(1), log_moneyness, params(6), params(4), params(5), TTM, 15, 0.0025)
@@ -104,6 +106,7 @@ x0 = 0;
 k1 = params_marginals(1); k2 = params_marginals(4);
 
 % Calibration of the nuZ parameter
+<<<<<<< Updated upstream
 nu_z = fmincon(@(nu_z) (sqrt(k1 * k2 / nu_z)- rho)^2, ...
     x0, A, b, Aeq, beq, lb, ub, [], options)
 
@@ -115,3 +118,9 @@ nu_z = fmincon(@(nu_z) (sqrt(k1 * k2 / nu_z)- rho)^2, ...
 % % Calibration of the nuZ parameter
 % params = fmincon(@(params) sqrt(params(1) * params(2) / ((params(1) + params(3)) * (params(2) + params(3)))) - rho, ...
 %     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options)
+=======
+nu_Z = fmincon(@(nu_Z) abs(sqrt(params(1) * params(4))/nu_Z - rho), x0, A, b, Aeq, beq, lb, ub, @(x) nonlinconstr_corr(x), options)
+
+% end run time
+toc;
+>>>>>>> Stashed changes
