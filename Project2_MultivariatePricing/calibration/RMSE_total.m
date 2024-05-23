@@ -26,7 +26,7 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     RMSE = 0;
     N_options = 0;
 
-    for ii = 1:6
+    for ii = 1:length(dataset.datesExpiry)
 
         %% Initialization
         put_length = length(dataset.putAsk(ii).prices);
@@ -36,7 +36,7 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
         log_moneyness = log(F0(ii) ./ dataset.strikes(ii).value);
 
         % Time to maturity
-        TTM = yearfrac(date_settlement, dataset.datesExpiry(ii), conv_ACT365);
+        TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
 
         %% Pricing 
         % Price of Call/Puts through the FFT and Lewis formula
