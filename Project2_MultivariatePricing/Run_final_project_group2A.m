@@ -66,8 +66,10 @@ data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0
 
 %% Calibration of the model parameters
 
-% % Quantities of interest
+% Quantities of interest
+% x0 = [2 10 0.5 2 10 0.5];
 x0 = [10 2 0.5 10 2 0.5];
+% x0 = 0.5 * ones(6, 1);
 
 % Linear inequality constraints 
 A = [-1 0 0 0 0 0;
@@ -91,10 +93,24 @@ options = optimset('Display', 'iter');
 params_marginals = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
-log_moneyness = log(F0_EU(1) ./ data_EU.strikes(1).value);
-TTM = yearfrac(date_settlement, datenum(data_EU.datesExpiry(1)), conv_ACT365);
-prices = callPriceLewis(B_bar_EU(1), F0_EU(1), log_moneyness, params_marginals(6), params_marginals(4), params_marginals(5), TTM, 15, 0.0025)
-mean_call_price = (data_EU.callAsk(1).prices + data_EU.callBid(1).prices)/2
+% idx = 2;
+% 
+% put_length = length(data_EU.putAsk(idx).prices);
+% 
+% log_moneyness = log(F0_EU(idx) ./ data_EU.strikes(idx).value);
+% TTM = yearfrac(date_settlement, datenum(data_EU.datesExpiry(idx)), conv_ACT365);
+% prices = callPriceLewis(B_bar_EU(idx), F0_EU(idx), log_moneyness, params_marginals(6), params_marginals(4), params_marginals(5), TTM, 16, 0.0025);
+% call_prices = prices(put_length+1:end);
+% mean_call_price = (data_EU.callAsk(idx).prices + data_EU.callBid(idx).prices)/2;
+% 
+% put_prices = prices(1:put_length) - F0_EU(idx).* B_bar_EU(idx) + data_EU.strikes(idx).value(1:put_length) .* B_bar_EU(idx);
+% mean_put_price = (data_EU.putAsk(idx).prices + data_EU.putBid(idx).prices)/2;
+% 
+% perc_var_call = (call_prices - mean_call_price)./mean_call_price;
+% perc_var_put = (put_prices - mean_put_price)./mean_put_price;
+% 
+% perc = [perc_var_put perc_var_call];
+
 
 %% 2nd Calibration over the rho
 
@@ -103,7 +119,7 @@ rho = hist_corr(SP500_EUR500);
 % Initialization of the parameters
 A = []; b = []; Aeq = []; beq = [];
 lb = 0; ub = [];
-x0 = 0;
+x0 = 1;
 
 % Recall the parameters
 k1 = params_marginals(1); k2 = params_marginals(4);

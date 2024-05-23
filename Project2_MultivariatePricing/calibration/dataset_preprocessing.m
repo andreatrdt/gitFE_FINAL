@@ -50,8 +50,8 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         %% Computation of the delta
 %         [delta_call, delta_put] = blsdelta(F0(ii)*B0(ii), strikes, interest_rate, TTM, [impvol_put_i impvol_call_i]);
 
-        [delta_call, ~] = blsdelta(F0(ii) * B0(ii), strikes(idx_call_OTM), interest_rate, TTM, impvol_call_i);
-        [~, delta_put] = blsdelta(F0(ii) * B0(ii), strikes(idx_put_OTM), interest_rate, TTM, impvol_put_i);
+        [delta_call, ~] = blsdelta(spot_ATM, strikes(idx_call_OTM), interest_rate, TTM, impvol_call_i);
+        [~, delta_put] = blsdelta(spot_ATM, strikes(idx_put_OTM), interest_rate, TTM, impvol_put_i);
 
         %% Restructuring of the dataset
 
@@ -73,12 +73,12 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         dataset.callBid(ii).prices = dataset.callBid(ii).prices(idx_call);
         dataset.callAsk(ii).prices = dataset.callAsk(ii).prices(idx_call);
         dataset.callAsk(ii).impvol = dataset.callAsk(ii).impvol(idx_call);
-        dataset.callAsk(ii).impvol = impvol_call_i;
+        dataset.callAsk(ii).impvol = impvol_call_i(idx_call - length(delta_put));
 
         dataset.putAsk(ii).prices = dataset.putAsk(ii).prices(idx_put);
         dataset.putBid(ii).prices = dataset.putBid(ii).prices(idx_put);
         dataset.putBid(ii).impvol = dataset.putBid(ii).impvol(idx_put);
-        dataset.putBid(ii).impvol = impvol_put_i;
+        dataset.putBid(ii).impvol = impvol_put_i(idx_put);
 
         idx_combined = unique([idx_put idx_call]);
         dataset.strikes(ii).value = dataset.strikes(ii).value(idx_combined);
