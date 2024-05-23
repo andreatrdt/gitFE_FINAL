@@ -1,4 +1,4 @@
-function [Z, integral] = E3_integralLewisFFT(M, dz, alpha, sigma, k, eta, timeToMaturity)
+function [Z, integral] = E3_integralLewisFFT(M, dz, alpha, sigma, k, eta, TTM)
 % Computation of the integral of Lewis formula in case of FFT
 %
 %INPUT
@@ -30,8 +30,11 @@ function [Z, integral] = E3_integralLewisFFT(M, dz, alpha, sigma, k, eta, timeTo
 
     % Computation of FFT input
     xi = -X-1i/2;
-    charFct = exp(-1i*xi*log(LaplaceTransform(timeToMaturity, k, alpha, eta, sigma))) .* ...
-        LaplaceTransform(timeToMaturity, k, alpha, (xi.^2+1i*(1+2*eta).*xi)/2, sigma);
+%     charFct = exp(-1i*xi*log(LaplaceTransform(TTM, k, alpha, eta, sigma))) .* ...
+%         LaplaceTransform(timeToMaturity, k, alpha, (xi.^2+1i*(1+2*eta).*xi)/2, sigma);
+
+    charFct = exp(TTM .* (1/k * (1 - sqrt(1 - 2i .* xi .* k .* eta + xi.^2 .* k .* sigma.^2))));
+
     integrand = 1/(2*pi) * 1./(X.^2+1/4) .* charFct; 
     j = (0:1:N-1)';
     inputFFT = integrand .* exp(-1i*z1*dx.*j);

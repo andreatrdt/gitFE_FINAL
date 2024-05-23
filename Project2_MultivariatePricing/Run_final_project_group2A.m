@@ -76,7 +76,7 @@ options = optimset('Display', 'iter');
 
 % Calibration
 params = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
-    F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
+    F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
 % params(T=1) =   0.1300   19.3334    0.1200    0.0257   42.8258    0.1182
 % params(T=2) =    1.1832   10.0741    0.1473    0.3111   17.4346    0.1307
@@ -93,7 +93,7 @@ lb = 0; ub = [];
 x0 = 1;
 
 % Calibration of the nuZ parameter
-nu_Z = fmincon(@(nu_Z) abs(sqrt(params(1) * params(4))/nu_Z - rho), x0, A, b, Aeq, beq, lb, ub, [], options);
+nu_Z = fmincon(@(nu_Z) abs(sqrt(params(1) * params(4))/nu_Z - rho), x0, A, b, Aeq, beq, lb, ub, [], options)
 
 
 

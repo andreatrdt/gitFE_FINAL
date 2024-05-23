@@ -26,7 +26,7 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     RMSE = 0;
     N_options = 0;
 
-    for ii = 1:3
+    for ii = 1:6
 
         %% Initialization
         put_length = length(dataset.putAsk(ii).prices);
