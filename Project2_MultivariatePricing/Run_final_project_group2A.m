@@ -14,6 +14,7 @@ clear all; close all; clc;
 addpath('data');
 addpath('forward price');
 addpath('calibration');
+addpath('general')
 
 %% Loading of the matrices
 % Loading of the matrices necessary for the projects
@@ -35,6 +36,10 @@ dates_USA = datenum(data_USA.datesExpiry);
 %% Year frac conventions
 
 conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
+
+%% plot
+ 
+plot_returns(SP500_EUR500,date_settlement)
 
 %%
 %% POINT 5: Forward Prices 
@@ -94,16 +99,3 @@ x0 = 1;
 
 % Calibration of the nuZ parameter
 nu_Z = fmincon(@(nu_Z) abs(sqrt(params(1) * params(4))/nu_Z - rho), x0, A, b, Aeq, beq, lb, ub, [], options)
-
-
-
-
-
-
-
-
-
-
-
-
-

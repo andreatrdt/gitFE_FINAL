@@ -19,7 +19,7 @@ function plot_returns(data,date_settlement)
     title('EU returns')
     datetick('x','dd-mmm-yyyy','keepticks')
     subplot(3,1,2)
-    plot(days,returns_USA)
+    plot(days,returns_USA,"Color","r")
     title('USA returns')
     datetick('x','dd-mmm-yyyy','keepticks')
     subplot(3,1,3)
@@ -31,7 +31,38 @@ function plot_returns(data,date_settlement)
     datetick('x','dd-mmm-yyyy','keepticks')
     hold off
 
+    filename_EU = 'eurostocks.xlsx';
 
+    filename_USA = 'SP500.xls';
+
+    returns_EU = readtable(filename_EU,Range="C6:C229");
+
+    returns_EU = table2array(returns_EU);
+
+    dates_EU = readtable(filename_EU,RAnge = "B6:B229");
+
+    dates_EU = table2array(dates_EU);
+
+  
+    returns_USA = readtable(filename_USA,Range = "B12:B1317");
+
+    returns_USA = table2array(returns_USA);
+
+    dates_USA = readtable(filename_USA,Range = "A12:A1317");
+
+    dates_USA = table2array(dates_USA);
+
+    
+    figure
+    subplot(2,1,1)
+    plot(datenum(dates_EU),returns_EU)
+    title('EU real returns')
+    datetick('x','dd-mmm-yyyy','keepticks');
+    subplot(2,1,2)
+    plot(datenum(dates_USA),returns_USA,"Color","r")
+    title('USA real returns')
+    datetick('x','dd-mmm-yyyy','keepticks');
+    
 
 
 end % function plot_returns
