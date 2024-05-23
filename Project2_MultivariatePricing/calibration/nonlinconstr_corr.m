@@ -3,7 +3,7 @@ function [c, ceq] = nonlinconstr_corr(params, k1, k2)
 % equality and the inequality ones
 % 
 % INPUT:
-% params:       [VECTOR] [nu_1, T1, S1, K2, T2, S2]
+% params:       [VECTOR] [nu_1, nu_2, nu_z]
 % k1:           [SCALAR] value calibrated for the USA mkt
 % k2:           [SCALAR] value calibrated for the EU mkt
 % 
@@ -11,13 +11,23 @@ function [c, ceq] = nonlinconstr_corr(params, k1, k2)
 % c:            inequality constraints
 % ceq:          equality constraints
 
+    %% Unpacking the constraints
+    nu_1 = params(1);
+    nu_2 = params(2);
+    nu_z = params(3);
+
     %% Constraints on the equalities
 
-    % Constraint to create the entire equality given on the final
-    % parameters
-    ceq = x(3)^2/(x(1)*x(2)^2) - x(6)^2/(x(4)*x(5)^2);
+%     ceq = [nu_1 * nu_z /(nu_1 + nu_z) - k1;
+%         nu_2 * nu_z /(nu_2 + nu_z) - k2;
+%         nu_1 * nu_2 / ((nu_1 + nu_z) * (nu_2 + nu_z)) - (k1 * k2/ nu_z)];
 
+    ceq = [nu_1 * nu_z /(nu_1 + nu_z) - k1;
+        nu_2 * nu_z /(nu_2 + nu_z) - k2;
+        nu_1 * nu_2 / ((nu_1 + nu_z) * (nu_2 + nu_z)) - (k1 * k2/ nu_z)];
+           
     %% Constraints on the inequalities
 
     c = [];
-end
+
+end % function nonlinconstr_corr

@@ -82,7 +82,7 @@ ub = [];
 options = optimset('Display', 'iter');
 
 % Calibration
-params = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
+params_marginals = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
 
@@ -98,7 +98,20 @@ rho = hist_corr(SP500_EUR500);
 % Initialization of the parameters
 A = []; b = []; Aeq = []; beq = [];
 lb = 0; ub = [];
-x0 = 1;
+x0 = 0;
+
+% Recall the parameters
+k1 = params_marginals(1); k2 = params_marginals(4);
 
 % Calibration of the nuZ parameter
-nu_Z = fmincon(@(nu_Z) abs(sqrt(params(1) * params(4))/nu_Z - rho), x0, A, b, Aeq, beq, lb, ub, @(x) nonlinconstr_corr(x), options)
+nu_z = fmincon(@(nu_z) (sqrt(k1 * k2 / nu_z)- rho)^2, ...
+    x0, A, b, Aeq, beq, lb, ub, [], options)
+
+% % Initialization of the parameters
+% A = []; b = []; Aeq = []; beq = [];
+% lb = [0 0 0]; ub = [];
+% x0 = ones(3, 1);
+% 
+% % Calibration of the nuZ parameter
+% params = fmincon(@(params) sqrt(params(1) * params(2) / ((params(1) + params(3)) * (params(2) + params(3)))) - rho, ...
+%     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options)
