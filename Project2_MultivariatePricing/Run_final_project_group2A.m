@@ -39,7 +39,7 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
 %% plot
  
-plot_returns(SP500_EUR500,date_settlement)
+% plot_returns(SP500_EUR500,date_settlement)
 
 %%
 %% POINT 5: Forward Prices 
@@ -63,8 +63,12 @@ data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0
 
 %% Calibration of the model parameters
 
-% Quantities of interest
-x0 = [10 2 0.5 10 2 0.5];
+load('params.mat')
+
+x0 = [20 0.2 0.1 30 0.5 0.3];
+
+% % Quantities of interest
+% x0 = [10 2 0.5 10 2 0.5];
 
 % Linear inequality constraints 
 A = []; b = [];
