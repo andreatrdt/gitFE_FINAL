@@ -41,7 +41,7 @@ dates_USA = datenum(data_USA.datesExpiry);
 
 conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
-%% plot of the returns
+%% Plot of the returns
  
 % plot_returns(SP500_EUR500,date_settlement)
 
@@ -55,19 +55,20 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 %% Options selection
 
 % Choice of only OTM options for the further calibration
-data_EU = OTM_preprocessing(data_EU, B_bar_EU);
-data_USA = OTM_preprocessing(data_USA, B_bar_USA);
+data_EU_OTM = OTM_preprocessing(data_EU, B_bar_EU, F0_EU);
+data_USA_OTM = OTM_preprocessing(data_USA, B_bar_USA, F0_USA);
 
 % Computing the Delta of Black & Scholes over the OTM Call/Put in order to
 % clean dataset from too far from the ATM point prices
 
-data_EU = dataset_preprocessing(data_EU, F0_EU, B_bar_EU, date_settlement, 0);
-data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0);
+data_calib_EU = dataset_preprocessing(data_EU_OTM, F0_EU, B_bar_EU, date_settlement, 0);
+data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_bar_USA, date_settlement, 0);
 
 %% Plot of the surface of the implied volatilities
 
-surface_vols(data_EU);
-surface_vols(data_USA);
+surface_vols(data_calib_EU);
+surface_vols(data_calib_USA);
+
 %% Calibration of the model parameters
 
 % Quantities of interest
@@ -94,26 +95,10 @@ ub = [];
 options = optimset('Display', 'iter');
 
 % Calibration
-params_marginals = fmincon(@(params) new_calibration(params, data_EU, data_USA, ...
+params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
-% idx = 2;
-% 
-% put_length = length(data_EU.putAsk(idx).prices);
-% 
-% log_moneyness = log(F0_EU(idx) ./ data_EU.strikes(idx).value);
-% TTM = yearfrac(date_settlement, datenum(data_EU.datesExpiry(idx)), conv_ACT365);
-% prices = callPriceLewis(B_bar_EU(idx), F0_EU(idx), log_moneyness, params_marginals(6), params_marginals(4), params_marginals(5), TTM, 16, 0.0025);
-% call_prices = prices(put_length+1:end);
-% mean_call_price = (data_EU.callAsk(idx).prices + data_EU.callBid(idx).prices)/2;
-% 
-% put_prices = prices(1:put_length) - F0_EU(idx).* B_bar_EU(idx) + data_EU.strikes(idx).value(1:put_length) .* B_bar_EU(idx);
-% mean_put_price = (data_EU.putAsk(idx).prices + data_EU.putBid(idx).prices)/2;
-% 
-% perc_var_call = (call_prices - mean_call_price)./mean_call_price;
-% perc_var_put = (put_prices - mean_put_price)./mean_put_price;
-% 
-% perc = [perc_var_put perc_var_call];
+cp(data_calib_EU, F0_EU, B_bar_EU, params_marginals, idx, date_settlement)
 
 
 %% 2nd Calibration over the rho
@@ -140,3 +125,5 @@ nu_z = fmincon(@(nu_z) (sqrt(k1 * k2) / nu_z - rho)^2, ...
 % % Calibration of the nuZ parameter
 % params = fmincon(@(params) sqrt(params(1) * params(2) / ((params(1) + params(3)) * (params(2) + params(3)))) - rho, ...
 %     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options)
+
+elapsed_time = toc;
