@@ -58,7 +58,11 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         end
 
         %% Computation of the delta
+<<<<<<< Updated upstream
         [delta_call_c, delta_put_c] = blsdelta(spot_ATM, strikes, interest_rate, TTM, [impvol_put_i impvol_call_i]);
+=======
+%         [delta_call_c, delta_put_c] = blsdelta(spot_ATM, strikes, interest_rate, TTM, [impvol_put_i impvol_call_i]);
+>>>>>>> Stashed changes
 
         [delta_call, ~] = blsdelta(spot_ATM, strikes(idx_call_OTM), interest_rate, TTM, impvol_call_i);
         [~, delta_put] = blsdelta(spot_ATM, strikes(idx_put_OTM), interest_rate, TTM, impvol_put_i);
