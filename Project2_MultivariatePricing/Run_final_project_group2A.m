@@ -64,6 +64,10 @@ data_USA = OTM_preprocessing(data_USA, B_bar_USA);
 data_EU = dataset_preprocessing(data_EU, F0_EU, B_bar_EU, date_settlement, 0);
 data_USA = dataset_preprocessing(data_USA, F0_USA, B_bar_USA, date_settlement, 0);
 
+%% Plot of the surface of the implied volatilities
+
+surface_vols(data_EU);
+surface_vols(data_USA);
 %% Calibration of the model parameters
 
 % Quantities of interest
