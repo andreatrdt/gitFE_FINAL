@@ -23,7 +23,8 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         
         spot_ATM = dataset.spot;
 
-        strike_ATM = F0(ii);
+%         strike_ATM = F0(ii);
+        strike_ATM = dataset.spot/B0(ii);
         strikes = dataset.strikes(ii).value;
 
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
@@ -56,8 +57,8 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         %% Computation of the delta
 %         [delta_call, delta_put] = blsdelta(F0(ii)*B0(ii), strikes, interest_rate, TTM, [impvol_put_i impvol_call_i]);
 
-        [delta_call, ~] = blsdelta(spot_ATM, strikes(idx_call_OTM), interest_rate, TTM, impvol_call_i);
-        [~, delta_put] = blsdelta(spot_ATM, strikes(idx_put_OTM), interest_rate, TTM, impvol_put_i);
+        [delta_call, ~] = blsdelta(F0(ii)*B0(ii), strikes(idx_call_OTM), interest_rate, TTM, impvol_call_i);
+        [~, delta_put] = blsdelta(F0(ii)*B0(ii), strikes(idx_put_OTM), interest_rate, TTM, impvol_put_i);
 
         %% Restructuring of the dataset
 

@@ -66,14 +66,14 @@ data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_bar_USA, date_set
 
 %% Plot of the surface of the implied volatilities
 
-surface_vols(data_calib_EU);
-surface_vols(data_calib_USA);
+% surface_vols(data_calib_EU);
+% surface_vols(data_calib_USA);
 
 %% Calibration of the model parameters
 
 % Quantities of interest
-% x0 = [2 10 0.5 2 10 0.5];
-x0 = [10 2 0.5 10 2 0.5];
+x0 = [2 10 0.5 2 10 0.5];
+% x0 = [10 2 0.5 10 2 0.5];
 % x0 = 0.5 * ones(6, 1);
 
 % Linear inequality constraints 
@@ -98,7 +98,7 @@ options = optimset('Display', 'iter');
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
-cp(data_calib_EU, F0_EU, B_bar_EU, params_marginals, idx, date_settlement)
+cp(data_calib_EU, F0_EU, B_bar_EU, params_marginals, 1, date_settlement)
 
 
 %% 2nd Calibration over the rho
