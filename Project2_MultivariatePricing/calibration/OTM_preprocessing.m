@@ -15,7 +15,6 @@ function dataset = OTM_preprocessing(dataset, B0, F0)
         
         strike_ATM = dataset.spot/B0(ii);
 
-%         strike_ATM = F0(ii);
         strikes = dataset.strikes(ii).value;
         
         %% Compute the related index for the strike ATM

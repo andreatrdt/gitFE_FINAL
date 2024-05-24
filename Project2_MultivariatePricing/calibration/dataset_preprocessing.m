@@ -21,21 +21,24 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 
         %% Quantities of interest
         
+        % Initial values
         spot_ATM = dataset.spot;
 
-%         strike_ATM = F0(ii);
         strike_ATM = dataset.spot/B0(ii);
         strikes = dataset.strikes(ii).value;
 
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
         interest_rate = -log(B0(ii))/TTM;
-%         interest_rate = log(1 + interest_rate); % E' corretto farlo continuously compounded o lo è già??
-        
+
+        % Indexes OTM option
         idx_call_OTM = find(strikes > strike_ATM);
         idx_put_OTM = find(strikes <= strike_ATM);
 
-        mid_price_call = (dataset.callAsk(ii).prices(idx_call_OTM) + dataset.callBid(ii).prices(idx_call_OTM))/2;
-        mid_price_put = (dataset.putAsk(ii).prices(idx_put_OTM) + dataset.putBid(ii).prices(idx_put_OTM))/2;
+        mid_price_call = (dataset.callAsk(ii).prices + dataset.callBid(ii).prices)/2;
+        mid_price_call = mid_price_call(idx_call_OTM);
+
+        mid_price_put = (dataset.putAsk(ii).prices + dataset.putBid(ii).prices)/2;
+        mid_price_put = mid_price_put(idx_put_OTM);
 
         %% Compute the Black implied volatilities
         
@@ -55,10 +58,10 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         end
 
         %% Computation of the delta
-%         [delta_call, delta_put] = blsdelta(F0(ii)*B0(ii), strikes, interest_rate, TTM, [impvol_put_i impvol_call_i]);
+        [delta_call_c, delta_put_c] = blsdelta(spot_ATM, strikes, interest_rate, TTM, [impvol_put_i impvol_call_i]);
 
-        [delta_call, ~] = blsdelta(F0(ii)*B0(ii), strikes(idx_call_OTM), interest_rate, TTM, impvol_call_i);
-        [~, delta_put] = blsdelta(F0(ii)*B0(ii), strikes(idx_put_OTM), interest_rate, TTM, impvol_put_i);
+        [delta_call, ~] = blsdelta(spot_ATM, strikes(idx_call_OTM), interest_rate, TTM, impvol_call_i);
+        [~, delta_put] = blsdelta(spot_ATM, strikes(idx_put_OTM), interest_rate, TTM, impvol_put_i);
 
         %% Restructuring of the dataset
 

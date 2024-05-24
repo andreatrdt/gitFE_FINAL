@@ -1,6 +1,6 @@
 function surface_vols(data)
     % Initialize vector to store the number of strikes for each expiry date
-    strikes = NaN;
+    strikes = [];
 
     % Consolidate all unique strikes across all expiry dates
     for i = 1:length(data.datesExpiry)
@@ -28,6 +28,7 @@ function surface_vols(data)
         vols(i, idxes) = volatility;
     end
 
+
     % Perform 2D interpolation to fill missing values
     [X, Y] = meshgrid(strikes, datenum(data.datesExpiry));
     validMask = ~isnan(vols);
@@ -40,6 +41,8 @@ function surface_vols(data)
     % Plot the surface
     figure();
     surf(strikes, datenum(data.datesExpiry),interpolatedVols,'FaceAlpha',0.5,'EdgeColor','interp');
+    hold on
+    
 
     % surf(strikes, datenum(data.datesExpiry),index_matrix);
 
