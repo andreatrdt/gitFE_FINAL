@@ -37,4 +37,4 @@ function distance = new_calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_
 
     distance = weight_EU*RMSE_EU + weight_USA*RMSE_USA;
 
-end
+end % function new_calibration

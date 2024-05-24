@@ -26,7 +26,7 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     RMSE = 0;
     N_options = 0;
 
-    M = 14;
+    M = 15;
     dz = 0.0025;
 
     %% Computation 
@@ -61,6 +61,6 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     end
 
     %% Final rebalancing
-    RMSE = sqrt(RMSE/N_options);
+    RMSE = sqrt(RMSE/N_options.^2);
 
 end % function RMSE_total

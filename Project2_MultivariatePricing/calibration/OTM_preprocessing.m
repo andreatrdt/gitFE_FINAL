@@ -29,4 +29,5 @@ function dataset = OTM_preprocessing(dataset, B0)
         dataset.putBid(ii).prices = dataset.putBid(ii).prices .* indicator_put_OTM;
     
     end
+    
 end % function OTM_preprocessing
