@@ -46,6 +46,8 @@ function surface_vols(data)
     interpolatedVols = griddata(X(validMask), Y(validMask), vols(validMask), X, Y, 'linear');
 
 
+    % Convert dates to strings for the y-axis labels
+    dateStrings = datestr(datenum(data.datesExpiry), 'dd-mmm-yyyy');
 
     % Plot the surface
     figure();
@@ -57,8 +59,11 @@ function surface_vols(data)
     zlabel('Implied Volatility');
     title('Surface of Implied Volatilities');
 
-    grid on;
-
+    % Set the y-axis ticks and labels
+    yticks(datenum(data.datesExpiry));
+    yticklabels(dateStrings);
+ 
+    
     
     shading interp;
     colorbar;
