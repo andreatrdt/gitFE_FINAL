@@ -53,7 +53,7 @@ function surface_vols(data)
     % Set the y-axis ticks and labels
     datetick('y','dd-mmm-yyyy','keepticks')
  
-    
+    colormap('cool')
     
     shading interp;
     colorbar;
