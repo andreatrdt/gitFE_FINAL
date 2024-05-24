@@ -1,20 +1,6 @@
 function surface_vols(data)
     % Initialize vector to store the number of strikes for each expiry date
-    vect = zeros(length(data.datesExpiry), 1);
-
-    % Find the maximum number of strikes for any expiry date
-    for i = 1:length(data.datesExpiry)
-        vect(i) = length(data.strikes(i).value);
-    end
-
-    % Identify the expiry date with the maximum number of strikes
-    [~, idx] = max(vect);
-
-    % Use the strikes from the expiry date with the maximum number of strikes
-    strikes = data.strikes(idx).value;
-
-    % Initialize the volatility matrix with NaNs
-    vols = NaN(length(data.datesExpiry), length(strikes));
+    strikes = NaN;
 
     % Consolidate all unique strikes across all expiry dates
     for i = 1:length(data.datesExpiry)
@@ -27,6 +13,8 @@ function surface_vols(data)
     % Initialize the complete volatility matrix with NaNs
     vols = NaN(length(data.datesExpiry), length(strikes));
 
+    index_matrix = NaN(length(data.datesExpiry), length(strikes));
+
     % Fill the volatility matrix with the corresponding volatilities
     for i = 1:length(data.datesExpiry)
         % Find the indices of current strikes in the consolidated strikes array
@@ -36,9 +24,9 @@ function surface_vols(data)
         volatility = [data.putBid(i).impvol, data.callAsk(i).impvol];
 
         % Populate the vols matrix with the corresponding volatilities
+        index_matrix(i, idxes) = idxes; 
         vols(i, idxes) = volatility;
     end
-
 
     % Perform 2D interpolation to fill missing values
     [X, Y] = meshgrid(strikes, datenum(data.datesExpiry));
@@ -47,11 +35,14 @@ function surface_vols(data)
 
 
     % Convert dates to strings for the y-axis labels
-    dateStrings = datestr(datenum(data.datesExpiry), 'dd-mmm-yyyy');
+    dateStrings = data.datesExpiry;
 
     % Plot the surface
     figure();
-    surf(strikes, datenum(data.datesExpiry), interpolatedVols);
+    surf(strikes, datenum(data.datesExpiry),interpolatedVols,'FaceAlpha',0.5,'EdgeColor','interp');
+
+    % surf(strikes, datenum(data.datesExpiry),index_matrix);
+
 
     % Label the axes
     xlabel('Strikes');
@@ -60,8 +51,7 @@ function surface_vols(data)
     title('Surface of Implied Volatilities');
 
     % Set the y-axis ticks and labels
-    yticks(datenum(data.datesExpiry));
-    yticklabels(dateStrings);
+    datetick('y','dd-mmm-yyyy','keepticks')
  
     
     
