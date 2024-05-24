@@ -25,8 +25,8 @@ function distance = new_calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_
 
     %% Computation of the RMSE
 
-    RMSE_USA = RMSE_total(params_USA, data_USA, F0_USA, B0_USA, date_settlement);
     RMSE_EU = RMSE_total(params_EU, data_EU, F0_EU, B0_EU, date_settlement);
+    RMSE_USA = RMSE_total(params_USA, data_USA, F0_USA, B0_USA, date_settlement); 
 
     %% Computation of the weights
 

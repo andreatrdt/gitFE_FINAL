@@ -72,9 +72,8 @@ surface_vols(data_calib_USA);
 %% Calibration of the model parameters
 
 % Quantities of interest
-x0 = [2 10 0.5 2 10 0.5];
 % x0 = [10 2 0.5 10 2 0.5];
-% x0 = 0.5 * ones(6, 1);
+x0 = [32 0.04 0.36 11.8 0.09 0.37];
 
 % Linear inequality constraints 
 A = [-1 0 0 0 0 0;
@@ -98,8 +97,7 @@ options = optimset('Display', 'iter');
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
-cp(data_calib_EU, F0_EU, B_bar_EU, params_marginals, 1, date_settlement)
-
+plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_marginals(4:6), date_settlement);
 
 %% 2nd Calibration over the rho
 
@@ -116,14 +114,5 @@ k1 = params_marginals(1); k2 = params_marginals(4);
 % Calibration of the nuZ parameter
 nu_z = fmincon(@(nu_z) (sqrt(k1 * k2) / nu_z - rho)^2, ...
     x0, A, b, Aeq, beq, lb, ub, [], options)
-
-% % Initialization of the parameters
-% A = []; b = []; Aeq = []; beq = [];
-% lb = [0 0 0]; ub = [];
-% x0 = ones(3, 1);
-% 
-% % Calibration of the nuZ parameter
-% params = fmincon(@(params) sqrt(params(1) * params(2) / ((params(1) + params(3)) * (params(2) + params(3)))) - rho, ...
-%     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options)
 
 elapsed_time = toc;
