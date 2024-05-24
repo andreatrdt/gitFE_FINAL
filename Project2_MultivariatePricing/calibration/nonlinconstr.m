@@ -9,13 +9,18 @@ function [c, ceq] = nonlinconstr(x)
 % c:            inequality constraints
 % ceq:          equality constraints
 
+    %% Unpacking the parameters
+    k1 = x(1); theta1 = x(2); sigma1 = x(3);
+    k2 = x(4); theta2 = x(5); sigma2 = x(6);
+
     %% Constraints on the equalities
 
     % Constraint to create the entire equality given on the final
     % parameters
-    ceq = x(3)^2/(x(1)*x(2)^2) - x(6)^2/(x(4)*x(5)^2);
+    ceq = sigma1^2/(k1*theta1^2) - sigma2^2/(k2*theta2^2);
 
     %% Constraints on the inequalities
 
     c = [];
-end
+    
+end % function nonlinconstr

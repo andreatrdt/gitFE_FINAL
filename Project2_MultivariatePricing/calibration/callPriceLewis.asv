@@ -38,6 +38,7 @@ function price = callPriceLewis(B0, F0, log_moneyness, sigma, k, theta, TTM, M, 
     integrand = 1/(2*pi) * 1./(X.^2+1/4) .* charFct; 
 
     j = (0:1:N-1)';
+%     inputFFT = integrand .* exp(-1i*z1*dx.*j);
     inputFFT = integrand .* exp(-1i*z1*dx.*j);
     
     %% Computation of the integral

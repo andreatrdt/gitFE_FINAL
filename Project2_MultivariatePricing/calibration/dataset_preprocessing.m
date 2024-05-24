@@ -23,12 +23,12 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         
         spot_ATM = dataset.spot;
 
-        strike_ATM = spot_ATM/B0(ii);
+        strike_ATM = F0(ii);
         strikes = dataset.strikes(ii).value;
 
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
         interest_rate = -log(B0(ii))/TTM;
-        interest_rate = log(1 + interest_rate); % E' corretto farlo continuously compounded o lo è già??
+%         interest_rate = log(1 + interest_rate); % E' corretto farlo continuously compounded o lo è già??
         
         idx_call_OTM = find(strikes > strike_ATM);
         idx_put_OTM = find(strikes <= strike_ATM);

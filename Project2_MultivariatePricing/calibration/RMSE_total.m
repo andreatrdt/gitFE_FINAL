@@ -2,7 +2,7 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
 % Computation of the total RMSE for the dataset given
 % 
 % INPUT:
-% params:            [k, theta, sigma]
+% params:            [VECTOR] of params [k, theta, sigma]
 % dataset:           [STRUCT] dataset preprocessed
 % F0:                [VECTOR] forward values
 % B0:                [VECTOR] discount values
@@ -26,6 +26,7 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     RMSE = 0;
     N_options = 0;
 
+    % FFT parameters
     M = 15;
     dz = 0.0025;
 
@@ -61,6 +62,6 @@ function RMSE = RMSE_total(params, dataset, F0, B0, date_settlement)
     end
 
     %% Final rebalancing
-    RMSE = sqrt(RMSE/N_options.^2);
+    RMSE = sqrt(RMSE)/N_options;
 
 end % function RMSE_total

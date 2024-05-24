@@ -1,9 +1,10 @@
-function dataset = OTM_preprocessing(dataset, B0)
+function dataset = OTM_preprocessing(dataset, B0, F0)
 % Computation of the OTM options only
 % 
 % INPUT:
 % dataset:          initial dataset
-% B0:               forward price at time 0
+% B0:               initial discount 
+% F0:               forward price at time 0
 % 
 % OUTPUT:
 % dataset:          dataset modified for the OTM options 
@@ -12,7 +13,8 @@ function dataset = OTM_preprocessing(dataset, B0)
 
         %% Quantities of interest
         
-        strike_ATM = dataset.spot/B0(ii);
+%         strike_ATM = dataset.spot/B0(ii);
+        strike_ATM = F0(ii);
         strikes = dataset.strikes(ii).value;
         
         %% Compute the related index for the strike ATM
