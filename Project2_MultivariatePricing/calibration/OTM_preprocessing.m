@@ -13,7 +13,8 @@ function dataset = OTM_preprocessing(dataset, B0, F0)
 
         %% Quantities of interest
         
-        strike_ATM = dataset.spot/B0(ii);
+%         strike_ATM = dataset.spot/B0(ii);
+        strike_ATM = F0(ii);
 
         strikes = dataset.strikes(ii).value;
         

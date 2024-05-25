@@ -50,9 +50,11 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
 
         prices = callPriceLewis(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
         
-        call_prices = max(prices(put_length+1:end), 0);
-        put_prices = max(prices(1:put_length) - F0(ii).* B0(ii) + dataset.strikes(ii).value(1:put_length) .* B0(ii), 0); 
+%         call_prices = max(prices(put_length+1:end), 0);
+%         put_prices = max(prices(1:put_length) - F0(ii).* B0(ii) + dataset.strikes(ii).value(1:put_length) .* B0(ii), 0); 
 
+        call_prices = prices(put_length+1:end);
+        put_prices = prices(1:put_length) - F0(ii).* B0(ii) + dataset.strikes(ii).value(1:put_length) .* B0(ii); 
         
         mean_call_price = (dataset.callAsk(ii).prices + dataset.callBid(ii).prices)/2;
         mean_put_price = (dataset.putAsk(ii).prices + dataset.putBid(ii).prices)/2;

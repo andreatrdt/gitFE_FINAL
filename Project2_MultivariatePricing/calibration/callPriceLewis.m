@@ -32,7 +32,8 @@ function price = callPriceLewis(B0, F0, log_moneyness, sigma, k, theta, TTM, M, 
     xi = -X-1i/2;
 
     %% Computation of the characteristic function
-    charFct = exp(TTM .* (1/k * (1 - sqrt(1 - 2i .* xi .* k .* theta + xi.^2 .* k .* sigma.^2))));
+    charFct = exp(TTM .* (1/k * (1 - sqrt(1 - 2i .* xi .* k .* theta + xi.^2 .* k .* sigma.^2))) - ...
+        TTM .* 1/k * (1 - sqrt(1 - 2 .* k .* theta - k .* sigma.^2)));
 
     %% Computation of the integrand
     integrand = 1/(2*pi) * 1./(X.^2+1/4) .* charFct; 

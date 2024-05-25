@@ -24,7 +24,8 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         % Initial values
         spot_ATM = dataset.spot;
 
-        strike_ATM = dataset.spot/B0(ii);
+%         strike_ATM = dataset.spot/B0(ii);
+        strike_ATM = F0(ii);
         strikes = dataset.strikes(ii).value;
 
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
@@ -49,7 +50,7 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 
         if flag
             figure();
-            plot(strikes(idx_call_OTM), impvol_call_i, 'o-'); hold on;
+            plot(strikes(idx_call_OTM), dataset.impvol_call_i, 'o-'); hold on;
             plot(strikes(idx_put_OTM), impvol_put_i, '*-'); grid on;
 
             title('Implied volatilities');
@@ -59,8 +60,6 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 
         %% Computation of the delta
         
-%         [delta_call_c, delta_put_c] = blsdelta(spot_ATM, strikes, interest_rate, TTM, [impvol_put_i impvol_call_i]);
-
         [delta_call, ~] = blsdelta(spot_ATM, strikes(idx_call_OTM), interest_rate, TTM, impvol_call_i);
         [~, delta_put] = blsdelta(spot_ATM, strikes(idx_put_OTM), interest_rate, TTM, impvol_put_i);
 

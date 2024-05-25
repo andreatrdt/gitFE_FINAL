@@ -46,13 +46,14 @@ function plot_calls_puts(dataset, F0, B0, params, date_settlement)
         %% Plots
 
         figure();
+        subplot(1, 2, 1);
         plot(strikes(put_length+1:end), call_prices, '*-'); hold on;
         plot(strikes(put_length+1:end), dataset.callAsk(ii).prices); hold on;
         plot(strikes(put_length+1:end), dataset.callBid(ii).prices); grid on;
         title('Call prices'); xlabel('Strikes'); ylabel('Prices');
         legend('Calibrated prices');
         
-        figure();
+        subplot(1, 2, 2);
         plot(strikes(1:put_length), put_prices, '*-'); hold on;
         plot(strikes(1:put_length), dataset.putAsk(ii).prices); hold on;
         plot(strikes(1:put_length), dataset.putBid(ii).prices); grid on;
