@@ -28,7 +28,7 @@ function plot_calls_puts(dataset, F0, B0, params, date_settlement)
         %% Computation of the prices
         
         % Parameters FFT
-        M = 15;
+        M = 14;
         dz = 0.0025;
 
         % Parameters pricing

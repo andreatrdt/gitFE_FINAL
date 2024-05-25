@@ -18,10 +18,6 @@ function [c, ceq] = nonlinconstr_corr(params, k1, k2)
 
     %% Constraints on the equalities
 
-%     ceq = [nu_1 * nu_z /(nu_1 + nu_z) - k1;
-%         nu_2 * nu_z /(nu_2 + nu_z) - k2;
-%         nu_1 * nu_2 / ((nu_1 + nu_z) * (nu_2 + nu_z)) - (k1 * k2/ nu_z)];
-
     ceq = [nu_1 * nu_z /(nu_1 + nu_z) - k1;
         nu_2 * nu_z /(nu_2 + nu_z) - k2;
         nu_1 * nu_2 / ((nu_1 + nu_z) * (nu_2 + nu_z)) - (k1 * k2/ nu_z)];

@@ -72,8 +72,10 @@ data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_bar_USA, date_set
 %% Calibration of the model parameters
 
 % Quantities of interest
-x0 = [10 2 0.5 10 2 0.5];
+% x0 = [10 2 0.5 10 2 0.5];
+x0 = [5 2 0.5 5 2 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
+% x0 = 0.5 * ones(1, 6);
 
 % Linear inequality constraints 
 A = [-1 0 0 0 0 0;
@@ -91,7 +93,7 @@ lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
-options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
+options = optimset('MaxFunEvals', 5e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
@@ -104,12 +106,12 @@ params_EU = params_marginals(4:6)
 %% Plots of the prices with calibrated values
 
 % Plot over the entire curve
-plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+% plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
+% plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
 
 % Plot over the filtered options
-% plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-% plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
+plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
 
 %% 2nd Calibration over the rho
 
@@ -122,10 +124,31 @@ lb = 0; ub = [];
 x0 = 1;
 
 % Recall the parameters
-k1 = params_marginals(1); k2 = params_marginals(4);
+k1 = params_USA(1); k2 = params_EU(1);
 
 % Calibration of the nuZ parameter
-nu_z = fmincon(@(nu_z) (sqrt(k1 * k2) / nu_z - rho)^2, ...
+nu_z_single = fmincon(@(nu_z) (sqrt(k1 * k2) / nu_z - rho)^2, ...
     x0, A, b, Aeq, beq, lb, ub, [], options)
+
+%% Alternative calibration over the rho
+
+% Computation of the historical correlation
+rho = hist_corr(SP500_EUR500);
+
+% Initialization of the parameters
+A = []; b = []; Aeq = []; beq = [];
+lb = zeros(1, 3); ub = [];
+x0 = ones(1, 3);
+
+% Recall the parameters
+k1 = params_USA(1); k2 = params_EU(1);
+
+% Calibration of the nuZ parameter
+params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+
+nu_1 = params(1)
+nu_2 = params(2)
+nu_z = params(3)
 
 elapsed_time = toc;
