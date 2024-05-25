@@ -2,11 +2,14 @@ function plot_calls_puts(dataset, F0, B0, params, date_settlement)
 % Plotting of the calls and put prices after the calibration
 % 
 % INPUT:
-% 
-% OUTPUT:
+% dataset:            [STRUCT] initial dataset
+% F0:                 [VECTOR] initial forward value F(0, T)
+% B0:                 [VECTOR] initial discounts B(0, T)
+% params:             [VECTOR] [k, theta, sigma]
+% date_settlement:    [DATENUM] initial date
 % 
 % USES:
-% 
+% function callPriceLewis()
 
     for ii = 1:length(dataset.datesExpiry)
 

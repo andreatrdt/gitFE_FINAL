@@ -91,29 +91,20 @@ lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
-options = optimset('MaxFunEvals', 5e3, 'Display', 'iter');
+options = optimset('MaxFunEvals',1e5, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
-    F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
+    F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options)
 
 % Display of the parameters on the console
-params_USA = params_marginals(1:3)
-params_EU = params_marginals(4:6)
-
-%% Plots of the prices with calibrated values
-
-% Plot over the entire curve
-plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
-
-% Plot over the filtered options
-% plot_calls_puts(data_calib_USA, F0_EU, B_bar_EU, params_EU, date_settlement);
-% plot_calls_puts(data_calib_USA, F0_EU, B_bar_EU, params_EU, date_settlement);
+params_USA = params_marginals(1:3);
+params_EU = params_marginals(4:6);
+% plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_marginals(4:6), date_settlement);
+plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, params_marginals(4:6), date_settlement);
 
 %% 2nd Calibration over the rho
 
-% Computation of the historical correlation
 rho = hist_corr(SP500_EUR500);
 
 % Initialization of the parameters
