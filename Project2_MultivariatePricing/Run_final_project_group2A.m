@@ -110,8 +110,12 @@ params_EU = params_marginals(4:6)
 % plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
 
 % Plot over the filtered options
-plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+% plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
+% plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+
+% Plot the implied volatilities over the Calls
+% plot_volatility_smiles(data_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
+% plot_volatility_smiles(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
 
 %% 2nd Calibration over the rho
 
@@ -129,6 +133,21 @@ k1 = params_USA(1); k2 = params_EU(1);
 % Calibration of the nuZ parameter
 nu_z_single = fmincon(@(nu_z) (sqrt(k1 * k2) / nu_z - rho)^2, ...
     x0, A, b, Aeq, beq, lb, ub, [], options)
+
+% Initialization of the parameters
+A = []; b = []; Aeq = []; beq = [];
+lb = zeros(1, 3); ub = [];
+x0 = ones(1, 3);
+
+% Recall the parameters
+k1 = params_USA(1); k2 = params_EU(1);
+
+% Calibration of the nuZ parameter
+params_singles = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + nu_z_single)*(params(2) + nu_z_single))) - rho)^2, ...
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr([params, nu_z_single], k1, k2), options);
+
+nu_1 = params_singles(1)
+nu_2 = params_singles(2)
 
 %% Alternative calibration over the rho
 
