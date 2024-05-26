@@ -66,8 +66,8 @@ data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_bar_USA, date_set
 
 %% Plot of the surface of the implied volatilities
 
-% surface_vols(data_calib_EU);
-% surface_vols(data_calib_USA);
+% surface_vols(data_calib_EU,F0_EU);
+% surface_vols(data_calib_USA,F0_USA);
 
 %% Calibration of the model parameters
 

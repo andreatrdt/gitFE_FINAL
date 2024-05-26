@@ -1,4 +1,4 @@
-function surface_vols(data)
+function surface_vols(data,F0)
     % Initialize vector to store the number of strikes for each expiry date
     strikes = [];
 
@@ -34,13 +34,14 @@ function surface_vols(data)
     validMask = ~isnan(vols);
     interpolatedVols = griddata(X(validMask), Y(validMask), vols(validMask), X, Y, 'linear');
 
+    log_moneyness = log(F0/strikes);
 
     % Convert dates to strings for the y-axis labels
     dateStrings = data.datesExpiry;
 
     % Plot the surface
     figure();
-    surf(strikes, datenum(data.datesExpiry),interpolatedVols,'FaceAlpha',0.5,'EdgeColor','interp');
+    surf(log_moneyness, datenum(data.datesExpiry),interpolatedVols,'FaceAlpha',0.5,'EdgeColor','interp');
     hold on
     
 
