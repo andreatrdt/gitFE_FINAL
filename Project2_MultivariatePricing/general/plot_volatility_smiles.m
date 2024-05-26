@@ -29,8 +29,10 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         M = 15;
         dz = 0.0025;
 
+
         % Parameters pricing
         strikes = dataset.strikes(ii).value;
+        put_length = length(dataset.putAsk(ii).prices);
 
         log_moneyness = log(F0(ii) ./ strikes);
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
@@ -40,9 +42,11 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         call_prices = callPriceLewis(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
         
         % Compute the implied volatilities OLD
+        mid_price_put = (dataset.putAsk(ii).prices + dataset.putBid(ii).prices)/2;
+        mid_price_put = mid_price_put + B0(ii) .* (F0(ii) - strikes(1:put_length));
+
         mid_price_call = (dataset.callAsk(ii).prices + dataset.callBid(ii).prices)/2;
-%         impvol_OLD= blkimpv(F0(ii), strikes, interest_rate, TTM, mid_price_call, 'Class', {'Call'});
-        impvol_OLD = dataset.callAsk(ii).impvol/100;
+        impvol_OLD= blkimpv(F0(ii), strikes, interest_rate, TTM, [mid_price_put mid_price_call], 'Class', {'Call'});
 
         % Compute the implied volatilities NEW
         impvol_NEW= blkimpv(F0(ii), strikes, interest_rate, TTM, call_prices, 'Class', {'Call'});
@@ -52,9 +56,11 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         figure();
         plot(strikes, impvol_OLD, 'o-'); hold on;
         plot(strikes, impvol_NEW, '*-'); grid on;
+%         plot(log_moneyness, impvol_OLD, 'o-'); hold on;
+%         plot(log_moneyness, impvol_NEW, '*-'); grid on;
 
         title('Implied volatilities');
-        xlabel('Strikes'); ylabel('Volatilities');
+        xlabel('Log-moneyness'); ylabel('Volatilities');
         legend('Imp Vol dataset', 'Imp Vol calibrated');
 
     end

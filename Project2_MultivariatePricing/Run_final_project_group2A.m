@@ -93,7 +93,7 @@ lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
-options = optimset('MaxFunEvals', 5e3, 'Display', 'iter');
+options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
@@ -114,8 +114,8 @@ params_EU = params_marginals(4:6)
 % plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
 
 % Plot the implied volatilities over the Calls
-% plot_volatility_smiles(data_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
-% plot_volatility_smiles(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
+plot_volatility_smiles(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
+plot_volatility_smiles(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
 
 %% 2nd Calibration over the rho
 
