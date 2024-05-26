@@ -1,11 +1,11 @@
-function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
+function blk_plot_calls_puts_total(dataset, F0, B0, sigma, date_settlement)
 % Plotting of the calls and put prices after the calibration
 % 
 % INPUT:
 % dataset:            [STRUCT] initial dataset
 % F0:                 [VECTOR] initial forward value F(0, T)
 % B0:                 [VECTOR] initial discounts B(0, T)
-% params:             [VECTOR] [k, theta, sigma]
+% sigma:              [SCALAR] volatility
 % date_settlement:    [DATENUM] initial date
 % 
 % USES:
@@ -14,28 +14,25 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
     for ii = 1:length(dataset.datesExpiry)
 
         %% Initialization
-    
-        conv_ACT365 = 3;
 
-        %% Unpacking of the parameters
-
-        k = params(1);
-        theta = params(2);
-        sigma = params(3);
-
-        %% Computation of the prices
-        
-        % Parameters FFT
-        M = 15;
-        dz = 0.0025;
-
-        % Parameters pricing
+        % Vector of strikes:
         strikes = dataset.strikes(ii).value;
 
-        log_moneyness = log(F0(ii) ./ strikes);
+        % Year frac convenction Act/365:
+        conv_ACT365 = 3;
+
+        %% Computation of the prices
+             
+        % Time to maturity
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
         
-        call_prices = callPriceLewis(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
+        % Interest rate
+        interest_rate = -log(B0(ii))/TTM;
+
+        %% Pricing 
+        
+        % Price of Call/Puts through the Black formula
+        call_prices = blkprice(F0(ii), strikes, interest_rate, TTM, sigma);
         put_prices = call_prices - B0(ii)*(F0(ii) - strikes);
         
         % Parameters comparison
@@ -56,8 +53,8 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         plot(strikes, dataset.callAsk(ii).prices, '--');
         plot(strikes, dataset.callBid(ii).prices, '--');
         xline(F0(ii), '--', 'LineWidth', 2, 'Color', 'r');
-        title(['Call prices at expiry ', datestr(dataset.datesExpiry(ii))]); xlabel('Strikes'); ylabel('Prices');
-        legend('Calibrated prices', 'Mean prices', 'Call Ask', 'Call Bid', 'Strike ATM');
+        title(['Black model Call prices at expiry ', datestr(dataset.datesExpiry(ii))]); xlabel('Strikes'); ylabel('Prices');
+        legend('Black calibrated prices', 'Mean prices', 'Call Ask', 'Call Bid', 'Strike ATM');
 
         subplot(1, 2, 2);
         plot(strikes, put_prices, '*-'); hold on;
@@ -65,8 +62,8 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         plot(strikes, dataset.putAsk(ii).prices, '--');
         plot(strikes, dataset.putBid(ii).prices, '--');
         xline(F0(ii), '--', 'LineWidth', 2, 'Color', 'r');
-        title(['Put prices at expiry ', datestr(dataset.datesExpiry(ii))]); xlabel('Strikes'); ylabel('Prices');
-        legend('Calibrated prices', 'Mean prices', 'Put Ask', 'Put Bid', 'Strike ATM');
+        title(['Black Put prices at expiry ', datestr(dataset.datesExpiry(ii))]); xlabel('Strikes'); ylabel('Prices');
+        legend('Black calibrated prices', 'Mean prices', 'Put Ask', 'Put Bid', 'Strike ATM');
         
     end
 

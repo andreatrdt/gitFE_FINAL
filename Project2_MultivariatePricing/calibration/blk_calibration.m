@@ -30,9 +30,6 @@ function RMSE_total = blk_calibration(sigma, dataset, F0, B0, date_settlement)
 
         N_options = N_options + length(dataset.strikes(ii).value);
 
-        % Logmoneyness values
-        % log_moneyness = log(F0(ii) ./ dataset.strikes(ii).value);
-
         % Time to maturity
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
         
@@ -43,11 +40,7 @@ function RMSE_total = blk_calibration(sigma, dataset, F0, B0, date_settlement)
         
         % Price of Call/Puts through the Black formula
         prices = blkprice(F0(ii), dataset.strikes(ii).value, interest_rate, TTM, sigma);
-        % callPriceLewis(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
         
-%         call_prices = max(prices(put_length+1:end), 0);
-%         put_prices = max(prices(1:put_length) - F0(ii).* B0(ii) + dataset.strikes(ii).value(1:put_length) .* B0(ii), 0); 
-
         call_prices = prices(put_length+1:end);
         put_prices = prices(1:put_length) - F0(ii).* B0(ii) + dataset.strikes(ii).value(1:put_length) .* B0(ii); 
         

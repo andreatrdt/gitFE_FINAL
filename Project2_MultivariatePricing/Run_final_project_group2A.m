@@ -117,15 +117,16 @@ disp(params_EU)
 
 %% Plots of the prices with calibrated values
 
-% Plot over the entire curve
-% plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-% plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
-
-% Plot over the filtered options
-% plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-% plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
-
 if flag == 1
+
+    % Plot over the entire curve
+    plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
+    plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+
+    % Plot over the filtered options
+    % plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
+    % plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+
     % Plot the implied volatilities over the Calls
     plot_volatility_smiles(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
     plot_volatility_smiles(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
@@ -210,3 +211,21 @@ sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_bar_E
 % Calibration of sigma USA
 sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_bar_USA, date_settlement), ...
     x0, A, b, Aeq, beq, lb, ub, [], options);
+
+%% Plots of the prices with calibrated values
+
+if flag == 1
+
+    % Plot over the entire curve
+    blk_plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, sigma_EU, date_settlement);
+    blk_plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, sigma_USA, date_settlement);
+
+    % Plot over the filtered options (TO BE IMPLEMENTED)
+    % plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
+    % plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+
+    % Plot the implied volatilities over the Calls (TO BE IMPLEMENTED)
+    % blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
+    % blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
+
+end
