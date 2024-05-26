@@ -13,6 +13,12 @@ tic;
 %% Clearing the workspace
 clear all; close all; clc;
 
+%% flags
+
+% flag = 1 for plotting enabled
+% flag = 0 for plotting disabled
+
+flag = 0;
 %% Load folders
 
 addpath('data');
@@ -47,8 +53,8 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
 %% POINT 5: Forward Prices 
 
-[F0_EU, B_bar_EU] = forward_prices(data_EU, 0);
-[F0_USA, B_bar_USA] = forward_prices(data_USA, 0);
+[F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
+[F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
 
 %% POINT 6: Calibration
 
@@ -61,14 +67,15 @@ data_USA_OTM = OTM_preprocessing(data_USA, B_bar_USA, F0_USA);
 % Computing the Delta of Black & Scholes over the OTM Call/Put in order to
 % clean dataset from too far from the ATM point prices
 
-data_calib_EU = dataset_preprocessing(data_EU_OTM, F0_EU, B_bar_EU, date_settlement, 0);
-data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_bar_USA, date_settlement, 0);
+data_calib_EU = dataset_preprocessing(data_EU_OTM, F0_EU, B_bar_EU, date_settlement, flag);
+data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_bar_USA, date_settlement, flag);
 
 %% Plot of the surface of the implied volatilities
 
-% surface_vols(data_calib_EU,F0_EU);
-% surface_vols(data_calib_USA,F0_USA);
-
+if flag == 1
+    surface_vols(data_calib_EU,F0_EU);
+    surface_vols(data_calib_USA,F0_USA);
+end
 %% Calibration of the model parameters
 
 % Quantities of interest
@@ -100,8 +107,13 @@ params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data
     F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
 
 % Display of the parameters on the console
-params_USA = params_marginals(1:3)
-params_EU = params_marginals(4:6)
+params_USA = params_marginals(1:3);
+params_EU = params_marginals(4:6);
+
+disp('Calibrated parameters for the USA market: ')
+disp(params_USA)
+disp('Calibrated parameters for the EU market: ')
+disp(params_EU)
 
 %% Plots of the prices with calibrated values
 
@@ -113,9 +125,12 @@ params_EU = params_marginals(4:6)
 % plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
 % plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
 
-% Plot the implied volatilities over the Calls
-plot_volatility_smiles(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
-plot_volatility_smiles(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
+if flag == 1
+    % Plot the implied volatilities over the Calls
+    plot_volatility_smiles(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
+    plot_volatility_smiles(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
+
+end
 
 %% 2nd Calibration over the rho
 
