@@ -176,22 +176,31 @@ elapsed_time = toc;
 
 %% Calibration of the model parameters
 
-% Initialization of the parameters
-x0 = 0.5;
+% Quantities of interest
+% x0 = [10 2 0.5 10 2 0.5];
+x0 = [5 2 0.5 5 2 0.5];
+% x0 = [32 0.04 0.36 11.8 0.09 0.37];
+% x0 = 0.5 * ones(1, 6);
+
 % Linear inequality constraints 
-A = []; b = [];
+A = -1;
+
+b = 0;
+
 % Linear equality constraints
 Aeq = []; beq = [];
+
 % Lower and upper bounds 
-lb = 0; ub = [];
+lb = 0;
+ub = [];
 
 % Options for the visualization
 options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
-% Calibration of sigma EU
+% Calibration
 sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_bar_EU, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, [], options);
+    x0, A, b, Aeq, beq, lb, ub, @(sigma) 0, options);
 
-% Calibration of sigma USA
-sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_bar_USA, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, [], options);
+% Display of the parameters on the console
+params_USA = params_marginals(1:3)
+params_EU = params_marginals(4:6)
