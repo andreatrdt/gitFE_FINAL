@@ -2,8 +2,8 @@ function [F_vector, B_bar_vector] = forward_prices(dataset, flag)
 % Computation of the forward prices following the Baviera, Azzone paper
 % 
 % INPUT:
-% dataset:           data containing all the required tables
-% date:              date to consider for the computation
+% dataset:           [STRUCT] data containing all the required tables
+% date:              [SCALAR] date to consider for the computation
 % flag:              [0: without plots & slope; 1: with plots & slope]
 % 
 % OUTPUT:

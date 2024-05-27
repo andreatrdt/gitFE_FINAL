@@ -86,9 +86,9 @@ end
 
 % Quantities of interest
 % x0 = [10 2 0.5 10 2 0.5];
-% x0 = [5 2 0.5 5 2 0.5];
+x0 = [2 2 0.5 2 2 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-x0 = 0.5 * ones(1, 6);
+% x0 = 0.5 * ones(1, 6);
 
 % Linear inequality constraints 
 A = [-1 0 0 0 0 0;

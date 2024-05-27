@@ -2,12 +2,12 @@ function dataset = OTM_preprocessing(dataset, B0, F0)
 % Computation of the OTM options only
 % 
 % INPUT:
-% dataset:          initial dataset
-% B0:               initial discount 
-% F0:               forward price at time 0
+% dataset:          [STUCT] initial dataset
+% B0:               [SCALAR] initial discount 
+% F0:               [SCALAR] forward price at time 0
 % 
 % OUTPUT:
-% dataset:          dataset modified for the OTM options 
+% dataset:          [STRUCT] dataset modified for the OTM options 
     
     for ii=1:length(dataset.datesExpiry)
 

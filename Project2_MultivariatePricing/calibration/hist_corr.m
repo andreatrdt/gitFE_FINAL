@@ -2,7 +2,7 @@ function rho = hist_corr(dataset)
 % Computation of the historical correlation
 % 
 % INPUT:
-% dataset:        initial dataset of the returns
+% dataset:        [STRUCT] initial dataset of the returns
 % 
 % OUTPUT:
 % rho:            correlation coefficient between USA and EU

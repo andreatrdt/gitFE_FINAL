@@ -1,4 +1,10 @@
 function surface_vols(data,F0)
+%
+% plot surface volatilities
+%
+% INPUTS:
+% data    [STRUCT]  structure containing the data
+% F0      [DOUBLE]  forward price
     % Initialize vector to store the number of strikes for each expiry date
     strikes = [];
 
