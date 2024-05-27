@@ -10,6 +10,9 @@
 % start run time
 tic;
 
+% fixing the seed
+rng(42);
+
 %% Clearing the workspace
 clear all; close all; clc;
 
@@ -154,6 +157,8 @@ k1 = params_USA(1); k2 = params_EU(1);
 
 % Calibration of the nuZ parameter
 nu_z = fmincon(@(nu_z) abs(sqrt(k1 * k2) / nu_z - rho), x0, A, b, Aeq, beq, lb, ub, [], options);
+disp('Calibrated nu_z parameter: ')
+disp(nu_z)
 
 %% Common and idiosynchratic parameters
 
