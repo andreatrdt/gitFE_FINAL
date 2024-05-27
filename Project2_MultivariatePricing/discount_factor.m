@@ -9,8 +9,9 @@ function discount =  discount_factor(B_bar , data , date_settlement)
 %
 % USES : discount_factor(B_bar , data , date_settlement)
 
+dates = datenum(data.datesExpiry);
 
-dt = yearfrac(date_settlement ,   data.datesExpiry(1:end));
+dt = yearfrac(date_settlement ,   dates(1:end));
 
 % mean spread
 spread = 34*1e-4;
