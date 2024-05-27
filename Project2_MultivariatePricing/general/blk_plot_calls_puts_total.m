@@ -54,7 +54,7 @@ function blk_plot_calls_puts_total(dataset, F0, B0, sigma, date_settlement)
         plot(strikes, dataset.callBid(ii).prices, '--');
         xline(F0(ii), '--', 'LineWidth', 2, 'Color', 'r');
         title(['Black model Call prices at expiry ', datestr(dataset.datesExpiry(ii))]); xlabel('Strikes'); ylabel('Prices');
-        legend('Black calibrated prices', 'Mean prices', 'Call Ask', 'Call Bid', 'Strike ATM');
+        legend('Black calibrated prices', 'Mean prices', 'Call Ask', 'Call Bid', 'Strike ATM', 'Location', 'best');
 
         subplot(1, 2, 2);
         plot(strikes, put_prices, '*-'); hold on;
@@ -63,7 +63,7 @@ function blk_plot_calls_puts_total(dataset, F0, B0, sigma, date_settlement)
         plot(strikes, dataset.putBid(ii).prices, '--');
         xline(F0(ii), '--', 'LineWidth', 2, 'Color', 'r');
         title(['Black Put prices at expiry ', datestr(dataset.datesExpiry(ii))]); xlabel('Strikes'); ylabel('Prices');
-        legend('Black calibrated prices', 'Mean prices', 'Put Ask', 'Put Bid', 'Strike ATM');
+        legend('Black calibrated prices', 'Mean prices', 'Put Ask', 'Put Bid', 'Strike ATM','Location', 'best');
         
     end
 

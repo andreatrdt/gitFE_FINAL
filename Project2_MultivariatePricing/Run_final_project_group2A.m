@@ -56,19 +56,23 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 [F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
 [F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
 
+B_EU = B_bar_EU
+B_USA = discount_factor(B_bar_USA , data_USA , date_settlement)
+
+
 %% POINT 6: Calibration
 
 %% Options selection
 
 % Choice of only OTM options for the further calibration
-data_EU_OTM = OTM_preprocessing(data_EU, B_bar_EU, F0_EU);
-data_USA_OTM = OTM_preprocessing(data_USA, B_bar_USA, F0_USA);
+data_EU_OTM = OTM_preprocessing(data_EU, B_EU, F0_EU);
+data_USA_OTM = OTM_preprocessing(data_USA, B_USA, F0_USA);
 
 % Computing the Delta of Black & Scholes over the OTM Call/Put in order to
 % clean dataset from too far from the ATM point prices
 
-data_calib_EU = dataset_preprocessing(data_EU_OTM, F0_EU, B_bar_EU, date_settlement, flag);
-data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_bar_USA, date_settlement, flag);
+data_calib_EU = dataset_preprocessing(data_EU_OTM, F0_EU, B_EU, date_settlement, flag);
+data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_USA, date_settlement, flag);
 
 %% Plot of the surface of the implied volatilities
 
@@ -104,7 +108,7 @@ options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
-    F0_EU, B_bar_EU, F0_USA, B_bar_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
+    F0_EU, B_EU, F0_USA, B_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
 
 % Display of the parameters on the console
 params_USA = params_marginals(1:3);
@@ -120,16 +124,16 @@ disp(params_EU)
 if flag == 1
 
     % Plot over the entire curve
-    plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-    plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+    plot_calls_puts_total(data_EU, F0_EU, B_EU, params_EU, date_settlement);
+    plot_calls_puts_total(data_USA, F0_USA, B_USA, params_USA, date_settlement);
 
     % Plot over the filtered options
-    % plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-    % plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+    % plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
+    % plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
 
     % Plot the implied volatilities over the Calls
-    plot_volatility_smiles(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
-    plot_volatility_smiles(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
+    plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement)
+    plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement)
 
 end
 
@@ -182,9 +186,12 @@ k1 = params_USA(1); k2 = params_EU(1);
 params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
-nu_1 = params(1)
-nu_2 = params(2)
-nu_z = params(3)
+nu_1 = params(1);
+nu_2 = params(2);
+nu_z = params(3);
+
+disp('Calibrated parameters for the USA market: ')
+disp(params)
 
 elapsed_time = toc;
 
@@ -205,11 +212,11 @@ lb = 0; ub = [];
 options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration of sigma EU
-sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_bar_EU, date_settlement), ...
+sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, date_settlement), ...
     x0, A, b, Aeq, beq, lb, ub, [], options);
 
 % Calibration of sigma USA
-sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_bar_USA, date_settlement), ...
+sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), ...
     x0, A, b, Aeq, beq, lb, ub, [], options);
 
 %% Plots of the prices with calibrated values
@@ -217,15 +224,15 @@ sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_ba
 if flag == 1
 
     % Plot over the entire curve
-    blk_plot_calls_puts_total(data_EU, F0_EU, B_bar_EU, sigma_EU, date_settlement);
-    blk_plot_calls_puts_total(data_USA, F0_USA, B_bar_USA, sigma_USA, date_settlement);
+    blk_plot_calls_puts_total(data_EU, F0_EU, B_EU, sigma_EU, date_settlement);
+    blk_plot_calls_puts_total(data_USA, F0_USA, B_USA, sigma_USA, date_settlement);
 
     % Plot over the filtered options (TO BE IMPLEMENTED)
-    % plot_calls_puts(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement);
-    % plot_calls_puts(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement);
+    % plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
+    % plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
 
     % Plot the implied volatilities over the Calls (TO BE IMPLEMENTED)
-    % blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_bar_EU, params_EU, date_settlement)
-    % blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_bar_USA, params_USA, date_settlement)
+    % blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement)
+    % blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement)
 
 end
