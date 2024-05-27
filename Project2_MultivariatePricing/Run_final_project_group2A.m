@@ -13,18 +13,20 @@ tic;
 %% Clearing the workspace
 clear all; close all; clc;
 
-%% flags
+%% Flag
 
 % flag = 1 for plotting enabled
 % flag = 0 for plotting disabled
 
 flag = 0;
+
 %% Load folders
 
 addpath('data');
 addpath('forward price');
 addpath('calibration');
 addpath('general');
+addpath('pricing_certificate');
 
 %% Loading of the matrices
 % Loading of the matrices necessary for the projects
@@ -56,8 +58,8 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 [F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
 [F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
 
-B_EU = B_bar_EU
-B_USA = discount_factor(B_bar_USA , data_USA , date_settlement)
+B_EU = B_bar_EU;
+B_USA = discount_factor(B_bar_USA , data_USA , date_settlement);
 
 
 %% POINT 6: Calibration
@@ -190,7 +192,7 @@ nu_1 = params(1);
 nu_2 = params(2);
 nu_z = params(3);
 
-disp('Calibrated parameters for the USA market: ')
+disp('Calibrated secondary parameters (nu1, nu2, nuz) : ')
 disp(params)
 
 elapsed_time = toc;
@@ -236,3 +238,35 @@ if flag == 1
     % blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement)
 
 end
+
+%%
+
+%% Point 9: pricing of the certificate
+
+% Simulation of theunderlying stock prices
+[St_USA, S0_USA] = stock_simulation(data_calib_USA, params_USA, F0_USA, B_USA, date_settlement);
+[St_EU, S0_EU] = stock_simulation(data_calib_EU, params_EU, F0_EU, B_EU, date_settlement);
+
+% Computation of the pricing certificate payoff
+indicator = St_EU < (0.95 * S0_EU);
+certificate_payoff = max(St_USA - S0_USA, 0) .* indicator; 
+
+% idx = find(certificate_payoff > 0);
+% certificate_reduced = certificate_payoff(idx);
+
+% Mean price and confidence interval
+[mean_price, ~, IC] = normfit(certificate_payoff)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
