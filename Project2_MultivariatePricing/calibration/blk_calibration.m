@@ -55,4 +55,4 @@ function RMSE_total = blk_calibration(sigma, dataset, F0, B0, date_settlement)
     %% Final adjusting of RMSE
     RMSE_total = sqrt(sum(RMSE))/N_options;
 
-end % function RMSE_total
+end % function blk_calibration
