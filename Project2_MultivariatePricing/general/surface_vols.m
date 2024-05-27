@@ -34,7 +34,7 @@ function surface_vols(data,F0)
     validMask = ~isnan(vols);
     interpolatedVols = griddata(X(validMask), Y(validMask), vols(validMask), X, Y, 'linear');
 
-    log_moneyness = log(F0/strikes);
+    log_moneyness = log(F0./strikes);
 
     % Convert dates to strings for the y-axis labels
     dateStrings = data.datesExpiry;
@@ -43,6 +43,8 @@ function surface_vols(data,F0)
     figure();
     surf(log_moneyness, datenum(data.datesExpiry),interpolatedVols,'FaceAlpha',0.5,'EdgeColor','interp');
     hold on
+    mesh(log_moneyness, datenum(data.datesExpiry),interpolatedVols);
+    hold off
     
 
     % surf(strikes, datenum(data.datesExpiry),index_matrix);

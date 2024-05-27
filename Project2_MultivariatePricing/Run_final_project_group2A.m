@@ -128,8 +128,8 @@ if flag == 1
     plot_calls_puts_total(data_USA, F0_USA, B_USA, params_USA, date_settlement);
 
     % Plot over the filtered options
-    % plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
-    % plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
+    plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
+    plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
 
     % Plot the implied volatilities over the Calls
     plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement)
