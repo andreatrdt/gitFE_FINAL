@@ -56,8 +56,8 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 [F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
 [F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
 
-B_EU = B_bar_EU
-B_USA = discount_factor(B_bar_USA , data_USA , date_settlement)
+B_EU = B_bar_EU;
+B_USA = discount_factor(B_bar_USA , data_USA , date_settlement);
 
 
 %% POINT 6: Calibration
@@ -84,9 +84,9 @@ end
 
 % Quantities of interest
 % x0 = [10 2 0.5 10 2 0.5];
-x0 = [5 2 0.5 5 2 0.5];
+% x0 = [5 2 0.5 5 2 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-% x0 = 0.5 * ones(1, 6);
+x0 = 0.5 * ones(1, 6);
 
 % Linear inequality constraints 
 A = [-1 0 0 0 0 0;
@@ -166,8 +166,10 @@ k1 = params_USA(1); k2 = params_EU(1);
 params_singles = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + nu_z_single)*(params(2) + nu_z_single))) - rho)^2, ...
     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr([params, nu_z_single], k1, k2), options);
 
-nu_1 = params_singles(1)
-nu_2 = params_singles(2)
+nu_1 = params_singles(1);
+nu_2 = params_singles(2);
+disp('Calibrated parameters: ')
+disp(params_singles)
 
 %% Alternative calibration over the rho
 
@@ -222,17 +224,16 @@ sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_US
 %% Plots of the prices with calibrated values
 
 if flag == 1
-
     % Plot over the entire curve
     blk_plot_calls_puts_total(data_EU, F0_EU, B_EU, sigma_EU, date_settlement);
     blk_plot_calls_puts_total(data_USA, F0_USA, B_USA, sigma_USA, date_settlement);
 
-    % Plot over the filtered options (TO BE IMPLEMENTED)
-    % plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
-    % plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
+    %Plot over the filtered options (TO BE IMPLEMENTED)
+    plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
+    plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
 
-    % Plot the implied volatilities over the Calls (TO BE IMPLEMENTED)
-    % blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement)
-    % blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement)
+    %Plot the implied volatilities over the Calls (TO BE IMPLEMENTED)
+    blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement)
+    blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement)
 
 end
