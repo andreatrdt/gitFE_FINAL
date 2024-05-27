@@ -119,10 +119,6 @@ params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data
 params_USA = params_marginals(1:3);
 params_EU = params_marginals(4:6);
 
-disp('Calibrated parameters for the USA market: ')
-disp(params_USA)
-disp('Calibrated parameters for the EU market: ')
-disp(params_EU)
 
 %% Plots of the prices with calibrated values
 
@@ -149,16 +145,38 @@ rho = hist_corr(SP500_EUR500);
 
 % Initialization of the parameters
 A = []; b = []; Aeq = []; beq = [];
-lb = 0; ub = [];
-x0 = 1;
+lb = zeros(1, 3); ub = [];
+x0 = ones(1, 3);
 
 % Recall the parameters
 k1 = params_USA(1); k2 = params_EU(1);
 
 % Calibration of the nuZ parameter
-nu_z = fmincon(@(nu_z) abs(sqrt(k1 * k2) / nu_z - rho), x0, A, b, Aeq, beq, lb, ub, [], options);
-disp('Calibrated nu_z parameter: ')
+params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+
+nu_1 = params(1);
+nu_2 = params(2);
+nu_z = params(3);
+
+%% disp the calibrated parameters
+
+
+
+disp('Calibrated parameters for the USA market: ')
+disp(params_USA)
+disp('Calibrated parameters for the EU market: ')
+disp(params_EU)
+
+
+disp('calibrated nu_1: ')
+disp(nu_1)
+disp('calibrated nu_2: ')
+disp(nu_2)
+disp('calibrated nu_z: ')
 disp(nu_z)
+
+
 
 %% Common and idiosynchratic parameters
 
