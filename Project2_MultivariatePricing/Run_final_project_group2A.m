@@ -242,7 +242,7 @@ end
 
 %%
 
-%% Point 9: pricing of the certificate
+%% Point 9: Pricing of the certificate - Levy
 
 % Simulation of theunderlying stock prices
 [St_USA, S0_USA] = stock_simulation(data_calib_USA, params_USA, F0_USA, B_USA, date_settlement);
@@ -252,16 +252,43 @@ end
 indicator = St_EU < (0.95 * S0_EU);
 certificate_payoff = max(St_USA - S0_USA, 0) .* indicator; 
 
-% idx = find(certificate_payoff > 0);
-% certificate_reduced = certificate_payoff(idx);
-
 % Mean price and confidence interval
 [mean_price, ~, IC] = normfit(certificate_payoff)
 
+% Plot of the histogram of positive payoffs
+idx = find(certificate_payoff > 0);
+certificate_reduced = certificate_payoff(idx);
+histogram(certificate_reduced);
 
+[mean, ~, IC] = normfit(certificate_reduced)
 
+%% Point 9: Pricing of the certificate - Brownian Motion
 
+% Computation of the rates and initial forwards
+[rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
+[rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
 
+% Simulation of theunderlying stock prices
+[St_Black, S0_Black] = stock_simulation_Black([sigma_USA; sigma_EU], [interp_F0_USA; interp_F0_EU], ...
+    [rate_USA; rate_EU], rho, date_settlement);
+
+% Unpacking the results
+St_USA_Black = St_Black(:, 1); St_EU_Black = St_Black(:, 2);
+S0_USA_Black = S0_Black(1); S0_EU_Black = S0_Black(2);
+
+% Computation of the pricing certificate payoff
+indicator_Black = St_EU_Black < (0.95 * S0_EU_Black);
+certificate_payoff_Black = max(St_USA_Black - S0_USA_Black, 0) .* indicator_Black; 
+
+% Mean price and confidence interval
+[mean_price_Black, ~, IC_Black] = normfit(certificate_payoff_Black)
+
+% Plot of the histogram of positive payoffs
+idx = find(certificate_payoff_Black > 0);
+certificate_reduced_Black = certificate_payoff_Black(idx);
+histogram(certificate_reduced_Black);
+
+[mean, ~, IC] = normfit(certificate_reduced_Black)
 
 
 
