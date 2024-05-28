@@ -291,26 +291,10 @@ end
 
 %% Point 9: Pricing of the certificate - Levy
 
-% % Simulation of theunderlying stock prices
-% % Computation of the rates and initial forwards
-% [rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
-% [rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
+% Simulation of theunderlying stock prices
 
-% [St_EU, S0_EU] = stock_simulation(data_calib_USA,data_calib_EU, [params_USA,params_EU], [interp_F0_USA,interp_F0_EU], [B_USA , B_EU], date_settlement, [rate_USA,rate_EU]);
 
-% % Computation of the pricing certificate payoff
-% indicator = St_EU < (0.95 * S0_EU);
-% certificate_payoff = max(St_USA - S0_USA, 0) .* indicator;
 
-% % Mean price and confidence interval
-% [mean_price, ~, IC] = normfit(certificate_payoff);
-
-% % Plot of the histogram of positive payoffs
-% idx = find(certificate_payoff > 0);
-% certificate_reduced = certificate_payoff(idx);
-% histogram(certificate_reduced);
-
-% [mean, ~, IC] = normfit(certificate_reduced)
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 
