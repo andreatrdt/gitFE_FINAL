@@ -23,6 +23,10 @@ clear all; close all; clc;
 
 flag = 0;
 
+% save results
+
+save_results = 1;
+
 %% Load folders
 
 addpath('data');
@@ -111,6 +115,8 @@ x0 = [2 2 0.5 2 2 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
 % x0 = 0.5 * ones(1, 6);
 
+initial_cond = x0;
+
 % Linear inequality constraints 
 A = [-1 0 0 0 0 0;
     0 0 -1 0 0 0;
@@ -194,28 +200,34 @@ disp(nu_2)
 disp('calibrated nu_z: ')
 disp(nu_z)
 
-% save results in a txt file
+if save_results == 1
 
-fileID = fopen('results.txt','w');
+    % save results in a txt file
 
-fprintf(fileID,'X0 used : %f \n',x0);
-fprintf(fileID,'Calibrated parameters for the USA market: \n');
-fprintf(fileID,'%f \n',params_USA);
-fprintf(fileID,'Calibrated parameters for the EU market: \n');
-fprintf(fileID,'%f \n',params_EU);
-fprintf(fileID,'calibrated nu_1: \n');
-fprintf(fileID,'%f \n',nu_1);
-fprintf(fileID,'calibrated nu_2: \n');
-fprintf(fileID,'%f \n',nu_2);
-fprintf(fileID,'calibrated nu_z: \n');
-fprintf(fileID,'%f \n',nu_z);
+    fileID = fopen('results.txt','w');
 
-fclose(fileID);
+    fprintf(fileID,'X0 used :\n');
+    fprintf(fileID,'%f \n',initial_cond);
+    fprintf(fileID,'Calibrated parameters for the USA market: \n');
+    fprintf(fileID,'%f \n',params_USA);
+    fprintf(fileID,'Calibrated parameters for the EU market: \n');
+    fprintf(fileID,'%f \n',params_EU);
+    fprintf(fileID,'calibrated nu_1: \n');
+    fprintf(fileID,'%f \n',nu_1);
+    fprintf(fileID,'calibrated nu_2: \n');
+    fprintf(fileID,'%f \n',nu_2);
+    fprintf(fileID,'calibrated nu_z: \n');
+    fprintf(fileID,'%f \n',nu_z);
+
+    fclose(fileID);
+
+end
 
 
 %% Common and idiosynchratic parameters
 
-% nu_1 = -k1*nu_z / ()
+% condition 9:
+
 
 
 %% Point 8: Black model calibration
@@ -259,20 +271,21 @@ if flag == 1
 
 end
 
-%%
-
 %% Point 9: Pricing of the certificate - Levy
 
 % Simulation of theunderlying stock prices
-[St_USA, S0_USA] = stock_simulation(data_calib_USA, params_USA, F0_USA, B_USA, date_settlement);
-[St_EU, S0_EU] = stock_simulation(data_calib_EU, params_EU, F0_EU, B_EU, date_settlement);
+% Computation of the rates and initial forwards
+[rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
+[rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
+
+[St_EU, S0_EU] = stock_simulation(data_calib_USA,data_calib_EU, [params_USA,params_EU], [interp_F0_USA,interp_F0_EU], [B_USA , B_EU], date_settlement, [rate_USA,rate_EU]);
 
 % Computation of the pricing certificate payoff
 indicator = St_EU < (0.95 * S0_EU);
 certificate_payoff = max(St_USA - S0_USA, 0) .* indicator; 
 
 % Mean price and confidence interval
-[mean_price, ~, IC] = normfit(certificate_payoff)
+[mean_price, ~, IC] = normfit(certificate_payoff);
 
 % Plot of the histogram of positive payoffs
 idx = find(certificate_payoff > 0);
@@ -300,7 +313,7 @@ indicator_Black = St_EU_Black < (0.95 * S0_EU_Black);
 certificate_payoff_Black = max(St_USA_Black - S0_USA_Black, 0) .* indicator_Black; 
 
 % Mean price and confidence interval
-[mean_price_Black, ~, IC_Black] = normfit(certificate_payoff_Black)
+[mean_price_Black, ~, IC_Black] = normfit(certificate_payoff_Black);
 
 % Plot of the histogram of positive payoffs
 idx = find(certificate_payoff_Black > 0);

@@ -31,7 +31,7 @@ function [prices, S0] = stock_simulation_Black(sigmas, F0, rates, rho, date_sett
 
     %% Computation of the initial stock price S(0)
 
-    S0 = F0 ./ exp(rates .* TTM);
+    S0 = F0 .* exp(- rates .* TTM);
     
     %% Simulation of the NIG process
 

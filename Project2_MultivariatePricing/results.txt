@@ -1,0 +1,17 @@
+X0 used : 1.000000 
+X0 used : 1.000000 
+X0 used : 1.000000 
+Calibrated parameters for the USA market: 
+0.020559 
+0.013710 
+0.120452 
+Calibrated parameters for the EU market: 
+0.011401 
+0.018403 
+0.120406 
+calibrated nu_1: 
+0.021263 
+calibrated nu_2: 
+0.011614 
+calibrated nu_z: 
+0.620410 
