@@ -63,7 +63,7 @@ if flag == 1
     plot_returns(SP500_EUR500,date_settlement)
 end
 
-%% POINT 5: Forward Prices 
+%% POINT 5: Forward Prices
 
 [F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
 [F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
@@ -116,7 +116,7 @@ x0 = 0.1 * ones(1, 6);
 
 initial_cond = x0;
 
-% Linear inequality constraints 
+% Linear inequality constraints
 A = [-1 0 0 0 0 0;
     0 0 -1 0 0 0;
     0 0 0 -1 0 0;
@@ -127,7 +127,7 @@ b = [0; 0; 0; 0];
 % Linear equality constraints
 Aeq = []; beq = [];
 
-% Lower and upper bounds 
+% Lower and upper bounds
 lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
@@ -231,8 +231,21 @@ end
 
 %% Common and idiosynchratic parameters
 
-marginal_param(params_USA,[nu_1,nu_2,nu_z])
 
+sol_USA =  marginal_param(params_USA,nu_z)
+
+a_USA = sol_USA.x(1)
+Beta_USA = sol_USA.x(4)
+gamma_USA = sol_USA.x(5)
+
+
+sol_EU = marginal_param(params_EU,nu_z)
+
+a_USA = sol_EU.x(1)
+Beta_z = sol_EU.x(2)
+gamma_z = sol_EU.x(3)
+Beta_USA = sol_EU.x(4)
+gamma_USA = sol_EU.x(5)
 
 
 %% Point 8: Black model calibration
@@ -241,11 +254,11 @@ marginal_param(params_USA,[nu_1,nu_2,nu_z])
 
 % Initialization of the parameters
 x0 = 0.5;
-% Linear inequality constraints 
+% Linear inequality constraints
 A = []; b = [];
 % Linear equality constraints
 Aeq = []; beq = [];
-% Lower and upper bounds 
+% Lower and upper bounds
 lb = 0; ub = [];
 
 % Options for the visualization
@@ -287,7 +300,7 @@ end
 
 % % Computation of the pricing certificate payoff
 % indicator = St_EU < (0.95 * S0_EU);
-% certificate_payoff = max(St_USA - S0_USA, 0) .* indicator; 
+% certificate_payoff = max(St_USA - S0_USA, 0) .* indicator;
 
 % % Mean price and confidence interval
 % [mean_price, ~, IC] = normfit(certificate_payoff);
@@ -315,7 +328,7 @@ S0_USA_Black = S0_Black(1); S0_EU_Black = S0_Black(2);
 
 % Computation of the pricing certificate payoff
 indicator_Black = St_EU_Black < (0.95 * S0_EU_Black);
-certificate_payoff_Black = max(St_USA_Black - S0_USA_Black, 0) .* indicator_Black; 
+certificate_payoff_Black = max(St_USA_Black - S0_USA_Black, 0) .* indicator_Black;
 
 % Mean price and confidence interval
 [mean_price_Black, ~, IC_Black] = normfit(certificate_payoff_Black);
