@@ -7,14 +7,15 @@
 % Matteo Torba
 % Andrea Tarditi
 
-% start run time
-tic;
-
-% fixing the seed
-rng(42);
 
 %% Clearing the workspace
 clear all; close all; clc;
+
+% start run time
+tic;
+
+% fix random seed
+rng(42);
 
 %% Flag
 
@@ -109,9 +110,9 @@ end
 
 % Quantities of interest
 % x0 = [10 2 0.5 10 2 0.5];
-x0 = [5 2 0.5 5 2 0.5];
+% x0 = [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-% x0 = 0.5 * ones(1, 6);
+x0 = 0.1 * ones(1, 6);
 
 initial_cond = x0;
 
@@ -131,7 +132,7 @@ lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
-options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
+options = optimset('MaxFunEvals', 5e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
@@ -183,8 +184,6 @@ nu_z = params(3);
 
 %% disp the calibrated parameters
 
-
-
 disp('Calibrated parameters for the USA market: ')
 disp(params_USA)
 disp('Calibrated parameters for the EU market: ')
@@ -232,7 +231,7 @@ end
 
 %% Common and idiosynchratic parameters
 
-% condition 9:
+marginal_param(params_USA,[nu_1,nu_2,nu_z])
 
 
 

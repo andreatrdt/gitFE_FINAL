@@ -28,7 +28,7 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
     
     % FFT parameters
     M = 15;
-    dz = 0.0025;
+    dz = 0.001;
 
     %% Computation 
     
