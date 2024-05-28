@@ -241,11 +241,11 @@ gamma_USA = sol_USA.x(5)
 
 sol_EU = marginal_param(params_EU,nu_z)
 
-a_USA = sol_EU.x(1)
+a_EU = sol_EU.x(1)
 Beta_z = sol_EU.x(2)
 gamma_z = sol_EU.x(3)
-Beta_USA = sol_EU.x(4)
-gamma_USA = sol_EU.x(5)
+Beta_EU = sol_EU.x(4)
+gamma_EU = sol_EU.x(5)
 
 
 %% Point 8: Black model calibration
@@ -291,10 +291,34 @@ end
 
 %% Point 9: Pricing of the certificate - Levy
 
-% Simulation of theunderlying stock prices
+[rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
+[rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
+
+[St_Levy, S0_Levy] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z , [interp_F0_USA; interp_F0_EU] ...
+                , [B_USA ; B_EU] , [rate_USA; rate_EU] , date_settlement);
+
+% Unpacking the results
+St_USA_Levy = St_Levy(:,1);
+St_EU_Levy = St_Levy(:,2);
+
+S0_USA_Levy = S0_Levy(1);
+S0_EU_Levy = S0_Levy(2);
+
+% Computation of the pricing certificate payoff
 
 
+indx_Levy = St_EU_Levy > (0.95 * S0_EU_Levy);
 
+certificate_payoff_Levy = max(St_USA_Levy - S0_USA_Levy, 0) .* indx_Levy;
+
+% Mean price and confidence interval
+[mean_price_levy, ~, IC_Levy] = normfit(certificate_payoff_Levy);
+
+% Plot of the histogram of positive payoffs
+certificate_reduced_Levy = certificate_payoff_Levy(find(certificate_payoff_Levy));
+%histogram(certificate_reduced_Levy);
+
+[mean, ~, IC] = normfit(certificate_reduced_Levy)
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 

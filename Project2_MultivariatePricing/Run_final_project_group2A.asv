@@ -7,11 +7,15 @@
 % Matteo Torba
 % Andrea Tarditi
 
-% start run time
-tic;
 
 %% Clearing the workspace
 clear all; close all; clc;
+
+% start run time
+tic;
+
+% fix random seed
+rng(42);
 
 %% Flag
 
@@ -19,6 +23,10 @@ clear all; close all; clc;
 % flag = 0 for plotting disabled
 
 flag = 0;
+
+% save results
+
+save_results = 1;
 
 %% Load folders
 
@@ -50,16 +58,32 @@ dates_USA = datenum(data_USA.datesExpiry);
 conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
 %% Plot of the returns
- 
-% plot_returns(SP500_EUR500,date_settlement)
 
-%% POINT 5: Forward Prices 
+if flag == 1
+    plot_returns(SP500_EUR500,date_settlement)
+end
+
+%% POINT 5: Forward Prices
 
 [F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
 [F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
 
 B_EU = B_bar_EU;
-B_USA = discount_factor(B_bar_USA , data_USA , date_settlement);
+B_USA = B_bar_USA;
+
+if flag == 1
+    figure;
+    plot(dates_EU,B_EU,'-*','Color','b');
+    title('Discount factor for the EU market');
+    datetick('x','dd-mmm-yyyy','keepticks')
+
+
+    figure;
+    plot(dates_USA,B_USA,'-*','Color','r');
+    title('Discount factor for the USA market');
+    datetick('x','dd-mmm-yyyy','keepticks')
+end
+
 
 
 %% POINT 6: Calibration
@@ -86,11 +110,13 @@ end
 
 % Quantities of interest
 % x0 = [10 2 0.5 10 2 0.5];
-x0 = [5 2 0.5 5 2 0.5];
+% x0 = [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-% x0 = 0.5 * ones(1, 6);
+x0 = 0.1 * ones(1, 6);
 
-% Linear inequality constraints 
+initial_cond = x0;
+
+% Linear inequality constraints
 A = [-1 0 0 0 0 0;
     0 0 -1 0 0 0;
     0 0 0 -1 0 0;
@@ -101,12 +127,12 @@ b = [0; 0; 0; 0];
 % Linear equality constraints
 Aeq = []; beq = [];
 
-% Lower and upper bounds 
+% Lower and upper bounds
 lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
-options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
+options = optimset('MaxFunEvals', 5e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
@@ -116,10 +142,6 @@ params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data
 params_USA = params_marginals(1:3);
 params_EU = params_marginals(4:6);
 
-disp('Calibrated parameters for the USA market: ')
-disp(params_USA)
-disp('Calibrated parameters for the EU market: ')
-disp(params_EU)
 
 %% Plots of the prices with calibrated values
 
@@ -146,57 +168,85 @@ rho = hist_corr(SP500_EUR500);
 
 % Initialization of the parameters
 A = []; b = []; Aeq = []; beq = [];
-lb = 0; ub = [];
-x0 = 1;
-
-% Recall the parameters
-k1 = params_USA(1); k2 = params_EU(1);
-
-% Calibration of the nuZ parameter
-nu_z_single = fmincon(@(nu_z) abs(sqrt(k1 * k2) / nu_z - rho), x0, A, b, Aeq, beq, lb, ub, [], options);
-
-%% Initialization of the parameters
-A = [-1 0; 0 -1]; b = [0; 0]; Aeq = []; beq = [];
-lb = zeros(1, 2); ub = [];
-x0 = ones(1, 2);
-
-% Recall the parameters
-k1 = params_USA(1); k2 = params_EU(1);
-
-% Calibration of the nuZ parameter
-params_singles = fmincon(@(params) abs(sqrt(params(1) * params(2) / ((params(1) + nu_z_single)*(params(2) + nu_z_single))) - rho), ...
-    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr([params, nu_z_single], k1, k2), options)
-
-nu_1 = params_singles(1)
-nu_2 = params_singles(2)
-disp('Calibrated parameters: ')
-disp(params_singles)
-
-%% Alternative calibration over the rho
-
-% Computation of the historical correlation
-rho = hist_corr(SP500_EUR500);
-
-% Initialization of the parameters
-A = []; b = []; Aeq = []; beq = [];
 lb = zeros(1, 3); ub = [];
-x0 = 0.5 * ones(1, 3);
+x0 = ones(1, 3);
 
 % Recall the parameters
 k1 = params_USA(1); k2 = params_EU(1);
 
 % Calibration of the nuZ parameter
-params = fmincon(@(params) abs(sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho), ...
-    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2, rho), options);
+params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
 nu_1 = params(1);
 nu_2 = params(2);
 nu_z = params(3);
 
-disp('Calibrated secondary parameters (nu1, nu2, nuz) : ')
-disp(params)
+%% disp the calibrated parameters
 
-elapsed_time = toc;
+disp('Calibrated parameters for the USA market: ')
+disp(params_USA)
+disp('Calibrated parameters for the EU market: ')
+disp(params_EU)
+
+
+disp('calibrated nu_1: ')
+disp(nu_1)
+disp('calibrated nu_2: ')
+disp(nu_2)
+disp('calibrated nu_z: ')
+disp(nu_z)
+
+if save_results == 1
+
+    % save results in a txt file
+
+    fileID = fopen('results.txt','w');
+
+    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'X0 used :\n');
+    fprintf(fileID,'%f \n',initial_cond);
+    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'Calibrated parameters for the USA market: \n');
+    fprintf(fileID,'%f \n',params_USA);
+    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'Calibrated parameters for the EU market: \n');
+    fprintf(fileID,'%f \n',params_EU);
+    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'calibrated nu_1: \n');
+    fprintf(fileID,'%f \n',nu_1);
+    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'calibrated nu_2: \n');
+    fprintf(fileID,'%f \n',nu_2);
+    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'calibrated nu_z: \n');
+    fprintf(fileID,'%f \n',nu_z);
+    fprintf(fileID,'-----------------------')
+
+
+    fclose(fileID);
+
+end
+
+
+%% Common and idiosynchratic parameters
+
+
+sol_USA =  marginal_param(params_USA,nu_z)
+
+a_USA = sol_USA.x(1)
+Beta_USA = sol_USA.x(4)
+gamma_USA = sol_USA.x(5)
+
+
+sol_EU = marginal_param(params_EU,nu_z)
+
+a_EU = sol_EU.x(1)
+Beta_z = sol_EU.x(2)
+gamma_z = sol_EU.x(3)
+Beta_EU = sol_EU.x(4)
+gamma_EU = sol_EU.x(5)
+
 
 %% Point 8: Black model calibration
 
@@ -204,11 +254,11 @@ elapsed_time = toc;
 
 % Initialization of the parameters
 x0 = 0.5;
-% Linear inequality constraints 
+% Linear inequality constraints
 A = []; b = [];
 % Linear equality constraints
 Aeq = []; beq = [];
-% Lower and upper bounds 
+% Lower and upper bounds
 lb = 0; ub = [];
 
 % Options for the visualization
@@ -239,29 +289,40 @@ if flag == 1
 
 end
 
-%%
-
 %% Point 9: Pricing of the certificate - Levy
+clc
+format bank
 
-% Simulation of theunderlying stock prices
-[St_USA, S0_USA] = stock_simulation(data_calib_USA, params_USA, F0_USA, B_USA, date_settlement);
-[St_EU, S0_EU] = stock_simulation(data_calib_EU, params_EU, F0_EU, B_EU, date_settlement);
+[rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
+[rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
+
+[St_Levy, S0_Levy] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z , [interp_F0_USA; interp_F0_EU] ...
+                , [B_USA ; B_EU] , [rate_USA; rate_EU] , date_settlement);
+
+% Unpacking the results
+St_USA_Levy = St_Levy(:,1);
+St_EU_Levy = St_Levy(:,2);
+
+S0_USA_Levy = S0_Levy(1);
+S0_EU_Levy = S0_Levy(2);
 
 % Computation of the pricing certificate payoff
-indicator = St_EU < (0.95 * S0_EU);
-certificate_payoff = max(St_USA - S0_USA, 0) .* indicator; 
+
+
+indx_Levy = St_EU_Levy > (0.95 * S0_EU_Levy);
+
+certificate_payoff_Levy = max(St_USA_Levy - S0_USA_Levy, 0) .* indx_Levy;
 
 % Mean price and confidence interval
-[mean_price, ~, IC] = normfit(certificate_payoff)
+[mean_price_levy, ~, IC_Levy] = normfit(certificate_payoff_Levy);
 
 % Plot of the histogram of positive payoffs
-idx = find(certificate_payoff > 0);
-certificate_reduced = certificate_payoff(idx);
-histogram(certificate_reduced);
+certificate_reduced_Levy = certificate_payoff_Levy(find(certificate_payoff_Levy));
+% histogram(certificate_reduced_Levy);
 
-[mean, ~, IC] = normfit(certificate_reduced)
+[mean, ~, IC] = normfit(certificate_reduced_Levy)
 
-%% Point 9: Pricing of the certificate - Brownian Motion
+% Point 9: Pricing of the certificate - Brownian Motion
 
 % Computation of the rates and initial forwards
 [rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
@@ -277,10 +338,10 @@ S0_USA_Black = S0_Black(1); S0_EU_Black = S0_Black(2);
 
 % Computation of the pricing certificate payoff
 indicator_Black = St_EU_Black < (0.95 * S0_EU_Black);
-certificate_payoff_Black = max(St_USA_Black - S0_USA_Black, 0) .* indicator_Black; 
+certificate_payoff_Black = max(St_USA_Black - S0_USA_Black, 0) .* indicator_Black;
 
 % Mean price and confidence interval
-[mean_price_Black, ~, IC_Black] = normfit(certificate_payoff_Black)
+[mean_price_Black, ~, IC_Black] = normfit(certificate_payoff_Black);
 
 % Plot of the histogram of positive payoffs
 idx = find(certificate_payoff_Black > 0);
@@ -288,12 +349,3 @@ certificate_reduced_Black = certificate_payoff_Black(idx);
 histogram(certificate_reduced_Black);
 
 [mean, ~, IC] = normfit(certificate_reduced_Black)
-
-
-
-
-
-
-
-
-
