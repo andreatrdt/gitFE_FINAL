@@ -70,7 +70,7 @@ end
 
 
 B_EU = B_bar_EU;
-B_USA = discount_factor(B_bar_USA , data_USA , date_settlement);
+B_USA = B_bar_USA;
 
 if flag == 1
     figure;
