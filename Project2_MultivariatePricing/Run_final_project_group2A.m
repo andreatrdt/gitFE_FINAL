@@ -67,8 +67,6 @@ end
 [F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
 [F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
 
-
-
 B_EU = B_bar_EU;
 B_USA = B_bar_USA;
 
@@ -111,7 +109,7 @@ end
 
 % Quantities of interest
 % x0 = [10 2 0.5 10 2 0.5];
-x0 = [2 2 0.5 2 2 0.5];
+x0 = [5 2 0.5 5 2 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
 % x0 = 0.5 * ones(1, 6);
 
@@ -206,18 +204,26 @@ if save_results == 1
 
     fileID = fopen('results.txt','w');
 
+    fprintf(fileID,'-----------------------')
     fprintf(fileID,'X0 used :\n');
     fprintf(fileID,'%f \n',initial_cond);
+    fprintf(fileID,'-----------------------')
     fprintf(fileID,'Calibrated parameters for the USA market: \n');
     fprintf(fileID,'%f \n',params_USA);
+    fprintf(fileID,'-----------------------')
     fprintf(fileID,'Calibrated parameters for the EU market: \n');
     fprintf(fileID,'%f \n',params_EU);
+    fprintf(fileID,'-----------------------')
     fprintf(fileID,'calibrated nu_1: \n');
     fprintf(fileID,'%f \n',nu_1);
+    fprintf(fileID,'-----------------------')
     fprintf(fileID,'calibrated nu_2: \n');
     fprintf(fileID,'%f \n',nu_2);
+    fprintf(fileID,'-----------------------')
     fprintf(fileID,'calibrated nu_z: \n');
     fprintf(fileID,'%f \n',nu_z);
+    fprintf(fileID,'-----------------------')
+
 
     fclose(fileID);
 
@@ -273,26 +279,26 @@ end
 
 %% Point 9: Pricing of the certificate - Levy
 
-% Simulation of theunderlying stock prices
-% Computation of the rates and initial forwards
-[rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
-[rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
+% % Simulation of theunderlying stock prices
+% % Computation of the rates and initial forwards
+% [rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
+% [rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
 
-[St_EU, S0_EU] = stock_simulation(data_calib_USA,data_calib_EU, [params_USA,params_EU], [interp_F0_USA,interp_F0_EU], [B_USA , B_EU], date_settlement, [rate_USA,rate_EU]);
+% [St_EU, S0_EU] = stock_simulation(data_calib_USA,data_calib_EU, [params_USA,params_EU], [interp_F0_USA,interp_F0_EU], [B_USA , B_EU], date_settlement, [rate_USA,rate_EU]);
 
-% Computation of the pricing certificate payoff
-indicator = St_EU < (0.95 * S0_EU);
-certificate_payoff = max(St_USA - S0_USA, 0) .* indicator; 
+% % Computation of the pricing certificate payoff
+% indicator = St_EU < (0.95 * S0_EU);
+% certificate_payoff = max(St_USA - S0_USA, 0) .* indicator; 
 
-% Mean price and confidence interval
-[mean_price, ~, IC] = normfit(certificate_payoff);
+% % Mean price and confidence interval
+% [mean_price, ~, IC] = normfit(certificate_payoff);
 
-% Plot of the histogram of positive payoffs
-idx = find(certificate_payoff > 0);
-certificate_reduced = certificate_payoff(idx);
-histogram(certificate_reduced);
+% % Plot of the histogram of positive payoffs
+% idx = find(certificate_payoff > 0);
+% certificate_reduced = certificate_payoff(idx);
+% histogram(certificate_reduced);
 
-[mean, ~, IC] = normfit(certificate_reduced)
+% [mean, ~, IC] = normfit(certificate_reduced)
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 
