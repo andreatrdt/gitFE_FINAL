@@ -17,7 +17,7 @@ function [c, ceq] = nonlinconstr(x)
 
     % Constraint to create the entire equality given on the final
     % parameters
-    ceq = sigma1^2/(k1*theta1^2) - sigma2^2/(k2*theta2^2);
+    ceq = (sigma1^2/(k1*theta1^2)) - (sigma2^2/(k2*theta2^2));
 
     %% Constraints on the inequalities
 

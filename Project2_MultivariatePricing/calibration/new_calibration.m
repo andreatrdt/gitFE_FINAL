@@ -30,6 +30,8 @@ function distance = new_calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_
 
     %% Computation of the weights
 
+    % SONO QUELLI CORRETTI ??
+    
     weight_USA = data_USA.spot/(data_EU.spot+data_USA.spot);
     weight_EU = data_EU.spot/(data_EU.spot+data_USA.spot);
     
