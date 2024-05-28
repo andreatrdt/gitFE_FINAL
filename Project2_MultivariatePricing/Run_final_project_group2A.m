@@ -53,16 +53,34 @@ dates_USA = datenum(data_USA.datesExpiry);
 conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
 %% Plot of the returns
- 
-% plot_returns(SP500_EUR500,date_settlement)
+
+if flag == 1
+    plot_returns(SP500_EUR500,date_settlement)
+end
 
 %% POINT 5: Forward Prices 
 
 [F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
 [F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
 
+
+
 B_EU = B_bar_EU;
 B_USA = discount_factor(B_bar_USA , data_USA , date_settlement);
+
+if flag == 1
+    figure;
+    plot(dates_EU,B_EU,'-*','Color','b');
+    title('Discount factor for the EU market');
+    datetick('x','dd-mmm-yyyy','keepticks')
+
+
+    figure;
+    plot(dates_USA,B_USA,'-*','Color','r');
+    title('Discount factor for the USA market');
+    datetick('x','dd-mmm-yyyy','keepticks')
+end
+
 
 
 %% POINT 6: Calibration
@@ -176,6 +194,23 @@ disp(nu_2)
 disp('calibrated nu_z: ')
 disp(nu_z)
 
+% save results in a txt file
+
+fileID = fopen('results.txt','w');
+
+fprintf(fileID,'X0 used : %f \n',x0);
+fprintf(fileID,'Calibrated parameters for the USA market: \n');
+fprintf(fileID,'%f \n',params_USA);
+fprintf(fileID,'Calibrated parameters for the EU market: \n');
+fprintf(fileID,'%f \n',params_EU);
+fprintf(fileID,'calibrated nu_1: \n');
+fprintf(fileID,'%f \n',nu_1);
+fprintf(fileID,'calibrated nu_2: \n');
+fprintf(fileID,'%f \n',nu_2);
+fprintf(fileID,'calibrated nu_z: \n');
+fprintf(fileID,'%f \n',nu_z);
+
+fclose(fileID);
 
 
 %% Common and idiosynchratic parameters
@@ -273,12 +308,3 @@ certificate_reduced_Black = certificate_payoff_Black(idx);
 histogram(certificate_reduced_Black);
 
 [mean, ~, IC] = normfit(certificate_reduced_Black)
-
-
-
-
-
-
-
-
-
