@@ -31,7 +31,7 @@ function [sol] = marginal_param(params,nu_z)
     prob.Equations.eq5 = eq5;
 
 
-    x0.x = 0.5 * ones(5,1);
+    x0.x = 0.1 * ones(5,1);
 
     sol = solve(prob,x0);
 

@@ -17,36 +17,36 @@ function disp_marginal_params(sol_USA, sol_EU)
 
     % Display the parameters
 
-    fprintf('----------------------------');
+    fprintf('----------------------------\n');
     fprintf('a_USA: %.4f\n', a_USA);
     fprintf('a_EU: %.4f\n', a_EU);
-    fprintf('----------------------------');
+    fprintf('----------------------------\n');
     fprintf('Beta_z: %.4f\n', Beta_z);
     fprintf('Beta_USA: %.4f\n', Beta_USA);
     fprintf('Beta_EU: %.4f\n', Beta_EU);
-    fprintf('----------------------------');
+    fprintf('----------------------------\n');
     fprintf('gamma_z: %.4f\n', gamma_z);
     fprintf('gamma_USA: %.4f\n', gamma_USA);
     fprintf('gamma_EU: %.4f\n', gamma_EU);
-    fprintf('----------------------------');
+    fprintf('----------------------------\n');
 
     
 
     % Save the parameters to a text file
     fileID = fopen('results.txt', 'a');
 
-    fprintf(fileID,'----------------------------');
+    fprintf(fileID,'----------------------------\n');
     fprintf(fileID,'a_USA: %.4f\n', a_USA);
     fprintf(fileID,'a_EU: %.4f\n', a_EU);
-    fprintf(fileID,'----------------------------');
+    fprintf(fileID,'----------------------------\n');
     fprintf(fileID,'Beta_z: %.4f\n', Beta_z);
     fprintf(fileID,'Beta_USA: %.4f\n', Beta_USA);
     fprintf(fileID,'Beta_EU: %.4f\n', Beta_EU);
-    fprintf(fileID,'----------------------------');
+    fprintf(fileID,'----------------------------\n');
     fprintf(fileID,'gamma_z: %.4f\n', gamma_z);
     fprintf(fileID,'gamma_USA: %.4f\n', gamma_USA);
     fprintf(fileID,'gamma_EU: %.4f\n', gamma_EU);
-    fprintf(fileID,'----------------------------');
+    fprintf(fileID,'----------------------------\n');
 
     % Close the file
     fclose(fileID);
