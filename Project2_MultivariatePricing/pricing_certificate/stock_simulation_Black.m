@@ -36,7 +36,7 @@ function [prices, S0] = stock_simulation_Black(sigmas, F0, rates, rho, date_sett
     %% Simulation of the NIG process
 
     % Stochastic part
-    correlationMatrix = [1 rho; rho 1];
+    correlationMatrix = [sigmas(1)^2 rho*sigmas(1)*sigmas(2); rho*sigmas(1)*sigmas(2) sigmas(2)^2];
     meanVector = [0; 0];
     
     g = mvnrnd(meanVector,correlationMatrix, nSim);
@@ -47,6 +47,6 @@ function [prices, S0] = stock_simulation_Black(sigmas, F0, rates, rho, date_sett
 
     %% Computation of the initial stock
 
-    prices = S0' .* exp(rates' + Xt);
+    prices = S0' .* exp(rates'*TTM + Xt);
 
 end % function stock_simulation_Black
