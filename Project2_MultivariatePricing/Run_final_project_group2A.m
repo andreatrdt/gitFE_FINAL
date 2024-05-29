@@ -170,25 +170,25 @@ end
 % Computation of the historical correlation
 rho = hist_corr(SP500_EUR50);
 
-% Initialization of the parameters
-A = []; b = []; Aeq = []; beq = [];
-lb = zeros(1, 3); ub = [];
-x0 = ones(1, 3);
+% % Initialization of the parameters
+% A = []; b = []; Aeq = []; beq = [];
+% lb = zeros(1, 3); ub = [];
+% x0 = ones(1, 3);
 
 % Recall the parameters
 k1 = params_USA(1); k2 = params_EU(1);
 
-% Calibration of the nuZ parameter
-params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
-    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+% % Calibration of the nuZ parameter
+% params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
+%     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
-nu_1 = params(1);
-nu_2 = params(2);
-nu_z = params(3);
+% nu_1 = params(1);
+% nu_2 = params(2);
+% nu_z = params(3);
 
-% nu_z = sqrt(k1*k2)/rho;
-% nu_1 = k1*nu_z/(nu_z-k1);
-% nu_2 = k2*nu_z/(nu_z-k2);
+nu_z = sqrt(k1*k2)/rho;
+nu_1 = k1*nu_z/(nu_z-k1);
+nu_2 = k2*nu_z/(nu_z-k2);
 
 %% disp the calibrated parameters
 
