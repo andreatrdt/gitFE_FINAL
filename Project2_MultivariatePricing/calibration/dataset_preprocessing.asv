@@ -42,29 +42,19 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 
         %% Comparison for the last implied volatility
         if length(dataset.datesExpiry) == 20 && ii == length(dataset.datesExpiry)
-
-            % Strikes to remove the jumps
             strikes_removal_put = [2000 2200 2400 2600 2700 4900 5000 5100 5200];
             strikes_removal_call = [5300 7200];
 
-            % Creation of the indexes
             [~, idx_removed_strikes_put] = ismember(strikes(idx_put_OTM), strikes_removal_put);
             [~, idx_removed_strikes_call] = ismember(strikes(idx_call_OTM), strikes_removal_call);
 
             idx_put = find(idx_removed_strikes_put == 0);
             idx_call = find(idx_removed_strikes_call == 0) + length(idx_put_OTM);
 
-            % Upgrade of the quantities
             strikes = strikes([idx_put idx_call]);
 
             mid_price_put = mid_price_put(idx_put);
-            mid_price_call = mid_price_call(idx_call - length(idx_put_OTM));
-
-            idx_call_OTM = find(strikes > strike_ATM);
-            idx_put_OTM = find(strikes <= strike_ATM);
-
-            mid_price_call = mid_price_call(idx_call_OTM - length(idx_put_OTM));
-            mid_price_put = mid_price_put(idx_put_OTM);
+            mid_price_call = mid_price_call(idx_call) - 
         end
 
         %% Compute the Black implied volatilities

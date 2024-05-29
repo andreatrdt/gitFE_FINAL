@@ -65,11 +65,8 @@ end
 
 %% POINT 5: Forward Prices
 
-[F0_EU, B_bar_EU] = forward_prices(data_EU, flag);
-[F0_USA, B_bar_USA] = forward_prices(data_USA, flag);
-
-B_EU = B_bar_EU;
-B_USA = B_bar_USA;
+[F0_EU, B_EU] = forward_prices(data_EU, flag);
+[F0_USA, B_USA] = forward_prices(data_USA, flag);
 
 if flag == 1
     figure;
@@ -93,8 +90,8 @@ end
 %% Options selection
 
 % Choice of only OTM options for the further calibration
-data_EU_OTM = OTM_preprocessing(data_EU, B_EU, F0_EU);
-data_USA_OTM = OTM_preprocessing(data_USA, B_USA, F0_USA);
+data_EU_OTM = OTM_preprocessing(data_EU, F0_EU);
+data_USA_OTM = OTM_preprocessing(data_USA, F0_USA);
 
 % Computing the Delta of Black & Scholes over the OTM Call/Put in order to
 % clean dataset from too far from the ATM point prices
