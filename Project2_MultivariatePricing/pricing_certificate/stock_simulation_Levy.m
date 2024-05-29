@@ -1,4 +1,4 @@
-function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z , params_USA , params_EU , F0, B0 , rates , date_settlement)
+function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z , params_USA , params_EU , S0 , rates , TTM)
 % Pricing of the underlying process Si(t)
 % 
 % INPUT:
@@ -13,10 +13,7 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu
 % 
 % USES:
 % function rate_interpolation()
-
-    %% Conventions
-
-    conv_ACT365 = 3;
+;
     
     %% Unpacking of the parameters
 
@@ -52,15 +49,6 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu
     drift_compensator_EU = - 1/kappa_EU * (1 - sqrt(1 - 2*kappa_EU*theta_EU - kappa_EU*sigma_EU^2));
 
     drift_compensator = [drift_compensator_USA, drift_compensator_EU];
-
-    
-    % Computation of the TTM
-    interp_date = datenum(busdate(datetime(date_settlement, 'ConvertFrom', 'datenum') - caldays(1) + calyears(1), 1, eurCalendar));
-    TTM = yearfrac(date_settlement, interp_date, conv_ACT365);
-
-    %% Computation of the initial stock price S(0)
-
-    S0 = F0 .* exp(-rates * TTM);
     
     %% Simulation of the NIG process
 
@@ -70,7 +58,6 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu
     G_1 = random('InverseGaussian', 1, TTM/nu_1, [nSim, 1]);
     G_2 = random('InverseGaussian', 1, TTM/nu_2, [nSim, 1]);
     G_z = random('InverseGaussian', 1, TTM/nu_z, [nSim, 1]);
-    
 
 
     Y_1 = Beta_USA.*G_1 + gamma_USA .* sqrt(TTM .* G_1) .* g;

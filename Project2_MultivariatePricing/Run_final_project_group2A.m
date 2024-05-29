@@ -168,24 +168,24 @@ end
 rho = hist_corr(SP500_EUR50);
 
 % % Initialization of the parameters
-% A = []; b = []; Aeq = []; beq = [];
-% lb = zeros(1, 3); ub = [];
-% x0 = ones(1, 3);
+A = []; b = []; Aeq = []; beq = [];
+lb = 0; ub = [];
+x0 = 1;
 
 % Recall the parameters
 k1 = params_USA(1); k2 = params_EU(1);
 
 % % Calibration of the nuZ parameter
-params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
-    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho), ...
+    x0, A, b, Aeq, beq, lb, ub, [], options);
 
-nu_1 = params(1);
-nu_2 = params(2);
-nu_z = params(3);
+
+nu_z = params;
 
 % nu_z = sqrt(k1*k2)/rho;
-% nu_1 = k1*nu_z/(nu_z-k1);
-% nu_2 = k2*nu_z/(nu_z-k2);
+
+nu_1 = k1*nu_z/(nu_z-k1);
+nu_2 = k2*nu_z/(nu_z-k2);
 
 %% disp the calibrated parameters
 
@@ -208,12 +208,9 @@ gamma_z = sol_EU.x(3);
 Beta_EU = sol_EU.x(4);
 gamma_EU = sol_EU.x(5);
 
-
 %% disp params
 
 disp_marginal_params(sol_USA, sol_EU)
-
-%%
 
 %% Point 8: Black model calibration
 
@@ -256,37 +253,42 @@ if flag == 1
 
 end
 
-%% Point 9: Pricing of the certificate - Levy
 
+%% Point 9: pricing of the certificate
+
+[rate_USA, TTM] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement);
+[rate_EU, ~] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), B_EU, date_settlement);
+
+S0_USA = data_USA.spot; 
+S0_EU = data_EU.spot;
+
+% % Simulation of theunderlying stock prices
+% St_USA = stock_simulation_Levy(params_USA, rate_USA , TTM , S0_USA);
+% St_EU = stock_simulation_Levy(params_EU, rate_EU , TTM , S0_EU);
+
+% Computation of the discount at 1y
+B0_Levy = exp(-rate_USA * TTM);
+
+S0_Levy = [S0_USA; S0_EU];
 
 % [rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
 % [rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
-% 
-% [St_Levy, S0_Levy] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z ,params_USA,params_EU, [interp_F0_USA; interp_F0_EU] ...
-%                 , [B_USA ; B_EU] , [rate_USA; rate_EU] , date_settlement);
-% 
-% % Unpacking the results
-% St_USA_Levy = St_Levy(1,:);
-% St_EU_Levy = St_Levy(2,:);
-% 
-% S0_USA_Levy = S0_Levy(1);
-% S0_EU_Levy = S0_Levy(2);
-% 
-% % Computation of the pricing certificate payoff
-% 
-% 
-% indx_Levy = St_EU_Levy > (0.95 * S0_EU_Levy);
-% 
-% certificate_payoff_Levy = max(St_USA_Levy - S0_USA_Levy, 0) .* indx_Levy;
-% 
-% % Mean price and confidence interval
-% [mean_price_levy, ~, IC_Levy] = normfit(certificate_payoff_Levy);
-% 
-% % Plot of the histogram of positive payoffs
-% certificate_reduced_Levy = certificate_payoff_Levy(find(certificate_payoff_Levy));
-% %histogram(certificate_reduced_Levy);
-% 
-% [mean, ~, IC] = normfit(certificate_reduced_Levy)
+
+[St_Levy] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z ,params_USA,params_EU, S0_Levy , [rate_USA; rate_EU] , TTM);
+
+% Unpacking the results
+St_USA_Levy = St_Levy(1,:);
+St_EU_Levy = St_Levy(2,:);
+
+
+% Computation of the pricing certificate payoff 
+indicator_Levy = St_EU_Levy > (0.95 * S0_EU);
+certificate_payoff_Levy = max(St_EU_Levy - S0_USA, 0) .* indicator_Levy;
+
+% Mean price and confidence interval
+[mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy)
+
+
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 
@@ -294,9 +296,10 @@ end
 [rate_USA, TTM] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement);
 [rate_EU, ~] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), B_EU, date_settlement);
 
-S0_USA = data_USA.spot; S0_EU = data_EU.spot;
+S0_USA = data_USA.spot; 
+S0_EU = data_EU.spot;
 
-% Simulation of theunderlying stock prices
+% % Simulation of theunderlying stock prices
 [St_Black, St_Black_AV] = stock_simulation_Black([sigma_USA; sigma_EU], [S0_USA; S0_EU], ...
     [rate_USA; rate_EU], rho, TTM);
 
