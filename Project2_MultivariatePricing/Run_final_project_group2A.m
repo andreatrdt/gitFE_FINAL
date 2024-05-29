@@ -240,6 +240,8 @@ sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, d
 sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), ...
     x0, A, b, Aeq, beq, lb, ub, [], options);
 
+covariance_black = rho * sigma_EU * sigma_USA;
+
 %% Plots of the prices with calibrated values
 
 if flag == 1
