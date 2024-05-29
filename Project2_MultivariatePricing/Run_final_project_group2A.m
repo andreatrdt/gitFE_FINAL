@@ -112,8 +112,8 @@ end
 % x0 = [10 2 0.5 10 2 0.5];
 % x0 = [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-% x0 = ones(1, 6);
-x0 = [0.1 0.02 0.1 0.1 0.02 0.1];
+x0 = 0.1 * ones(1, 6);
+% x0 = [0.1 0.02 0.1 0.1 0.02 0.1];
 
 initial_cond = x0;
 
@@ -133,7 +133,7 @@ lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
-options = optimset('MaxFunEvals', 50e3, 'Display', 'iter');
+options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
@@ -167,25 +167,25 @@ end
 % Computation of the historical correlation
 rho = hist_corr(SP500_EUR500);
 
-% % Initialization of the parameters
-% A = []; b = []; Aeq = []; beq = [];
-% lb = zeros(1, 3); ub = [];
-% x0 = ones(1, 3);
+% Initialization of the parameters
+A = []; b = []; Aeq = []; beq = [];
+lb = zeros(1, 3); ub = [];
+x0 = ones(1, 3);
 
 % Recall the parameters
 k1 = params_USA(1); k2 = params_EU(1);
 
-% % Calibration of the nuZ parameter
-% params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
-%     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+% Calibration of the nuZ parameter
+params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
-% nu_1 = params(1);
-% nu_2 = params(2);
-% nu_z = params(3);
+nu_1 = params(1);
+nu_2 = params(2);
+nu_z = params(3);
 
-nu_z = sqrt(k1*k2)/rho;
-nu_1 = k1*nu_z/(nu_z-k1);
-nu_2 = k2*nu_z/(nu_z-k2);
+% nu_z = sqrt(k1*k2)/rho;
+% nu_1 = k1*nu_z/(nu_z-k1);
+% nu_2 = k2*nu_z/(nu_z-k2);
 
 %% disp the calibrated parameters
 
@@ -193,20 +193,20 @@ disp_parmaeters(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, save_results);
 
 %% Common and idiosynchratic parameters
 
-sol_USA =  marginal_param(params_USA,nu_z)
+sol_USA =  marginal_param(params_USA,nu_z);
 
-a_USA = sol_USA.x(1)
-Beta_USA = sol_USA.x(4)
-gamma_USA = sol_USA.x(5)
+a_USA = sol_USA.x(1);
+Beta_USA = sol_USA.x(4);
+gamma_USA = sol_USA.x(5);
 
 
-sol_EU = marginal_param(params_EU,nu_z)
+sol_EU = marginal_param(params_EU,nu_z);
 
-a_EU = sol_EU.x(1)
-Beta_z = sol_EU.x(2)
-gamma_z = sol_EU.x(3)
-Beta_EU = sol_EU.x(4)
-gamma_EU = sol_EU.x(5)
+a_EU = sol_EU.x(1);
+Beta_z = sol_EU.x(2);
+gamma_z = sol_EU.x(3);
+Beta_EU = sol_EU.x(4);
+gamma_EU = sol_EU.x(5);
 
 
 %% Point 8: Black model calibration
@@ -252,15 +252,16 @@ end
 
 %% Point 9: Pricing of the certificate - Levy
 
+
 [rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
 [rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
 
-[St_Levy, S0_Levy] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z , [interp_F0_USA; interp_F0_EU] ...
+[St_Levy, S0_Levy] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z ,params_USA,params_EU, [interp_F0_USA; interp_F0_EU] ...
                 , [B_USA ; B_EU] , [rate_USA; rate_EU] , date_settlement);
 
 % Unpacking the results
-St_USA_Levy = St_Levy(:,1);
-St_EU_Levy = St_Levy(:,2);
+St_USA_Levy = St_Levy(1,:);
+St_EU_Levy = St_Levy(2,:);
 
 S0_USA_Levy = S0_Levy(1);
 S0_EU_Levy = S0_Levy(2);

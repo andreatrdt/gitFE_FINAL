@@ -20,6 +20,7 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu
     
     %% Unpacking of the parameters
 
+
     kappa_USA = params_USA(1);
     theta_USA = params_USA(2);
     sigma_USA = params_USA(3);
@@ -70,7 +71,7 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu
     G_2 = random('InverseGaussian', 1, TTM/nu_2, [nSim, 1]);
     G_z = random('InverseGaussian', 1, TTM/nu_z, [nSim, 1]);
     
-    % Creation of Xt dynamic
+
 
     Y_1 = Beta_USA.*G_1 + gamma_USA .* sqrt(TTM .* G_1) .* g;
     Y_2 = Beta_EU.*G_2 + gamma_EU .* sqrt(TTM .* G_2) .* g;
