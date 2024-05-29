@@ -42,7 +42,7 @@ addpath('pricing_certificate');
 data_USA = load("OptionData.mat").mkt;
 data_EU = load("OptionData.mat").mkt_EU;
 
-SP500_EUR500 = load("SPXSX5Ereturns.mat").Returns;
+SP500_EUR50 = load("SPXSX5Ereturns.mat").Returns;
 
 %% Initialization of the base parameters
 
@@ -60,7 +60,7 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 %% Plot of the returns
 
 if flag == 1
-    plot_returns(SP500_EUR500,date_settlement)
+    plot_returns(SP500_EUR50,date_settlement)
 end
 
 %% POINT 5: Forward Prices
@@ -73,14 +73,16 @@ B_USA = B_bar_USA;
 
 if flag == 1
     figure;
-    plot(dates_EU,B_EU,'-*','Color','b');
+    plot(dates_EU,B_EU,'-*','Color','b'); grid on;
     title('Discount factor for the EU market');
+    ylabel('Discounts');
     datetick('x','dd-mmm-yyyy','keepticks')
 
 
     figure;
-    plot(dates_USA,B_USA,'-*','Color','r');
+    plot(dates_USA,B_USA,'-*','Color','r'); grid on;
     title('Discount factor for the USA market');
+    ylabel('Discounts');
     datetick('x','dd-mmm-yyyy','keepticks')
 end
 
@@ -106,6 +108,7 @@ if flag == 1
     surface_vols(data_calib_EU,F0_EU);
     surface_vols(data_calib_USA,F0_USA);
 end
+
 %% Calibration of the model parameters
 
 % Quantities of interest
@@ -165,7 +168,7 @@ end
 %% 2nd Calibration over the rho
 
 % Computation of the historical correlation
-rho = hist_corr(SP500_EUR500);
+rho = hist_corr(SP500_EUR50);
 
 % Initialization of the parameters
 A = []; b = []; Aeq = []; beq = [];
