@@ -1,4 +1,4 @@
-function [prices, S0] = stock_simulation_Black(sigmas, S0, rates, rho, TTM)
+function [prices, pricesAV] = stock_simulation_Black(sigmas, S0, rates, rho, TTM)
 % Pricing of the underlying process Si(t)
 % 
 % INPUT:
@@ -16,7 +16,7 @@ function [prices, S0] = stock_simulation_Black(sigmas, S0, rates, rho, TTM)
     %% Initialization
 
     nSim = 1e6;
-    
+
     %% Simulation of the NIG process
 
     % Stochastic part
@@ -32,5 +32,12 @@ function [prices, S0] = stock_simulation_Black(sigmas, S0, rates, rho, TTM)
     %% Computation of the initial stock
 
     prices = S0' .* exp(rates'*TTM + Xt);
+    
+    %% Computation for the antithetic behaviour
+
+    Xt_AV = -0.5 .* sigmas'.^2 .* TTM - sigmas' .* sqrt(TTM) .* g;
+    pricesAV = S0' .* exp(rates'*TTM + Xt_AV);
+
+    % pricesAV = (prices + pricesAV)/2;
 
 end % function stock_simulation_Black

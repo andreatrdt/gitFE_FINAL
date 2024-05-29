@@ -294,28 +294,37 @@ end
 [rate_USA, TTM] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement);
 [rate_EU, ~] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), B_EU, date_settlement);
 
+S0_USA = data_USA.spot; S0_EU = data_EU.spot;
+
 % Simulation of theunderlying stock prices
-[St_Black, S0_Black] = stock_simulation_Black([sigma_USA; sigma_EU], [data_USA.spot; data_EU.spot], ...
+[St_Black, St_Black_AV] = stock_simulation_Black([sigma_USA; sigma_EU], [S0_USA; S0_EU], ...
     [rate_USA; rate_EU], rho, TTM);
-
-% Unpacking the results
-St_USA_Black = St_Black(:, 1); St_EU_Black = St_Black(:, 2);
-S0_USA_Black = S0_Black(1); S0_EU_Black = S0_Black(2);
-
-% Computation of the pricing certificate payoff
-indicator_Black = St_EU_Black < (0.95 * S0_EU_Black);
-certificate_payoff_Black = max(St_USA_Black - S0_USA_Black, 0) .* indicator_Black;
 
 % Computation of the discount at 1y
 B0_black = exp(-rate_USA * TTM);
 
+%% NORMAL
+
+% Unpacking the results
+St_USA_Black = St_Black(:, 1); St_EU_Black = St_Black(:, 2);
+
+% Computation of the pricing certificate payoff 
+indicator_Black = St_EU_Black < (0.95 * S0_EU);
+certificate_payoff_Black = max(St_USA_Black - S0_USA, 0) .* indicator_Black;
+
 % Mean price and confidence interval
 [mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black)
 
+%% ANTITHETIC
 
-% Plot of the histogram of positive payoffs
-% idx = find(certificate_payoff_Black > 0);
-% certificate_reduced_Black = certificate_payoff_Black(idx);
-% histogram(certificate_reduced_Black);
-% 
-% [mean, ~, IC] = normfit(certificate_reduced_Black)
+% Unpacking the results
+St_USA_Black_AV = St_Black_AV(:, 1); St_EU_Black_AV = St_Black_AV(:, 2);
+
+% Computation of the pricing certificate payoff 
+indicator_Black_AV = St_EU_Black_AV < (0.95 * S0_EU);
+certificate_payoff_Black_AV = max(St_USA_Black_AV - S0_USA, 0) .* indicator_Black_AV;
+
+certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_Black)/2;
+
+% Mean price and confidence interval
+[mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV)
