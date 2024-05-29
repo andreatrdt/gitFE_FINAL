@@ -112,7 +112,8 @@ end
 % x0 = [10 2 0.5 10 2 0.5];
 % x0 = [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-x0 = 0.1 * ones(1, 6);
+% x0 = ones(1, 6);
+x0 = [0.1 0.02 0.1 0.1 0.02 0.1];
 
 initial_cond = x0;
 
@@ -132,7 +133,7 @@ lb = [0; -Inf; 0; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
-options = optimset('MaxFunEvals', 5e3, 'Display', 'iter');
+options = optimset('MaxFunEvals', 50e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
@@ -166,21 +167,25 @@ end
 % Computation of the historical correlation
 rho = hist_corr(SP500_EUR500);
 
-% Initialization of the parameters
-A = []; b = []; Aeq = []; beq = [];
-lb = zeros(1, 3); ub = [];
-x0 = ones(1, 3);
+% % Initialization of the parameters
+% A = []; b = []; Aeq = []; beq = [];
+% lb = zeros(1, 3); ub = [];
+% x0 = ones(1, 3);
 
 % Recall the parameters
 k1 = params_USA(1); k2 = params_EU(1);
 
-% Calibration of the nuZ parameter
-params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
-    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+% % Calibration of the nuZ parameter
+% params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
+%     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
-nu_1 = params(1);
-nu_2 = params(2);
-nu_z = params(3);
+% nu_1 = params(1);
+% nu_2 = params(2);
+% nu_z = params(3);
+
+nu_z = sqrt(k1*k2)/rho;
+nu_1 = k1*nu_z/(nu_z-k1);
+nu_2 = k2*nu_z/(nu_z-k2);
 
 %% disp the calibrated parameters
 
@@ -203,25 +208,25 @@ if save_results == 1
 
     fileID = fopen('results.txt','w');
 
-    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'-----------------------');
     fprintf(fileID,'X0 used :\n');
     fprintf(fileID,'%f \n',initial_cond);
-    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'-----------------------');
     fprintf(fileID,'Calibrated parameters for the USA market: \n');
     fprintf(fileID,'%f \n',params_USA);
-    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'-----------------------');
     fprintf(fileID,'Calibrated parameters for the EU market: \n');
     fprintf(fileID,'%f \n',params_EU);
-    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'-----------------------');
     fprintf(fileID,'calibrated nu_1: \n');
     fprintf(fileID,'%f \n',nu_1);
-    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'-----------------------');
     fprintf(fileID,'calibrated nu_2: \n');
     fprintf(fileID,'%f \n',nu_2);
-    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'-----------------------');
     fprintf(fileID,'calibrated nu_z: \n');
     fprintf(fileID,'%f \n',nu_z);
-    fprintf(fileID,'-----------------------')
+    fprintf(fileID,'-----------------------');
 
 
     fclose(fileID);

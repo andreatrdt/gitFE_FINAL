@@ -11,6 +11,7 @@ function [sol] = marginal_param(params,nu_z)
 % sol: the solution of the optimization problem
 %
 % USES: marginal_param()
+
     kappa = params(1);
     theta = params(2);
     sigma = params(3);
