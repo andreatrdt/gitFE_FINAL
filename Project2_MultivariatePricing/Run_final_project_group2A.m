@@ -42,7 +42,7 @@ addpath('pricing_certificate');
 data_USA = load("OptionData.mat").mkt;
 data_EU = load("OptionData.mat").mkt_EU;
 
-SP500_EUR500 = load("SPXSX5Ereturns.mat").Returns;
+SP500_EUR50 = load("SPXSX5Ereturns.mat").Returns;
 
 %% Initialization of the base parameters
 
@@ -60,7 +60,7 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 %% Plot of the returns
 
 if flag == 1
-    plot_returns(SP500_EUR500,date_settlement)
+    plot_returns(SP500_EUR50,date_settlement)
 end
 
 %% POINT 5: Forward Prices
@@ -165,7 +165,7 @@ end
 %% 2nd Calibration over the rho
 
 % Computation of the historical correlation
-rho = hist_corr(SP500_EUR500);
+rho = hist_corr(SP500_EUR50);
 
 % % Initialization of the parameters
 % A = []; b = []; Aeq = []; beq = [];
