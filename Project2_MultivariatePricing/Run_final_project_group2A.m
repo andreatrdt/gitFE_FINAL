@@ -192,7 +192,7 @@ nu_z = params(3);
 
 %% disp the calibrated parameters
 
-disp_parmaeters(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, save_results);
+disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, save_results);
 
 %% Common and idiosynchratic parameters
 
@@ -211,6 +211,10 @@ gamma_z = sol_EU.x(3);
 Beta_EU = sol_EU.x(4);
 gamma_EU = sol_EU.x(5);
 
+
+%% disp params
+
+disp_marginal_params(sol_USA, sol_EU)
 
 %% Point 8: Black model calibration
 

@@ -1,4 +1,4 @@
-function disp_parmaeters(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
+function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
 
     params_USA = params_marginals(1:3);
     params_EU = params_marginals(4:6);
