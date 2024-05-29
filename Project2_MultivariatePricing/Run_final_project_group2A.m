@@ -176,16 +176,16 @@ rho = hist_corr(SP500_EUR50);
 k1 = params_USA(1); k2 = params_EU(1);
 
 % % Calibration of the nuZ parameter
-% params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
-%     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho)^2, ...
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
-% nu_1 = params(1);
-% nu_2 = params(2);
-% nu_z = params(3);
+nu_1 = params(1);
+nu_2 = params(2);
+nu_z = params(3);
 
-nu_z = sqrt(k1*k2)/rho;
-nu_1 = k1*nu_z/(nu_z-k1);
-nu_2 = k2*nu_z/(nu_z-k2);
+% nu_z = sqrt(k1*k2)/rho;
+% nu_1 = k1*nu_z/(nu_z-k1);
+% nu_2 = k2*nu_z/(nu_z-k2);
 
 %% disp the calibrated parameters
 
@@ -213,6 +213,8 @@ gamma_EU = sol_EU.x(5);
 
 disp_marginal_params(sol_USA, sol_EU)
 
+%%
+
 %% Point 8: Black model calibration
 
 %% Calibration of the model parameters
@@ -237,8 +239,6 @@ sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, d
 sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), ...
     x0, A, b, Aeq, beq, lb, ub, [], options);
 
-covariance_black = rho * sigma_EU * sigma_USA;
-
 %% Plots of the prices with calibrated values
 
 if flag == 1
@@ -259,44 +259,44 @@ end
 %% Point 9: Pricing of the certificate - Levy
 
 
-[rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
-[rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
-
-[St_Levy, S0_Levy] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z ,params_USA,params_EU, [interp_F0_USA; interp_F0_EU] ...
-                , [B_USA ; B_EU] , [rate_USA; rate_EU] , date_settlement);
-
-% Unpacking the results
-St_USA_Levy = St_Levy(1,:);
-St_EU_Levy = St_Levy(2,:);
-
-S0_USA_Levy = S0_Levy(1);
-S0_EU_Levy = S0_Levy(2);
-
-% Computation of the pricing certificate payoff
-
-
-indx_Levy = St_EU_Levy > (0.95 * S0_EU_Levy);
-
-certificate_payoff_Levy = max(St_USA_Levy - S0_USA_Levy, 0) .* indx_Levy;
-
-% Mean price and confidence interval
-[mean_price_levy, ~, IC_Levy] = normfit(certificate_payoff_Levy);
-
-% Plot of the histogram of positive payoffs
-certificate_reduced_Levy = certificate_payoff_Levy(find(certificate_payoff_Levy));
-%histogram(certificate_reduced_Levy);
-
-[mean, ~, IC] = normfit(certificate_reduced_Levy)
+% [rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
+% [rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
+% 
+% [St_Levy, S0_Levy] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z ,params_USA,params_EU, [interp_F0_USA; interp_F0_EU] ...
+%                 , [B_USA ; B_EU] , [rate_USA; rate_EU] , date_settlement);
+% 
+% % Unpacking the results
+% St_USA_Levy = St_Levy(1,:);
+% St_EU_Levy = St_Levy(2,:);
+% 
+% S0_USA_Levy = S0_Levy(1);
+% S0_EU_Levy = S0_Levy(2);
+% 
+% % Computation of the pricing certificate payoff
+% 
+% 
+% indx_Levy = St_EU_Levy > (0.95 * S0_EU_Levy);
+% 
+% certificate_payoff_Levy = max(St_USA_Levy - S0_USA_Levy, 0) .* indx_Levy;
+% 
+% % Mean price and confidence interval
+% [mean_price_levy, ~, IC_Levy] = normfit(certificate_payoff_Levy);
+% 
+% % Plot of the histogram of positive payoffs
+% certificate_reduced_Levy = certificate_payoff_Levy(find(certificate_payoff_Levy));
+% %histogram(certificate_reduced_Levy);
+% 
+% [mean, ~, IC] = normfit(certificate_reduced_Levy)
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 
 % Computation of the rates and initial forwards
-[rate_USA, interp_F0_USA] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), F0_USA, B_USA, date_settlement);
-[rate_EU, interp_F0_EU] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), F0_EU, B_EU, date_settlement);
+[rate_USA, TTM] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement);
+[rate_EU, ~] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), B_EU, date_settlement);
 
 % Simulation of theunderlying stock prices
-[St_Black, S0_Black] = stock_simulation_Black([sigma_USA; sigma_EU], [interp_F0_USA; interp_F0_EU], ...
-    [rate_USA; rate_EU], rho, date_settlement);
+[St_Black, S0_Black] = stock_simulation_Black([sigma_USA; sigma_EU], [data_USA.spot; data_EU.spot], ...
+    [rate_USA; rate_EU], rho, TTM);
 
 % Unpacking the results
 St_USA_Black = St_Black(:, 1); St_EU_Black = St_Black(:, 2);
@@ -306,12 +306,16 @@ S0_USA_Black = S0_Black(1); S0_EU_Black = S0_Black(2);
 indicator_Black = St_EU_Black < (0.95 * S0_EU_Black);
 certificate_payoff_Black = max(St_USA_Black - S0_USA_Black, 0) .* indicator_Black;
 
+% Computation of the discount at 1y
+B0_black = exp(-rate_USA * TTM);
+
 % Mean price and confidence interval
-[mean_price_Black, ~, IC_Black] = normfit(certificate_payoff_Black);
+[mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black)
+
 
 % Plot of the histogram of positive payoffs
-idx = find(certificate_payoff_Black > 0);
-certificate_reduced_Black = certificate_payoff_Black(idx);
-histogram(certificate_reduced_Black);
-
-[mean, ~, IC] = normfit(certificate_reduced_Black)
+% idx = find(certificate_payoff_Black > 0);
+% certificate_reduced_Black = certificate_payoff_Black(idx);
+% histogram(certificate_reduced_Black);
+% 
+% [mean, ~, IC] = normfit(certificate_reduced_Black)

@@ -1,9 +1,8 @@
-function [rate, interp_F0] = interp_pricing_params(dates, F0, B0, date_settlement)
+function [rate, TTM] = interp_pricing_params(dates, B0, date_settlement)
 % Extraction of the interest rate and initial forwards
 % 
 % INPUT:
 % dates:                [DATENUM VEC] dates of the dataset
-% F0:                   [VECTOR] initial forward value
 % B0:                   [VECTOR] initial discount value
 % date_settlement:      [DATENUM] initial date of the certificate
 % 
@@ -25,9 +24,5 @@ function [rate, interp_F0] = interp_pricing_params(dates, F0, B0, date_settlemen
     %% Computation of interest rate
 
     rate = rate_interpolation(dates, B0, date_settlement);
-
-    %% Computation of the interpolated F(0, 1y)
-
-    interp_F0 = interp1(dates, F0, interp_date);
 
 end % function interp_pricing_params

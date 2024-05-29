@@ -1,45 +1,29 @@
-function [prices, S0] = stock_simulation_Black(sigmas, F0, rates, rho, date_settlement)
+function [prices, S0] = stock_simulation_Black(sigmas, S0, rates, rho, TTM)
 % Pricing of the underlying process Si(t)
 % 
 % INPUT:
 % sigmas:               [VECTOR] volatilities of the Black process
-% F0:                   [VECTOR] initial forward value
-% B0:                   [VECTOR] initial discount value
+% S0:                   [VECTOR] initial spot value
+% rates:                [VECTOR] interest rates
 % rho:                  [SCALAR] historical correlation
-% date_settlement:      [DATENUM] initial date of the certificate
+% TTM:                  [SCALAR] time to maturity
 % 
 % OUTPUT:
 % prices:               [MATRIX] underlying stock to be simulated
 % S0:                   [VECTOR] initial value of the stock
-% 
-% USES:
-% function rate_interpolation()
 
-    %% Conventions
-
-    conv_ACT365 = 3;
-
-    %% Unpacking of parameters
 
     %% Initialization
 
     nSim = 1e6;
-
-    % Computation of the TTM
-    interp_date = datenum(busdate(datetime(date_settlement, 'ConvertFrom', 'datenum') - caldays(1) + calyears(1), 1, eurCalendar));
-    TTM = yearfrac(date_settlement, interp_date, conv_ACT365);
-
-    %% Computation of the initial stock price S(0)
-
-    S0 = F0 .* exp(- rates .* TTM);
     
     %% Simulation of the NIG process
 
     % Stochastic part
-    correlationMatrix = [sigmas(1)^2 rho*sigmas(1)*sigmas(2); rho*sigmas(1)*sigmas(2) sigmas(2)^2];
+    covarianceMatrix = [1 rho; rho 1];
     meanVector = [0; 0];
     
-    g = mvnrnd(meanVector,correlationMatrix, nSim);
+    g = mvnrnd(meanVector, covarianceMatrix, nSim);
     
     % Creation of Xt dynamic
 
