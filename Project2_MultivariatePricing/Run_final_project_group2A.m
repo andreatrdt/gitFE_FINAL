@@ -189,53 +189,9 @@ nu_2 = k2*nu_z/(nu_z-k2);
 
 %% disp the calibrated parameters
 
-disp('Calibrated parameters for the USA market: ')
-disp(params_USA)
-disp('Calibrated parameters for the EU market: ')
-disp(params_EU)
-
-
-disp('calibrated nu_1: ')
-disp(nu_1)
-disp('calibrated nu_2: ')
-disp(nu_2)
-disp('calibrated nu_z: ')
-disp(nu_z)
-
-if save_results == 1
-
-    % save results in a txt file
-
-    fileID = fopen('results.txt','w');
-
-    fprintf(fileID,'-----------------------');
-    fprintf(fileID,'X0 used :\n');
-    fprintf(fileID,'%f \n',initial_cond);
-    fprintf(fileID,'-----------------------');
-    fprintf(fileID,'Calibrated parameters for the USA market: \n');
-    fprintf(fileID,'%f \n',params_USA);
-    fprintf(fileID,'-----------------------');
-    fprintf(fileID,'Calibrated parameters for the EU market: \n');
-    fprintf(fileID,'%f \n',params_EU);
-    fprintf(fileID,'-----------------------');
-    fprintf(fileID,'calibrated nu_1: \n');
-    fprintf(fileID,'%f \n',nu_1);
-    fprintf(fileID,'-----------------------');
-    fprintf(fileID,'calibrated nu_2: \n');
-    fprintf(fileID,'%f \n',nu_2);
-    fprintf(fileID,'-----------------------');
-    fprintf(fileID,'calibrated nu_z: \n');
-    fprintf(fileID,'%f \n',nu_z);
-    fprintf(fileID,'-----------------------');
-
-
-    fclose(fileID);
-
-end
-
+disp_parmaeters(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, save_results);
 
 %% Common and idiosynchratic parameters
-
 
 sol_USA =  marginal_param(params_USA,nu_z)
 

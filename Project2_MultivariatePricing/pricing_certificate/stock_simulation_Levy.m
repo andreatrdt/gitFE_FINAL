@@ -1,4 +1,4 @@
-function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z , F0, B0 , rates , date_settlement)
+function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z , params_USA , params_EU , F0, B0 , rates , date_settlement)
 % Pricing of the underlying process Si(t)
 % 
 % INPUT:
@@ -20,6 +20,15 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu
     
     %% Unpacking of the parameters
 
+    kappa_USA = params_USA(1);
+    theta_USA = params_USA(2);
+    sigma_USA = params_USA(3);
+
+
+    kappa_EU = params_EU(1);
+    theta_EU = params_EU(2);
+    sigma_EU = params_EU(3);
+
   
     a_EU = sol_EU.x(1);
     a_USA = sol_USA.x(1);
@@ -37,11 +46,11 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu
 
     nSim = 1e6;
 
-    drift_compensator_USA = - 1/nu_1 * (1 - sqrt(1 - 2*nu_1*Beta_USA - nu_1*gamma_USA^2));
-    drift_compensator_EU = - 1/nu_2 * (1 - sqrt(1 - 2*nu_2*Beta_EU - nu_2*gamma_EU^2));
-    drift_compensator_z = - 1/nu_z * (1 - sqrt(1 - 2*nu_z*Beta_z - nu_z*gamma_z^2));
+    drift_compensator_USA = - 1/kappa_USA * (1 - sqrt(1 - 2*kappa_USA*theta_USA - kappa_USA*sigma_USA^2));
 
-    drift_compensator = [drift_compensator_USA + a_USA * drift_compensator_z, drift_compensator_EU + a_EU * drift_compensator_z];
+    drift_compensator_EU = - 1/kappa_EU * (1 - sqrt(1 - 2*kappa_EU*theta_EU - kappa_EU*sigma_EU^2));
+
+    drift_compensator = [drift_compensator_USA, drift_compensator_EU];
 
     
     % Computation of the TTM
