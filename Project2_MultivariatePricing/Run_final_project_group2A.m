@@ -73,14 +73,16 @@ B_USA = B_bar_USA;
 
 if flag == 1
     figure;
-    plot(dates_EU,B_EU,'-*','Color','b');
+    plot(dates_EU,B_EU,'-*','Color','b'); grid on;
     title('Discount factor for the EU market');
+    ylabel('Discounts');
     datetick('x','dd-mmm-yyyy','keepticks')
 
 
     figure;
-    plot(dates_USA,B_USA,'-*','Color','r');
+    plot(dates_USA,B_USA,'-*','Color','r'); grid on;
     title('Discount factor for the USA market');
+    ylabel('Discounts');
     datetick('x','dd-mmm-yyyy','keepticks')
 end
 
@@ -106,6 +108,7 @@ if flag == 1
     surface_vols(data_calib_EU,F0_EU);
     surface_vols(data_calib_USA,F0_USA);
 end
+
 %% Calibration of the model parameters
 
 % Quantities of interest
