@@ -57,6 +57,12 @@ dates_USA = datenum(data_USA.datesExpiry);
 
 conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
+%% Plot of the penny and initial options
+
+if flag == 1
+    dataset_exploration(data_EU, data_USA, date_settlement)
+end
+
 %% Plot of the returns
 
 if flag == 1
@@ -110,10 +116,10 @@ end
 
 % Quantities of interest
 % x0 = [10 2 0.5 10 2 0.5];
-% x0 = [1 1 0.5 1 1 0.5];
+% x0 = 0.09 * [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-x0 = 0.1 * ones(1, 6);
-% x0 = [0.1 0.02 0.1 0.1 0.02 0.1];
+% x0 = 0.5 * ones(1, 6);
+x0 = [0.1 -0.02 0.1 0.1 -0.02 0.1];
 
 initial_cond = x0;
 

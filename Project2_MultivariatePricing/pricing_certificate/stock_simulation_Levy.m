@@ -13,21 +13,17 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , pa
 % 
 % USES:
 % function rate_interpolation()
-;
     
     %% Unpacking of the parameters
-
 
     kappa_USA = params_USA(1);
     theta_USA = params_USA(2);
     sigma_USA = params_USA(3);
 
-
     kappa_EU = params_EU(1);
     theta_EU = params_EU(2);
     sigma_EU = params_EU(3);
 
-    
     nu_z = params_z(1);
     a_EU = sol_EU(1);
     a_USA = sol_USA(1);
@@ -61,18 +57,19 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , pa
     G_z = random('InverseGaussian', 1, TTM/nu_z, [nSim, 1]);
 
 
-    Y_1 = Beta_USA.*G_1 + gamma_USA .* sqrt(TTM .* G_1) .* g;
-    Y_2 = Beta_EU.*G_2 + gamma_EU .* sqrt(TTM .* G_2) .* g;
-    Z = Beta_z.*G_z + gamma_z .* sqrt(TTM .* G_z) .* g;
+    Y_1 = Beta_USA.*G_1*TTM + gamma_USA .* sqrt(TTM .* G_1) .* g;
+    Y_2 = Beta_EU.*G_2*TTM + gamma_EU .* sqrt(TTM .* G_2) .* g;
+    Z = Beta_z.*G_z*TTM + gamma_z .* sqrt(TTM .* G_z) .* g;
 
     %% Computation of the initial stock
 
     X_1 = Y_1 + a_USA * Z;
+
     X_2 = Y_2 + a_EU * Z;
 
     Xt = [X_1 , X_2];
 
-    prices = S0' .* exp(rates' - drift_compensator * TTM + Xt);
+    prices = S0' .* exp(rates' + drift_compensator * TTM + Xt);
 
     prices = prices';
 
