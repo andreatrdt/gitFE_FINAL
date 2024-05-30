@@ -249,6 +249,7 @@ disp_marginal_params(sol_USA , sol_EU , beta_z, gamma_z,save_results);
 
 % Initialization of the parameters
 x0 = 0.5;
+x0 = 1e-4;
 % Linear inequality constraints
 A = []; b = [];
 % Linear equality constraints
