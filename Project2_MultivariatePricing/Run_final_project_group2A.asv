@@ -15,7 +15,7 @@ clear all; close all; clc;
 tic;
 
 % fix random seed
-rng(2);
+rng(42);
 
 %% Flag
 
@@ -91,28 +91,13 @@ end
 
 if flag
     figure;
-    plot(dates_EU, F0_EU,'-*', 'Color', 'b'); grid on;
-    title('Forwards value EU');
-    ylabel('Forwards');
-    datetick('x','dd-mmm-yyyy','keepticks');
-
-    yf = yearfrac(date_settlement, data_EU.datesExpiry, conv_ACT365);
-    rates = -log(B_EU)./yf;
-    F0_sim_EU = data_EU.spot .* exp(rates .* yf);
-    hold on;  plot(dates_EU, F0_sim_EU, '-o', 'Color', 'r');
-
-    figure;
-    plot(dates_USA, F0_USA, '-*', 'Color', 'b'); grid on;
-    title('Forwards value USA');
-    ylabel('Forwards');
-    datetick('x','dd-mmm-yyyy','keepticks');
-
-    yf = yearfrac(date_settlement, data_USA.datesExpiry, conv_ACT365);
-    rates = -log(B_USA)./yf;
-    F0_sim_USA = data_USA.spot .* exp(rates .* yf);
-    hold on;  plot(dates_USA, F0_sim_USA, '-o', 'Color', 'r');
-  
+    plot(dates_EU,F_EU,'-*','Color','b'); hold on;
+    plot(dates_USA,F_,'-*','Color','r'); grid on;
+    title('Discount factor for the EU market');
+    ylabel('Discounts');
+    datetick('x','dd-mmm-yyyy','keepticks')
 end
+
 
 %% POINT 6: Calibration
 
@@ -141,8 +126,8 @@ end
 % x0 = [10 2 0.5 10 2 0.5];
 % x0 = 0.09 * [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-% x0 = 0.1 * ones(1, 6);
-x0 = [0.1 -0.5 0.15 0.1 -0.5 0.15];
+% x0 = 0.5 * ones(1, 6);
+x0 = [0.1 -0.1 0.1 -0.1 0.1 0.1];
 
 initial_cond = x0;
 
@@ -272,7 +257,6 @@ disp_marginal_params(sol_USA , sol_EU , beta_z, gamma_z,save_results);
 
 % Initialization of the parameters
 x0 = 0.5;
-x0 = 1e-4;
 % Linear inequality constraints
 A = []; b = [];
 % Linear equality constraints
@@ -298,13 +282,13 @@ if flag == 1
     blk_plot_calls_puts_total(data_EU, F0_EU, B_EU, sigma_EU, date_settlement);
     blk_plot_calls_puts_total(data_USA, F0_USA, B_USA, sigma_USA, date_settlement);
 
-    % Plot over the filtered options
-    blk_plot_calls_puts(data_calib_EU, F0_EU, B_EU, sigma_EU, date_settlement);
-    blk_plot_calls_puts(data_calib_USA, F0_USA, B_USA, sigma_USA, date_settlement);
+    %Plot over the filtered options (TO BE IMPLEMENTED)
+    plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
+    plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
 
-    % Plot the implied volatilities over the Calls
-    blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, sigma_EU, date_settlement)
-    blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, sigma_USA, date_settlement)
+    %Plot the implied volatilities over the Calls (TO BE IMPLEMENTED)
+    blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement)
+    blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement)
 
 end
 
