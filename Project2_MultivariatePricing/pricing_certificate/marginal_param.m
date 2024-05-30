@@ -1,4 +1,4 @@
-function [sol] = marginal_param(params,nu_z)
+function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
 %
 % This function computes the common and idiosyncratic parameters for the
 % USA and EU markets
@@ -12,26 +12,40 @@ function [sol] = marginal_param(params,nu_z)
 %
 % USES: marginal_param()
 
-    kappa = params(1);
-    theta = params(2);
-    sigma = params(3);
+    kappa_1 = params_USA(1);
+    theta_1 = params_USA(2);
+    sigma_1 = params_USA(3);
 
-    x = optimvar('x',5);
-    eq1 = x(1) * x(2) - kappa * theta / nu_z == 0;
-    eq2 = (x(3)*x(1))^2 - kappa * sigma^2 / nu_z == 0;
-    eq3 = x(4) +x(1)*x(2) - theta == 0;
-    eq4 = x(5)^2 + x(3)^2 * x(3)^2 - sigma^2 == 0;
-    eq5 = x(3)^2/x(2)^2 - (sigma^2 * nu_z) / (kappa * theta^2) == 0;
+    kappa_2 = params_EU(1);
+    theta_2 = params_EU(2);
+    sigma_2 = params_EU(3);
+
+
+    x = optimvar('x',4);
+
+    % a_1 = x(1)
+    % a_2 = x(2)
+    % Beta_z = x(3)
+    % gamma_z = x(4)
+
+
+    eq1 = x(1) * x(3) - (kappa_1 * sigma_1 / nu_z) == 0;
+
+    eq2 = x(2) * x(3) - (kappa_2 * sigma_2 / nu_z) == 0;
+
+    eq3 = kappa_1 * sigma_1^2 - nu_z * x(1)^2 * x(4) ^2  == 0;
+
+    eq4 = x(1) * x(2) *( x(4)^2 + x(3)^2 * nu_z) / (sqrt(sigma_1^2 + theta_1 ^ 2 * kappa_1^2) * sqrt(sigma_2^2 + theta_2 ^ 2 * kappa_2^2)) - rho == 0;
+
 
     prob = eqnproblem;
     prob.Equations.eq1 = eq1;
     prob.Equations.eq2 = eq2;
     prob.Equations.eq3 = eq3;
     prob.Equations.eq4 = eq4;
-    prob.Equations.eq5 = eq5;
 
 
-    x0.x = 0.1 * ones(5,1);
+    x0.x = 0.1 * ones(4,1);
 
     sol = solve(prob,x0);
 

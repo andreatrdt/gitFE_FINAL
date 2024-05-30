@@ -1,4 +1,4 @@
-function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu_z , params_USA , params_EU , S0 , rates , TTM)
+function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , params_z, params_USA , params_EU , S0 , rates , TTM)
 % Pricing of the underlying process Si(t)
 % 
 % INPUT:
@@ -27,17 +27,18 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , nu
     theta_EU = params_EU(2);
     sigma_EU = params_EU(3);
 
-  
-    a_EU = sol_EU.x(1);
-    a_USA = sol_USA.x(1);
+    
+    nu_z = params_z(1);
+    a_EU = sol_EU(1);
+    a_USA = sol_USA(1);
 
-    Beta_z = sol_EU.x(2);
-    Beta_USA = sol_USA.x(4);
-    Beta_EU = sol_EU.x(4);
+    Beta_z = params_z(2);
+    Beta_USA = sol_USA(2);
+    Beta_EU = sol_EU(2);
 
-    gamma_z = sol_EU.x(3);
-    gamma_USA = sol_USA.x(5);  
-    gamma_EU = sol_EU.x(5);
+    gamma_z = params_z(3);
+    gamma_USA = sol_USA(3);  
+    gamma_EU = sol_EU(3);
 
 
     %% Computation of the support params
