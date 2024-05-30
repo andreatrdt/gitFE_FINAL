@@ -1,4 +1,4 @@
-function [rate, TTM] = interp_pricing_params(dates, B0, date_settlement)
+function [rate, TTM, interp_date] = interp_pricing_params(dates, B0, date_settlement)
 % Extraction of the interest rate and initial forwards
 % 
 % INPUT:
