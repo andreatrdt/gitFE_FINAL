@@ -7,9 +7,6 @@ function blk_plot_calls_puts_total(dataset, F0, B0, sigma, date_settlement)
 % B0:                 [VECTOR] initial discounts B(0, T)
 % sigma:              [SCALAR] volatility
 % date_settlement:    [DATENUM] initial date
-% 
-% USES:
-% function callPriceLewis()
 
     for ii = 1:length(dataset.datesExpiry)
 
