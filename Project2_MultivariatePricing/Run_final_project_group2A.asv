@@ -1,4 +1,4 @@
-z% Final FE Project
+% Final FE Project
 % Group 2A
 %
 % Description:
@@ -343,3 +343,7 @@ certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_
 
 % Mean price and confidence interval
 [mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV)
+
+%% Closed formula
+
+price = blk_semiclosed(data_USA.spot, rate_USA, sigma_USA, sigma_EU, rho, TTM)

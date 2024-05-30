@@ -311,8 +311,11 @@ certificate_payoff_Levy = max(St_EU_Levy - S0_USA, 0) .* indicator_Levy;
 S0_USA = data_USA.spot; 
 S0_EU = data_EU.spot;
 
+F01_USA = S0_USA*exp(rate_USA*TTM);
+F01_EU = S0_EU*exp(rate_EU*TTM);
+
 % % Simulation of theunderlying stock prices
-[St_Black, St_Black_AV] = stock_simulation_Black([sigma_USA; sigma_EU], [S0_USA; S0_EU], ...
+[St_Black, St_Black_AV] = stock_simulation_Black([sigma_USA; sigma_EU], [F01_USA; F01_EU], ...
     [rate_USA; rate_EU], rho, TTM);
 
 % Computation of the discount at 1y
@@ -343,3 +346,7 @@ certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_
 
 % Mean price and confidence interval
 [mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV)
+
+%% Closed formula
+
+price = blk_semiclosed(data_USA.spot, rate_USA, sigma_USA, sigma_EU, rho, TTM)
