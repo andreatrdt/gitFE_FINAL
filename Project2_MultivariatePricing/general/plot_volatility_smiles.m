@@ -46,10 +46,10 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         mid_price_put = mid_price_put + B0(ii) .* (F0(ii) - strikes(1:put_length));
 
         mid_price_call = (dataset.callAsk(ii).prices + dataset.callBid(ii).prices)/2;
-        impvol_OLD= blkimpv(F0(ii), strikes, interest_rate, TTM, [mid_price_put mid_price_call], 'Class', {'Call'});
+        impvol_OLD = blkimpv(F0(ii), strikes, interest_rate, TTM, [mid_price_put mid_price_call], 'Class', {'Call'});
 
         % Compute the implied volatilities NEW
-        impvol_NEW= blkimpv(F0(ii), strikes, interest_rate, TTM, call_prices, 'Class', {'Call'});
+        impvol_NEW = blkimpv(F0(ii), strikes, interest_rate, TTM, call_prices, 'Class', {'Call'});
         
         % figure()
         % plot(strikes,[mid_price_put mid_price_call], strikes, call_prices)
