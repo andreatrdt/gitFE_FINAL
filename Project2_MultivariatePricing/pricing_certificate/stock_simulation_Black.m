@@ -23,6 +23,7 @@ function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rates, rho, TTM
     covarianceMatrix = [TTM rho*TTM; rho*TTM TTM];
     meanVector = [0; 0];
     
+    rng(2);
     g = mvnrnd(meanVector, covarianceMatrix, nSim);
     
     % Creation of Xt dynamic

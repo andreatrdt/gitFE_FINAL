@@ -15,7 +15,7 @@ clear all; close all; clc;
 tic;
 
 % fix random seed
-rng(42);
+rng(2);
 
 %% Flag
 
@@ -118,8 +118,8 @@ end
 % x0 = [10 2 0.5 10 2 0.5];
 % x0 = 0.09 * [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-% x0 = 0.5 * ones(1, 6);
-x0 = [0.1 -0.02 0.1 0.1 -0.02 0.1];
+% x0 = 0.1 * ones(1, 6);
+x0 = [0.1 -0.5 0.15 0.1 -0.5 0.15];
 
 initial_cond = x0;
 
@@ -274,13 +274,13 @@ if flag == 1
     blk_plot_calls_puts_total(data_EU, F0_EU, B_EU, sigma_EU, date_settlement);
     blk_plot_calls_puts_total(data_USA, F0_USA, B_USA, sigma_USA, date_settlement);
 
-    %Plot over the filtered options (TO BE IMPLEMENTED)
-    plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
-    plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
+    % Plot over the filtered options
+    blk_plot_calls_puts(data_calib_EU, F0_EU, B_EU, sigma_EU, date_settlement);
+    blk_plot_calls_puts(data_calib_USA, F0_USA, B_USA, sigma_USA, date_settlement);
 
-    %Plot the implied volatilities over the Calls (TO BE IMPLEMENTED)
-    blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement)
-    blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement)
+    % Plot the implied volatilities over the Calls
+    blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, sigma_EU, date_settlement)
+    blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, sigma_USA, date_settlement)
 
 end
 

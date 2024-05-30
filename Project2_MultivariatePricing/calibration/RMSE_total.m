@@ -67,7 +67,8 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
 
     %% Final adjusting of RMSE
     % RMSE_total = sqrt(sum(RMSE))/N_options;
-    RMSE_total = max(RMSE);
-    % RMSE_total = sum(RMSE);
+
+    % RMSE_total = max(RMSE);
+    RMSE_total = sum(RMSE);
 
 end % function RMSE_total
