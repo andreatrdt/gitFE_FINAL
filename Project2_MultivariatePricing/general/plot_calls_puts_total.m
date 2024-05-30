@@ -27,7 +27,7 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         
         % Parameters FFT
         M = 15;
-        dz = 0.0025;
+        dz = 0.001;
 
         % Parameters pricing
         strikes = dataset.strikes(ii).value;
@@ -35,7 +35,7 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         log_moneyness = log(F0(ii) ./ strikes);
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
         
-        call_prices = callPriceLewis(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
+        call_prices = callPriceLewis_pref(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
         put_prices = call_prices - B0(ii)*(F0(ii) - strikes);
         
         % Parameters comparison

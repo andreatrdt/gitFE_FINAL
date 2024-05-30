@@ -39,7 +39,7 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         interest_rate = -log(B0(ii))/TTM;
 
         % Pricing the calls through FFT
-        call_prices = callPriceLewis(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
+        call_prices = callPriceLewis_pref(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
         
         % Compute the implied volatilities OLD
         mid_price_put = (dataset.putAsk(ii).prices + dataset.putBid(ii).prices)/2;
@@ -50,6 +50,10 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
 
         % Compute the implied volatilities NEW
         impvol_NEW= blkimpv(F0(ii), strikes, interest_rate, TTM, call_prices, 'Class', {'Call'});
+        
+        % figure()
+        % plot(strikes,[mid_price_put mid_price_call], strikes, call_prices)
+        % legend('Mkt','Model')
         
         %% Plot of the volatilities
 

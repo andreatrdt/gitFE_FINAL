@@ -33,7 +33,7 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
     %% Computation 
     
     % for ii = 1:length(dataset.datesExpiry)
-    for ii = 1 : 1
+    for ii = 1 : length(dataset.datesExpiry)
 
         %% Initialization
         put_length = length(dataset.putAsk(ii).prices);
@@ -59,10 +59,12 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
 
         %% Computation of RMSE
 
-        RMSE(ii) = sum((call_prices - mean_call_price).^2) + sum((put_prices - mean_put_price).^2);
+        % RMSE(ii) = sum((call_prices - mean_call_price).^2) + sum((put_prices - mean_put_price).^2);
+        RMSE(ii) = rmse(call_prices,mean_call_price)+rmse(put_prices,mean_put_price);
     end
 
     %% Final adjusting of RMSE
-    RMSE_total = sqrt(sum(RMSE))/N_options;
+    % RMSE_total = sqrt(sum(RMSE))/N_options;
+    RMSE_total = max(RMSE);
 
 end % function RMSE_total
