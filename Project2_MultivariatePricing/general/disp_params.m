@@ -14,7 +14,7 @@ function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
 
     if flag == 1
 
-        fileID = fopen('results.txt', 'a');
+        fileID = fopen('results.txt', 'w');
 
         % Writing and displaying the initial condition
         fprintf(fileID, '-----------------------\n');
