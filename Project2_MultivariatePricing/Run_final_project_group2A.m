@@ -143,6 +143,18 @@ params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data
 params_USA = params_marginals(1:3);
 params_EU = params_marginals(4:6);
 
+%% parameters group 2B
+
+% % sigma_EU = 0.11991
+% % kappa_EU = 0.0024632
+% % theta_EU = 0.021422
+% % sigma_US = 0.10851
+% % kappa_US = 0.0019843
+% % theta_US = 0.021599
+
+% params_USA = [0.0019843 , 0.021599 , 0.10851];
+% params_EU = [0.0024632 , 0.021422 , 0.11991];
+
 
 %% Plots of the prices with calibrated values
 
