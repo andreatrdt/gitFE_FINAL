@@ -27,7 +27,7 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         
         % Parameters FFT
         M = 15;
-        dz = 0.0025;
+        dz = 0.001;
 
 
         % Parameters pricing
