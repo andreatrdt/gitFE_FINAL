@@ -30,8 +30,8 @@ function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
     %% Composition of the equations
 
     % Conditions (9.1) BB
-    eq1 = x(1) * x(3) - (kappa_1 * sigma_1 / nu_z) == 0;
-    eq2 = x(2) * x(3) - (kappa_2 * sigma_2 / nu_z) == 0;
+    eq1 = x(1) * x(3) - (kappa_1 * theta_1 / nu_z) == 0;
+    eq2 = x(2) * x(3) - (kappa_2 * theta_2 / nu_z) == 0;
 
     % Conditions (9.2) BB
     eq3 = kappa_1 * sigma_1^2 - nu_z * x(1)^2 * x(4) ^2  == 0;
