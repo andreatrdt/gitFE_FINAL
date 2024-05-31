@@ -2,7 +2,7 @@ function disp_contract_prices(price_Levy,CI_Levy,price_Blk,CI_Blk,price_Blk_AV,C
     
     disp('Prices of the derivative')
     disp('-----------------------------------------------------------------------------------------------------')
-    fprintf(' Model              |  Price          |  Confidence Interval \n')
+    fprintf(' Model              |  Price               |  Confidence Interval \n')
     disp('-----------------------------------------------------------------------------------------------------')
     fprintf('Levy:               |  %.8f%%              |  [ %.8f%% ,  %.8f%%] \n', price_Levy, CI_Levy(1), CI_Levy(2))
     
