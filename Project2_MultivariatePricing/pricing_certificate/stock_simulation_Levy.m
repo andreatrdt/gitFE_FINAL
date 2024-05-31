@@ -25,9 +25,9 @@ function [stock , S0] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z,
     sigma_EU = params_EU(3);
 
     nu_z = syst_Z(1);
-    nu_EU = idiosync_EU(1);
     nu_USA = idiosync_USA(1);
-
+    nu_EU = idiosync_EU(1);
+    
     Beta_z = syst_Z(2);
     Beta_USA = idiosync_USA(2);
     Beta_EU = idiosync_EU(2);
