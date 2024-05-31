@@ -145,7 +145,7 @@ end
 % x0 = 0.09 * [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
 % x0 = 0.1 * ones(1, 6);
-x0 = [0.9 -0.5 0.15 0.9 -0.5 0.15];
+x0 = [0.3 -0.5 0.15 0.3 -0.5 0.15];
 
 initial_cond = x0;
 
@@ -239,7 +239,10 @@ lb = zeros(1, 3); ub = [];
 x0 = ones(1, 3);
 
 % Calibration of the nu parameters
-params = fmincon(@(params) abs(sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical), ...
+% params = fmincon(@(params) abs(sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical), ...
+%    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+
+params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
 nu_1 = params(1);
@@ -263,7 +266,11 @@ disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, save_results);
 %     theta_2 = params_EU(2);
 %     sigma_2 = params_EU(3);
 
-sol =  marginal_param(params_USA,params_EU , nu_z , rho_historical);
+% Compute the rho obtained from the model
+rho_model_Levy = sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3))));
+
+%
+sol =  marginal_param(params_USA,params_EU , nu_z , rho_model_Levy);
 
 a_USA = sol.x(1);
 a_EU = sol.x(2);
@@ -418,6 +425,6 @@ price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, s
 
 %% Display of the prices:
 
-mean_price_Levy = 0;
-IC_Levy = [0; 0];
+% mean_price_Levy = 0;
+% IC_Levy = [0; 0];
 disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
