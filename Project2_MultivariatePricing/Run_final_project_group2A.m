@@ -375,7 +375,7 @@ indicator_Black = St_EU_Black < (0.95 * S0_EU);
 certificate_payoff_Black = max(St_USA_Black - S0_USA, 0) .* indicator_Black;
 
 % Mean price and confidence interval
-[mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black)
+[mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black);
 
 %% ANTITHETIC
 
@@ -389,9 +389,15 @@ certificate_payoff_Black_AV = max(St_USA_Black_AV - S0_USA, 0) .* indicator_Blac
 certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_Black)/2;
 
 % Mean price and confidence interval
-[mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV)
+[mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV);
 
 %% Closed formula
 
 % Price computed via the closed formula
-price = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, sigma_EU, rho, TTM)
+price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, sigma_EU, rho, TTM);
+
+%% Display of the prices:
+
+mean_price_Levy = 0;
+IC_Levy = [0; 0];
+disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
