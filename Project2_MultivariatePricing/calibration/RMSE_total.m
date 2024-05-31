@@ -61,7 +61,8 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
         %% Computation of RMSE
 
         % RMSE(ii) = sum((call_prices - mean_call_price).^2) + sum((put_prices - mean_put_price).^2);
-        RMSE(ii) = rmse(call_prices,mean_call_price) + rmse(put_prices,mean_put_price);
+        % RMSE(ii) = rmse(call_prices,mean_call_price) + rmse(put_prices,mean_put_price);
+        RMSE(ii) = rmse([call_prices'; put_prices'], [mean_call_price'; mean_put_price']);% + rmse(put_prices,mean_put_price);
 
     end
 
@@ -69,6 +70,6 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
     % RMSE_total = sqrt(sum(RMSE))/N_options;
 
     % RMSE_total = max(RMSE);
-    RMSE_total = sum(RMSE);
+    RMSE_total = max(RMSE);
 
 end % function RMSE_total

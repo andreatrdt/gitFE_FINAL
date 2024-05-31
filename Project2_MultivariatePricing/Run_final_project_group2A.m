@@ -346,17 +346,19 @@ certificate_payoff_Levy = max(St_EU_Levy - S0_USA, 0) .* indicator_Levy;
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 
-% Computation of the rates and initial forwards
-[rate_USA, TTM] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement);
+% Computation of the rates and the time to maturity
+[rate_USA, TTM, interp_date] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement);
 [rate_EU, ~] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), B_EU, date_settlement);
 
+% Stock prices
 S0_USA = data_USA.spot; 
 S0_EU = data_EU.spot;
 
+% Forward prices
 F01_USA = S0_USA*exp(rate_USA*TTM);
 F01_EU = S0_EU*exp(rate_EU*TTM);
 
-% % Simulation of theunderlying stock prices
+% % Simulation of the underlying stock prices
 [St_Black, St_Black_AV] = stock_simulation_Black([sigma_USA; sigma_EU], [F01_USA; F01_EU], ...
     [rate_USA; rate_EU], rho, TTM);
 
@@ -391,4 +393,5 @@ certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_
 
 %% Closed formula
 
-price = blk_semiclosed(data_USA.spot, rate_USA, sigma_USA, sigma_EU, rho, TTM)
+% Price computed via the closed formula
+price = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, sigma_EU, rho, TTM)

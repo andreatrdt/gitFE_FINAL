@@ -1,4 +1,4 @@
-function price = blk_semiclosed(s1_0, rate, sigma1, sigma2, rho, TTM)
+function price = blk_semiclosed(s1_0, rate1, rate2, sigma1, sigma2, rho, TTM)
 
     % discount = exp(-rate*TTM);
     % 
@@ -12,14 +12,14 @@ function price = blk_semiclosed(s1_0, rate, sigma1, sigma2, rho, TTM)
     % price = s1_0*discount* integral( integrand, -inf, xmax );
 
 
-    discount = exp(-rate*TTM);
+    discount = exp(-rate1*TTM);
     
-    d1 = @(w) ((rate-sigma1^2/2)*TTM + rho*w*sigma1 + (1-rho^2)*sigma1^2*TTM ) / (sigma1*sqrt((1-rho^2)*TTM));
+    d1 = @(w) ((rate1-sigma1^2/2)*TTM + rho*w*sigma1 + (1-rho^2)*sigma1^2*TTM ) / (sigma1*sqrt((1-rho^2)*TTM));
     d2 = @(w) d1(w) - sqrt((1-rho^2)*TTM)*sigma1;
     
-    integrand = @(w) ( exp(rate*TTM-sigma1^2*rho^2*TTM/2+sigma1*rho*w) .* normcdf(d1(w)) - normcdf(d2(w)) ) .* exp(-w.^2./(2*TTM))./sqrt(2*pi*TTM);
+    integrand = @(w) ( exp(rate1*TTM-sigma1^2*rho^2*TTM/2+sigma1*rho*w) .* normcdf(d1(w)) - normcdf(d2(w)) ) .* exp(-w.^2./(2*TTM))./sqrt(2*pi*TTM);
     
-    xmax = (log(0.95)-(rate-sigma2^2/2)*TTM)/sigma2;
+    xmax = (log(0.95)-(rate2-sigma2^2/2)*TTM)/sigma2;
     
     price = s1_0*discount* integral( integrand, -inf, xmax );
 end
