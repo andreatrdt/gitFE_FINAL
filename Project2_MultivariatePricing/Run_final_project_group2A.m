@@ -161,7 +161,7 @@ b = [0; 0; 0; 0];
 Aeq = []; beq = [];
 
 % Lower and upper bounds
-lb = [0.8; -Inf; 0; 0.8; -Inf; 0];
+lb = [0.01; -Inf; 0; 0.01; -Inf; 0];
 ub = [];
 
 % Options for the visualization
