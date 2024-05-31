@@ -29,17 +29,14 @@ function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
 
     %% Composition of the equations
 
-    % Conditions (9.1) BB
+    % Cond
     eq1 = x(1) * x(3) - (kappa_1 * sigma_1 / nu_z) == 0;
     eq2 = x(2) * x(3) - (kappa_2 * sigma_2 / nu_z) == 0;
 
-    % Conditions (9.2) BB
     eq3 = kappa_1 * sigma_1^2 - nu_z * x(1)^2 * x(4) ^2  == 0;
-    eq4 = kappa_2 * sigma_2^2 - nu_z * x(2)^2 * x(4) ^2  == 0;
 
-    % eq4 = x(1) * x(2) *( x(4)^2 + x(3)^2 * nu_z) / (sqrt(sigma_1^2 + theta_1 ^ 2 * kappa_1) * sqrt(sigma_2^2 + theta_2 ^ 2 * kappa_2)) - rho == 0;
+    eq4 = x(1) * x(2) *( x(4)^2 + x(3)^2 * nu_z) / (sqrt(sigma_1^2 + theta_1 ^ 2 * kappa_1^2) * sqrt(sigma_2^2 + theta_2 ^ 2 * kappa_2^2)) - rho == 0;
 
-    %% Solving
 
     prob = eqnproblem;
     prob.Equations.eq1 = eq1;
@@ -47,10 +44,10 @@ function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
     prob.Equations.eq3 = eq3;
     prob.Equations.eq4 = eq4;
 
-    % Initial value
+
     x0.x = 0.1 * ones(4,1);
 
-    % Solution
     sol = solve(prob,x0);
+
 
 end % function marginal_param(params,nu_z)
