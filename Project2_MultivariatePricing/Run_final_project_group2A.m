@@ -35,7 +35,7 @@ addpath('forward price');
 addpath('calibration');
 addpath('general');
 addpath('pricing_certificate');
-
+addpath('plotting');
 %% Loading of the matrices
 % Loading of the matrices necessary for the projects
 

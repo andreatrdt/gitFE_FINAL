@@ -26,18 +26,22 @@ function disp_marginal_params(sol_USA , sol_EU ,Beta_z, gamma_z, save_results)
 
     % Display the parameters
 
-    fprintf('----------------------------\n');
-    fprintf('a_USA: %.4f\n', a_USA);
-    fprintf('a_EU: %.4f\n', a_EU);
-    fprintf('----------------------------\n');
-    fprintf('Beta_z: %.4f\n', Beta_z);
-    fprintf('Beta_USA: %.4f\n', Beta_USA);
-    fprintf('Beta_EU: %.4f\n', Beta_EU);
-    fprintf('----------------------------\n');
-    fprintf('gamma_z: %.4f\n', gamma_z);
-    fprintf('gamma_USA: %.4f\n', gamma_USA);
-    fprintf('gamma_EU: %.4f\n', gamma_EU);
-    fprintf('----------------------------\n');
+    disp('----------------------------')
+    fprintf('a_USA: %.4f\n', a_USA)
+    fprintf('a_EU: %.4f\n', a_EU)
+    disp('----------------------------')
+    
+    % Display Beta parameters
+    fprintf('Beta_z: %.4f\n', Beta_z)
+    fprintf('Beta_USA: %.4f\n', Beta_USA)
+    fprintf('Beta_EU: %.4f\n', Beta_EU)
+    disp('----------------------------')
+    
+    % Display gamma parameters
+    fprintf('gamma_z: %.4f\n', gamma_z)
+    fprintf('gamma_USA: %.4f\n', gamma_USA)
+    fprintf('gamma_EU: %.4f\n', gamma_EU)
+    disp('----------------------------')
 
     if save_results
         % Save the parameters to a text file
