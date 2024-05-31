@@ -53,6 +53,9 @@ date_settlement = datenum('2023-07-09');
 dates_EU = datenum(data_EU.datesExpiry);
 dates_USA = datenum(data_USA.datesExpiry);
 
+% Computation of the historical correlation
+rho_historical = hist_corr(SP500_EUR50);
+
 %% Year frac conventions
 
 conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
@@ -142,7 +145,7 @@ end
 % x0 = 0.09 * [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
 % x0 = 0.1 * ones(1, 6);
-x0 = [0.1 -0.5 0.15 0.1 -0.5 0.15];
+x0 = [0.9 -0.5 0.15 0.9 -0.5 0.15];
 
 initial_cond = x0;
 
@@ -158,7 +161,7 @@ b = [0; 0; 0; 0];
 Aeq = []; beq = [];
 
 % Lower and upper bounds
-lb = [0; -Inf; 0; 0; -Inf; 0];
+lb = [0.8; -Inf; 0; 0.8; -Inf; 0];
 ub = [];
 
 % Options for the visualization
@@ -171,6 +174,9 @@ params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data
 % Display of the parameters on the console
 params_USA = params_marginals(1:3);
 params_EU = params_marginals(4:6);
+
+% Explicit useful params
+k1 = params_USA(1); k2 = params_EU(1);
 
 %% parameters group 2B
 
@@ -203,30 +209,44 @@ if flag == 1
 
 end
 
-%% 2nd Calibration over the rho
+%%
 
-% Computation of the historical correlation
-rho = hist_corr(SP500_EUR50);
+%% POINT 7: comparison with the historical correlation
 
-% % Initialization of the parameters
+%% Calibration over the rho - OLD
+
+% Initialization of the parameters
 A = []; b = []; Aeq = []; beq = [];
 lb = 0; ub = [];
 x0 = 1;
 
-% Recall the parameters
-k1 = params_USA(1); k2 = params_EU(1);
-
 % % Calibration of the nuZ parameter
-params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho), ...
+params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho_historical), ...
     x0, A, b, Aeq, beq, lb, ub, [], options);
-
 
 nu_z = params;
 
-% nu_z = sqrt(k1*k2)/rho;
-
 nu_1 = k1*nu_z/(nu_z-k1);
 nu_2 = k2*nu_z/(nu_z-k2);
+
+%% Calibration over the rho - MISMATCH CORR
+
+% Initialization of the parameters
+A = [-1 0 0; 0 -1 0; 0 0 -1]; b = [0; 0; 0];
+Aeq = []; beq = [];
+lb = zeros(1, 3); ub = [];
+
+x0 = ones(1, 3);
+
+% Calibration of the nu parameters
+params = fmincon(@(params) abs(sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical), ...
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+
+nu_1 = params(1);
+nu_2 = params(2);
+nu_z = params(3);
+
+
 
 %% disp the calibrated parameters
 
@@ -243,7 +263,7 @@ disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, save_results);
 %     theta_2 = params_EU(2);
 %     sigma_2 = params_EU(3);
 
-sol =  marginal_param(params_USA,params_EU , nu_z , rho);
+sol =  marginal_param(params_USA,params_EU , nu_z , rho_historical);
 
 a_USA = sol.x(1);
 a_EU = sol.x(2);
@@ -360,7 +380,7 @@ F01_EU = S0_EU*exp(rate_EU*TTM);
 
 % % Simulation of the underlying stock prices
 [St_Black, St_Black_AV] = stock_simulation_Black([sigma_USA; sigma_EU], [F01_USA; F01_EU], ...
-    [rate_USA; rate_EU], rho, TTM);
+    [rate_USA; rate_EU], rho_historical, TTM);
 
 % Computation of the discount at 1y
 B0_black = exp(-rate_USA * TTM);
@@ -394,7 +414,7 @@ certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_
 %% Closed formula
 
 % Price computed via the closed formula
-price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, sigma_EU, rho, TTM);
+price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, sigma_EU, rho_historical, TTM);
 
 %% Display of the prices:
 

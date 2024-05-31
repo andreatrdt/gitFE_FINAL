@@ -1,4 +1,4 @@
-function [c, ceq] = nonlinconstr_corr(params, k1, k2, rho)
+function [c, ceq] = nonlinconstr_corr(params, k1, k2)
 % Computation of the non linear constraints for the nu_Z, both the
 % equality and the inequality ones
 % 

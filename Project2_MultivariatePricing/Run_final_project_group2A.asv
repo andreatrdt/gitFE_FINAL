@@ -15,7 +15,7 @@ clear all; close all; clc;
 tic;
 
 % fix random seed
-rng(42);
+rng(2);
 
 %% Flag
 
@@ -52,6 +52,9 @@ date_settlement = datenum('2023-07-09');
 % Dates Vector:
 dates_EU = datenum(data_EU.datesExpiry);
 dates_USA = datenum(data_USA.datesExpiry);
+
+% Computation of the historical correlation
+rho_historical = hist_corr(SP500_EUR50);
 
 %% Year frac conventions
 
@@ -91,13 +94,28 @@ end
 
 if flag
     figure;
-    plot(dates_EU,F_EU,'-*','Color','b'); hold on;
-    plot(dates_USA,F_,'-*','Color','r'); grid on;
-    title('Discount factor for the EU market');
-    ylabel('Discounts');
-    datetick('x','dd-mmm-yyyy','keepticks')
-end
+    plot(dates_EU, F0_EU,'-*', 'Color', 'b'); grid on;
+    title('Forwards value EU');
+    ylabel('Forwards');
+    datetick('x','dd-mmm-yyyy','keepticks');
 
+    yf = yearfrac(date_settlement, data_EU.datesExpiry, conv_ACT365);
+    rates = -log(B_EU)./yf;
+    F0_sim_EU = data_EU.spot .* exp(rates .* yf);
+    hold on;  plot(dates_EU, F0_sim_EU, '-o', 'Color', 'r');
+
+    figure;
+    plot(dates_USA, F0_USA, '-*', 'Color', 'b'); grid on;
+    title('Forwards value USA');
+    ylabel('Forwards');
+    datetick('x','dd-mmm-yyyy','keepticks');
+
+    yf = yearfrac(date_settlement, data_USA.datesExpiry, conv_ACT365);
+    rates = -log(B_USA)./yf;
+    F0_sim_USA = data_USA.spot .* exp(rates .* yf);
+    hold on;  plot(dates_USA, F0_sim_USA, '-o', 'Color', 'r');
+  
+end
 
 %% POINT 6: Calibration
 
@@ -126,8 +144,8 @@ end
 % x0 = [10 2 0.5 10 2 0.5];
 % x0 = 0.09 * [1 1 0.5 1 1 0.5];
 % x0 = [32 0.04 0.36 11.8 0.09 0.37];
-% x0 = 0.5 * ones(1, 6);
-x0 = [0.1 -0.1 0.1 -0.1 0.1 0.1];
+% x0 = 0.1 * ones(1, 6);
+x0 = [0.9 -0.5 0.15 0.9 -0.5 0.15];
 
 initial_cond = x0;
 
@@ -143,7 +161,7 @@ b = [0; 0; 0; 0];
 Aeq = []; beq = [];
 
 % Lower and upper bounds
-lb = [0; -Inf; 0; 0; -Inf; 0];
+lb = [0.8; -Inf; 0.8; 0; -Inf; 0];
 ub = [];
 
 % Options for the visualization
@@ -188,10 +206,11 @@ if flag == 1
 
 end
 
-%% 2nd Calibration over the rho
+%%
 
-% Computation of the historical correlation
-rho = hist_corr(SP500_EUR50);
+%% POINT 7: comparison with the historical correlation
+
+%% Calibration over the rho - OLD
 
 % % Initialization of the parameters
 A = []; b = []; Aeq = []; beq = [];
@@ -202,16 +221,35 @@ x0 = 1;
 k1 = params_USA(1); k2 = params_EU(1);
 
 % % Calibration of the nuZ parameter
-params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho), ...
+params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho_historical), ...
     x0, A, b, Aeq, beq, lb, ub, [], options);
-
 
 nu_z = params;
 
-% nu_z = sqrt(k1*k2)/rho;
-
 nu_1 = k1*nu_z/(nu_z-k1);
 nu_2 = k2*nu_z/(nu_z-k2);
+
+%% Calibration over the rho - MISMATCH CORR
+
+% Initialization of the parameters
+A = [-1 0 0;
+    0 -1 0;
+    0 0 -1]; b = []; Aeq = []; beq = [];
+lb = zeros(1, 3); ub = [];
+x0 = ones(1, 3);
+
+% Recall the parameters
+k1 = params_USA(1); k2 = params_EU(1);
+
+% Calibration of the nuZ parameter
+params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+
+nu_1 = params(1);
+nu_2 = params(2);
+nu_z = params(3);
+
+
 
 %% disp the calibrated parameters
 
@@ -228,7 +266,7 @@ disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, save_results);
 %     theta_2 = params_EU(2);
 %     sigma_2 = params_EU(3);
 
-sol =  marginal_param(params_USA,params_EU , nu_z , rho);
+sol =  marginal_param(params_USA,params_EU , nu_z , rho_historical);
 
 a_USA = sol.x(1);
 a_EU = sol.x(2);
@@ -257,6 +295,7 @@ disp_marginal_params(sol_USA , sol_EU , beta_z, gamma_z,save_results);
 
 % Initialization of the parameters
 x0 = 0.5;
+x0 = 1e-4;
 % Linear inequality constraints
 A = []; b = [];
 % Linear equality constraints
@@ -282,13 +321,13 @@ if flag == 1
     blk_plot_calls_puts_total(data_EU, F0_EU, B_EU, sigma_EU, date_settlement);
     blk_plot_calls_puts_total(data_USA, F0_USA, B_USA, sigma_USA, date_settlement);
 
-    %Plot over the filtered options (TO BE IMPLEMENTED)
-    plot_calls_puts(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement);
-    plot_calls_puts(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement);
+    % Plot over the filtered options
+    blk_plot_calls_puts(data_calib_EU, F0_EU, B_EU, sigma_EU, date_settlement);
+    blk_plot_calls_puts(data_calib_USA, F0_USA, B_USA, sigma_USA, date_settlement);
 
-    %Plot the implied volatilities over the Calls (TO BE IMPLEMENTED)
-    blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, params_EU, date_settlement)
-    blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, params_USA, date_settlement)
+    % Plot the implied volatilities over the Calls
+    blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, sigma_EU, date_settlement)
+    blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, sigma_USA, date_settlement)
 
 end
 
@@ -330,19 +369,21 @@ certificate_payoff_Levy = max(St_EU_Levy - S0_USA, 0) .* indicator_Levy;
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 
-% Computation of the rates and initial forwards
-[rate_USA, TTM] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement);
+% Computation of the rates and the time to maturity
+[rate_USA, TTM, interp_date] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement);
 [rate_EU, ~] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), B_EU, date_settlement);
 
+% Stock prices
 S0_USA = data_USA.spot; 
 S0_EU = data_EU.spot;
 
+% Forward prices
 F01_USA = S0_USA*exp(rate_USA*TTM);
 F01_EU = S0_EU*exp(rate_EU*TTM);
 
-% % Simulation of theunderlying stock prices
+% % Simulation of the underlying stock prices
 [St_Black, St_Black_AV] = stock_simulation_Black([sigma_USA; sigma_EU], [F01_USA; F01_EU], ...
-    [rate_USA; rate_EU], rho, TTM);
+    [rate_USA; rate_EU], rho_historical, TTM);
 
 % Computation of the discount at 1y
 B0_black = exp(-rate_USA * TTM);
@@ -357,7 +398,7 @@ indicator_Black = St_EU_Black < (0.95 * S0_EU);
 certificate_payoff_Black = max(St_USA_Black - S0_USA, 0) .* indicator_Black;
 
 % Mean price and confidence interval
-[mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black)
+[mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black);
 
 %% ANTITHETIC
 
@@ -371,8 +412,15 @@ certificate_payoff_Black_AV = max(St_USA_Black_AV - S0_USA, 0) .* indicator_Blac
 certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_Black)/2;
 
 % Mean price and confidence interval
-[mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV)
+[mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV);
 
 %% Closed formula
 
-price = blk_semiclosed(data_USA.spot, rate_USA, sigma_USA, sigma_EU, rho, TTM)
+% Price computed via the closed formula
+price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, sigma_EU, rho_historical, TTM);
+
+%% Display of the prices:
+
+mean_price_Levy = 0;
+IC_Levy = [0; 0];
+disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
