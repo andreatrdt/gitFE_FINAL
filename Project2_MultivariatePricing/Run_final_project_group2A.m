@@ -371,7 +371,7 @@ St_EU_Levy = St_Levy(2,:);
 
 % Computation of the pricing certificate payoff 
 indicator_Levy = St_EU_Levy < (0.95 * S0_EU);
-certificate_payoff_Levy = max(St_EU_Levy - S0_USA, 0) .* indicator_Levy;
+certificate_payoff_Levy = max(St_USA_Levy - S0_USA, 0) .* indicator_Levy;
 
 % Mean price and confidence interval
 [mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy);
