@@ -69,7 +69,7 @@ function [prices , S0] = stock_simulation_Levy(sol_USA, sol_EU, nu_1 , nu_2 , pa
 
     Xt = [X_1 , X_2];
 
-    prices = S0' .* exp(rates' + drift_compensator * TTM + Xt);
+    prices = S0' .* exp((rates' + drift_compensator) * TTM + Xt);
 
     prices = prices';
 
