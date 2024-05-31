@@ -48,7 +48,7 @@ function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
     prob.Equations.eq4 = eq4;
 
     % Initial value
-    x0.x = 0.1 * ones(4,1);
+    x0.x = ones(4,1);
 
     % Solution
     sol = solve(prob,x0);

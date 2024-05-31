@@ -1,4 +1,4 @@
-function rate = rate_interpolation(dates, discounts, date_settlement)
+function rate = rate_interpolation(dates, discounts, date_settlement, interp_date)
 % Interpolation of the 1y zero rate
 % 
 % INPUT:
@@ -20,10 +20,6 @@ function rate = rate_interpolation(dates, discounts, date_settlement)
     %% Computation of the Zero Rates
 
     rates = zeroRates(dates, discounts);
-
-    %% Choice of the date
-
-    interp_date = datenum(busdate(datetime(dates(1), 'ConvertFrom', 'datenum') - caldays(1) + calyears(1), 1, eurCalendar));
 
     %% Interpolation of the required rate
 
