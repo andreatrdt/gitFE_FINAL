@@ -350,6 +350,19 @@ year_to_maturity = 1;
 [rate_USA, TTM] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement, year_to_maturity);
 [rate_EU, ~] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), B_EU, date_settlement, year_to_maturity);
 
+yf = yearfrac(date_settlement, data_USA.datesExpiry, conv_ACT365);
+interp_date = datenum(busdate(datetime(date_settlement, 'ConvertFrom', 'datenum') - caldays(1) + calyears(year_to_maturity), 1, eurCalendar));
+
+if flag
+    figure;
+    plot(dates_USA, -log(B_USA)./yf, '-*', 'Color', 'b'); hold on;
+    plot(interp_date, rate_USA, 'o', 'Color', 'r'); grid on;
+    title('Rates USA');
+    ylabel('Rates');
+    datetick('x','dd-mmm-yyyy','keepticks');
+end
+
+    
 S0_USA = data_USA.spot; S0_EU = data_EU.spot;
 
 % % Simulation of theunderlying stock prices
@@ -359,19 +372,19 @@ S0_USA = data_USA.spot; S0_EU = data_EU.spot;
 % Computation of the discount at 1y
 B0_Levy = exp(-rate_USA * TTM);
 
-S0_Levy = [S0_USA; S0_EU];
+S0_Levy = [S0_USA S0_EU];
 rates_Levy = [rate_USA; rate_EU];
 
 St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
 
 % Unpacking the results
-St_USA_Levy = St_Levy(1,:);
-St_EU_Levy = St_Levy(2,:);
+St_USA_Levy = St_Levy(:, 1);
+St_EU_Levy = St_Levy(:, 2);
 
 
 % Computation of the pricing certificate payoff 
 indicator_Levy = St_EU_Levy < (0.95 * S0_EU);
-certificate_payoff_Levy = max(St_EU_Levy - S0_USA, 0) .* indicator_Levy;
+certificate_payoff_Levy = max(St_USA_Levy - S0_USA, 0) .* indicator_Levy;
 
 % Mean price and confidence interval
 [mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy);
