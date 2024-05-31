@@ -361,7 +361,7 @@ indicator_Levy = St_EU_Levy > (0.95 * S0_EU);
 certificate_payoff_Levy = max(St_EU_Levy - S0_USA, 0) .* indicator_Levy;
 
 % Mean price and confidence interval
-[mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy)
+[mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy);
 
 
 %% Point 9: Pricing of the certificate - Brownian Motion

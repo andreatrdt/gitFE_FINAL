@@ -65,35 +65,34 @@ function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
 
     end
 
-        % Display initial condition
-        disp('-----------------------')
-        disp('X0 used:')
-        fprintf('%f\n', initial_cond)
-        disp('-----------------------')
+    % Display initial condition
+    disp('-----------------------')        
+    disp('X0 used:')
+    fprintf('%f\n', initial_cond)
+    disp('-----------------------')
         
-        % Display calibrated parameters for the USA market
-        disp('Calibrated parameters for the USA market:')
-        fprintf('kappa_USA: %f\n', kappa_USA)
-        fprintf('theta_USA: %f\n', theta_USA)
-        fprintf('sigma_USA: %f\n', sigma_USA)
-        disp('-----------------------')
+    % Display calibrated parameters for the USA market
+    disp('Calibrated parameters for the USA market:')
+    fprintf('kappa_USA: %f\n', kappa_USA)
+    fprintf('theta_USA: %f\n', theta_USA)
+    fprintf('sigma_USA: %f\n', sigma_USA)
+    disp('-----------------------')
         
-        % Display calibrated parameters for the EU market
-        disp('Calibrated parameters for the EU market:')
-        fprintf('kappa_EU: %f\n', kappa_EU)
-        fprintf('theta_EU: %f\n', theta_EU)
-        fprintf('sigma_EU: %f\n', sigma_EU)
-        disp('-----------------------')
+    % Display calibrated parameters for the EU market
+    disp('Calibrated parameters for the EU market:')
+    fprintf('kappa_EU: %f\n', kappa_EU)
+    fprintf('theta_EU: %f\n', theta_EU)
+    fprintf('sigma_EU: %f\n', sigma_EU)
+    disp('-----------------------')
         
-        % Display calibrated nu parameters
-        disp('Calibrated nu parameters:')
-        fprintf('nu_1: %f\n', nu_1)
-        disp('-----------------------')
-        fprintf('nu_2: %f\n', nu_2)
-        disp('-----------------------')
-        fprintf('nu_z: %f\n', nu_z)
-        disp('-----------------------')
-    end
+    % Display calibrated nu parameters
+    disp('Calibrated nu parameters:')
+    fprintf('nu_1: %f\n', nu_1)
+    disp('-----------------------')
+    fprintf('nu_2: %f\n', nu_2)
+    disp('-----------------------')
+    fprintf('nu_z: %f\n', nu_z)
+    disp('-----------------------')
     
 
 
