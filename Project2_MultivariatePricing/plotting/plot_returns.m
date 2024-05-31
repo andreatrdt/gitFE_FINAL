@@ -2,6 +2,7 @@ function plot_returns(data,date_settlement)
 %
 % INPUTS:
 % data: struct od the DATA used
+% date_settlement: the date of the settlement
 
 % OUTPUTS:
 % plot the returns of the options

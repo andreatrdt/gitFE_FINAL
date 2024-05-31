@@ -2,11 +2,14 @@ function [stock , S0] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z,
 % Pricing of the underlying process Si(t)
 % 
 % INPUT:
-% dataset:              initial dataset
-% params:               calibration NIG parameters [k, theta, sigma]
-% F0:                   initial forward value
-% B0:                   initial discount value
-% date_settlement:      initial date of the certificate
+% idiosync_USA:         idiosyncratic parameters for the USA
+% idiosync_EU:          idiosyncratic parameters for the EU
+% syst_Z:               systematic parameters for the Z process
+% params_USA:           parameters for the USA
+% params_EU:            parameters for the EU
+% S0:                   initial stock value
+% rates:                interest rates
+% TTM:                  time to maturity
 % 
 % OUTPUT:
 % stock:                underlying stock to be simulated

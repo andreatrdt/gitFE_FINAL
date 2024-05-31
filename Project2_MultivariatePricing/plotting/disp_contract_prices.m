@@ -1,5 +1,18 @@
 function disp_contract_prices(price_Levy,CI_Levy,price_Blk,CI_Blk,price_Blk_AV,CI_Blk_AV,price_SemiclosedBlk)
-    
+%
+% INPUT:
+% price_Levy:           [SCALAR] price of the derivative under the Levy model
+% CI_Levy:              [VECTOR] confidence interval for the Levy model
+% price_Blk:            [SCALAR] price of the derivative under the Black model
+% CI_Blk:               [VECTOR] confidence interval for the Black model
+% price_Blk_AV:         [SCALAR] price of the derivative under the Black model with AV
+% CI_Blk_AV:            [VECTOR] confidence interval for the Black model with AV
+% price_SemiclosedBlk:  [SCALAR] price of the derivative under the Black model with semi-closed formula
+%
+% OUTPUT:
+% Display the prices of the derivative and their confidence intervals
+%
+% USES: disp_contract_prices()
     disp('Prices of the derivative')
     disp('-----------------------------------------------------------------------------------------------------')
     fprintf(' Model              |  Price               |  Confidence Interval \n')

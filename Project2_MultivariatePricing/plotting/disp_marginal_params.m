@@ -3,7 +3,8 @@ function disp_marginal_params(sol_USA , sol_EU ,Beta_z, gamma_z, save_results)
 % INPUTS
 % sol_USA: structure containing the solution of the optimization problem
 % sol_EU: structure containing the solution of the optimization problem
-% nu_z: the calibrated nu_z
+% Beta_z: the calibrated beta_z
+% gamma_z: the calibrated gamma
 % save_results: a boolean to save the results to a text file
 %
 % OUTPUTS

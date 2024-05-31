@@ -5,6 +5,7 @@ function rate = rate_interpolation(dates, discounts, date_settlement, interp_dat
 % dates:                 dates of required points
 % discounts:             discounts of the required points
 % date_settlement:       initial date of computation
+% interp_date:           date of interpolation
 % 
 % OUTPUT:
 % rate:                  zero rate for the GK formula
