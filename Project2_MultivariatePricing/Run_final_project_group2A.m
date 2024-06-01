@@ -295,7 +295,7 @@ syst_Z = [nu_z , beta_z, gamma_z];
 
 %% Display of the parameters over the command window
 
-% disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z,save_results);
+disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z,save_results);
 
 %%
 

@@ -20,7 +20,6 @@ function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
     theta_USA = params_USA(2);
     sigma_USA = params_USA(3);
 
-
     kappa_EU = params_EU(1);
     theta_EU = params_EU(2);
     sigma_EU = params_EU(3);

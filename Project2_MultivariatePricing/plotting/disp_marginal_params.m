@@ -14,16 +14,14 @@ function disp_marginal_params(sol_USA , sol_EU ,Beta_z, gamma_z, save_results)
 
 
      % Extract parameters for the USA
-     a_USA = sol_USA(1);
+     a_USA = sol_USA(4);
      Beta_USA = sol_USA(2);
      gamma_USA = sol_USA(3);
   
      % Extract parameters for the EU
-     a_EU = sol_EU(1);
+     a_EU = sol_EU(4);
      Beta_EU = sol_EU(2);
      gamma_EU = sol_EU(3);
-
-
 
     % Display the parameters
 
