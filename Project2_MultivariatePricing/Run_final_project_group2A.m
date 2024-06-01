@@ -1,34 +1,42 @@
-% Final FE Project
+% Final FE Project: Multivariate Levy Pricing
 % Group 2A
 %
 % Description:
+% The project focus on the comparison of 2 different methods of model
+% pricing; an exponential Levy framework with multiple parameters and a
+% Black framework which takes consideration of the volatility only.
+% Moreover, the project requires the pricing of an exotic derivative
+% between the S&P500 and the EURO50 markets.
 
 % Marco Maspes
-% Matteo Torba
 % Andrea Tarditi
-
+% Matteo Torba
 
 %% Clearing the workspace
 clear all; close all; clc;
+warning('off', 'all');
 
-% start run time
+% Start run time computation
 tic;
 
-% fix random seed
+% Fix random seed for the simulation
 rng(42);
 
-%% Flag
+
+%% Flags
 
 % flag = 1 for plotting enabled
 % flag = 0 for plotting disabled
 
 flag = 0;
 
-% save results
+% save_results = 1 for text saving enabled
+% save_results = 0 for text saving disabled
 
 save_results = 1;
 
 %% Load folders
+% Introduced multiple folders for a better division of the scripts
 
 addpath('data');
 addpath('forward price');
@@ -38,7 +46,7 @@ addpath('pricing_certificate');
 addpath('plotting');
 
 %% Loading of the matrices
-% Loading of the matrices necessary for the projects
+% Loading of the initial matrices and structures
 
 data_USA = load("OptionData.mat").mkt;
 data_EU = load("OptionData.mat").mkt_EU;
@@ -61,7 +69,7 @@ rho_historical = hist_corr(SP500_EUR50);
 
 conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 
-%% Plot of the penny and initial options
+%% Plot of initial options
 
 if flag == 1
     dataset_exploration(data_EU, data_USA, date_settlement)
@@ -73,50 +81,20 @@ if flag == 1
     plot_returns(SP500_EUR50,date_settlement)
 end
 
+%%
+
 %% POINT 5: Forward Prices
+% Computation of the forward prices through the Synthetic Forwards
+% procedure
 
 [F0_EU, B_EU] = forward_prices(data_EU, flag);
 [F0_USA, B_USA] = forward_prices(data_USA, flag);
 
-if flag
-    figure;
-    plot(dates_EU,B_EU,'-*','Color','b'); grid on;
-    title('Discount factor for the EU market');
-    ylabel('Discounts');
-    datetick('x','dd-mmm-yyyy','keepticks')
-
-
-    figure;
-    plot(dates_USA,B_USA,'-*','Color','r'); grid on;
-    title('Discount factor for the USA market');
-    ylabel('Discounts');
-    datetick('x','dd-mmm-yyyy','keepticks')
+if flag == 1
+    plot_forwards_discounts(data_EU, data_USA, B_EU, B_USA, F0_EU, F0_USA, date_settlement);
 end
 
-if flag
-    figure;
-    plot(dates_EU, F0_EU,'-*', 'Color', 'b'); grid on;
-    title('Forwards value EU');
-    ylabel('Forwards');
-    datetick('x','dd-mmm-yyyy','keepticks');
-
-    yf = yearfrac(date_settlement, data_EU.datesExpiry, conv_ACT365);
-    rates = -log(B_EU)./yf;
-    F0_sim_EU = data_EU.spot .* exp(rates .* yf);
-    hold on;  plot(dates_EU, F0_sim_EU, '-o', 'Color', 'r');
-
-    figure;
-    plot(dates_USA, F0_USA, '-*', 'Color', 'b'); grid on;
-    title('Forwards value USA');
-    ylabel('Forwards');
-    datetick('x','dd-mmm-yyyy','keepticks');
-
-    yf = yearfrac(date_settlement, data_USA.datesExpiry, conv_ACT365);
-    rates = -log(B_USA)./yf;
-    F0_sim_USA = data_USA.spot .* exp(rates .* yf);
-    hold on;  plot(dates_USA, F0_sim_USA, '-o', 'Color', 'r');
-  
-end
+%%
 
 %% POINT 6: Calibration
 
@@ -216,19 +194,19 @@ end
 
 %% Calibration over the rho - OLD
 
-% Initialization of the parameters
-A = []; b = []; Aeq = []; beq = [];
-lb = 0; ub = [];
-x0 = 1;
-
+% % Initialization of the parameters
+% A = []; b = []; Aeq = []; beq = [];
+% lb = 0; ub = [];
+% x0 = 1;
+% 
 % % Calibration of the nuZ parameter
-params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho_historical), ...
-    x0, A, b, Aeq, beq, lb, ub, []);%, options);
-
-nu_z = params;
-
-nu_1 = k1*nu_z/(nu_z-k1);
-nu_2 = k2*nu_z/(nu_z-k2);
+% params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho_historical), ...
+%     x0, A, b, Aeq, beq, lb, ub, [], options);
+% 
+% nu_z = params;
+% 
+% nu_1 = k1*nu_z/(nu_z-k1);
+% nu_2 = k2*nu_z/(nu_z-k2);
 
 %% Calibration over the rho - MISMATCH CORR
 
@@ -365,10 +343,6 @@ end
     
 S0_USA = data_USA.spot; S0_EU = data_EU.spot;
 
-% % Simulation of theunderlying stock prices
-% St_USA = stock_simulation_Levy(params_USA, rate_USA , TTM , S0_USA);
-% St_EU = stock_simulation_Levy(params_EU, rate_EU , TTM , S0_EU);
-
 % Computation of the discount at 1y
 B0_Levy = exp(-rate_USA * TTM);
 
@@ -380,7 +354,6 @@ St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, p
 % Unpacking the results
 St_USA_Levy = St_Levy(:, 1);
 St_EU_Levy = St_Levy(:, 2);
-
 
 % Computation of the pricing certificate payoff 
 indicator_Levy = St_EU_Levy < (0.95 * S0_EU);
