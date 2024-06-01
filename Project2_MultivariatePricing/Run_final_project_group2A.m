@@ -15,7 +15,7 @@ clear all; close all; clc;
 tic;
 
 % fix random seed
-rng(2);
+rng(42);
 
 %% Flag
 
@@ -170,7 +170,7 @@ options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
-    F0_EU, B_EU, F0_USA, B_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
+    F0_EU, B_EU, F0_USA, B_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params));%, options);
 
 % Display of the parameters on the console
 params_USA = params_marginals(1:3);
@@ -223,7 +223,7 @@ x0 = 1;
 
 % % Calibration of the nuZ parameter
 params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho_historical), ...
-    x0, A, b, Aeq, beq, lb, ub, [], options);
+    x0, A, b, Aeq, beq, lb, ub, []);%, options);
 
 nu_z = params;
 
@@ -244,7 +244,7 @@ x0 = ones(1, 3);
 %    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
 params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
-    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2));%, options);
 
 nu_1 = params(1);
 nu_2 = params(2);
@@ -252,7 +252,7 @@ nu_z = params(3);
 
 %% disp the calibrated parameters
 
-disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, save_results);
+disp_params(params_marginals, initial_cond, save_results);
 
 %% Common and idiosynchratic parameters
 
@@ -295,7 +295,7 @@ syst_Z = [nu_z , beta_z, gamma_z];
 
 %% Display of the parameters over the command window
 
-disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z,save_results);
+disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z, nu_z, save_results);
 
 %%
 
@@ -318,11 +318,11 @@ options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration of sigma EU
 sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, [], options);
+    x0, A, b, Aeq, beq, lb, ub, []);%, options);
 
 % Calibration of sigma USA
 sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, [], options);
+    x0, A, b, Aeq, beq, lb, ub, []);%, options);
 
 %% Plots of the prices with calibrated values
 

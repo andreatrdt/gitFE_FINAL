@@ -1,4 +1,4 @@
-function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
+function disp_params(params_marginals, initial_cond, flag)
 %
 % INPUTS
 % params_marginals: the calibrated parameters for the marginals
@@ -29,11 +29,10 @@ function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
         fileID = fopen('results.txt', 'w');
 
         % Writing and displaying the initial condition
-        fprintf(fileID, '-----------------------\n');
+        fprintf(fileID,'PARAMETERS obtained by calibration:\n');
         fprintf(fileID, 'X0 used :\n');
-        fprintf(fileID, '%f \n', initial_cond);
+        fprintf(fileID, '%f \n', initial_cond');
         fprintf(fileID, '-----------------------\n');
-        
 
         % Writing and displaying the USA market parameters
         fprintf(fileID, 'Calibrated parameters for the USA market: \n');
@@ -49,16 +48,6 @@ function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
         fprintf(fileID, 'sigma_EU: %f \n', sigma_EU);
         fprintf(fileID, '-----------------------\n');
 
-        % Writing and displaying the calibrated nu parameters
-        fprintf(fileID, 'calibrated nu_1: \n');
-        fprintf(fileID, '%f \n', nu_1);
-        fprintf(fileID, '-----------------------\n');
-        fprintf(fileID, 'calibrated nu_2: \n');
-        fprintf(fileID, '%f \n', nu_2);
-        fprintf(fileID, '-----------------------\n');
-        fprintf(fileID, 'calibrated nu_z: \n');
-        fprintf(fileID, '%f \n', nu_z);
-        fprintf(fileID, '-----------------------\n');
 
         fclose(fileID);
 
@@ -68,6 +57,9 @@ function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
     disp('-----------------------')        
     disp('X0 used:')
     fprintf('%f\n', initial_cond)
+
+    fprintf('PARAMETERS obtained by calibration:\n');
+
     disp('-----------------------')
         
     % Display calibrated parameters for the USA market
@@ -84,15 +76,6 @@ function disp_params(params_marginals, nu_1 ,nu_2 ,nu_z, initial_cond, flag)
     fprintf('sigma_EU: %f\n', sigma_EU)
     disp('-----------------------')
         
-    % Display calibrated nu parameters
-    disp('Calibrated nu parameters:')
-    fprintf('nu_1: %f\n', nu_1)
-    disp('-----------------------')
-    fprintf('nu_2: %f\n', nu_2)
-    disp('-----------------------')
-    fprintf('nu_z: %f\n', nu_z)
-    disp('-----------------------')
-    
 
 
 end
