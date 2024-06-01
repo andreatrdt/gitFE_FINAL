@@ -117,6 +117,8 @@ if flag == 1
     surface_vols(data_calib_USA,F0_USA);
 end
 
+%% Multi-calibration comparison
+
 %% Calibration of the model parameters
 
 % Quantities of interest

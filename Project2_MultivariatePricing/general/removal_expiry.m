@@ -1,12 +1,16 @@
-function dataset_renovated = removal_expiry(dataset, indexes)
+function [dataset_renovated, F0_renovated, B0_renovated] = removal_expiry(dataset, F0, B0, indexes)
 % Removal of a specific expiry after preprocessing decisions
 % 
 % INPUT:
 % dataset:                 [STRUCT] dataset from the mkt
+% F0:                      [VECTOR] initial fwd 
+% B0:                      [VECTOR] initial discount 
 % indexes:                 [VECTOR] expiry to remove
 % 
 % OUTPUT:
 % dataset_renovated:       [STRUCT] dataset modified
+% F0_renovated:            [VECTOR] initial fwd modified
+% B0_renovated:            [VECTOR] initial discount modified
 
     %% Introductive values
     length_dataset = length(dataset.datesExpiry);
@@ -19,14 +23,25 @@ function dataset_renovated = removal_expiry(dataset, indexes)
         end
     end
 
+    %% Controls
+    % Control that F0 and B0 are columns
+    
+    if (size(F0, 2) > size(F0, 1))
+        F0 = F0';
+    end
+
+    if (size(B0, 2) > size(B0, 1))
+        B0 = B0';
+    end
+
     %% Removal of the components and creation of the new dataset
 
     for ii = 1:length(indexes)
 
-        % Choose the index
+        %% Choose the index
         idx = indexes(ii);
 
-        % Initializa the new dataset
+        %% New dataset
         dataset_renovated = struct();
         
         % Expiries
@@ -64,8 +79,17 @@ function dataset_renovated = removal_expiry(dataset, indexes)
         % Spot
         dataset_renovated.spot = dataset.spot;
 
-        % Final change for new for computations
+        %% New Forwards and discounts
+
+        F0_renovated = [F0(1:idx-1); F0(idx+1:end)];
+        B0_renovated = [B0(1:idx-1); B0(idx+1:end)];
+
+        %% Final changes for new computations
+
         dataset = dataset_renovated;
+        F0 = F0_renovated;
+        B0 = B0_renovated;
+
     end
 
 end % function removal_expiry
