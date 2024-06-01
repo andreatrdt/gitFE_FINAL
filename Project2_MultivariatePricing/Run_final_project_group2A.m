@@ -44,6 +44,7 @@ addpath('calibration');
 addpath('general');
 addpath('pricing_certificate');
 addpath('plotting');
+addpath('tables_multicalib');
 
 %% Loading of the matrices
 % Loading of the initial matrices and structures
@@ -119,23 +120,52 @@ end
 
 %%
 
-%% Multi-calibration comparison
+%% Multi-calibration comparison 1st round
+% WATCH OUT: to run these calibration feasibility test takes lot of time.
+% The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 40
+% minutes. This is due to the 33 consequent calibrations necessary: mean
+% time for each calibration is 72 seconds.
 
-[params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
+% [params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
 
 %% Plots of the multicalib results 1st round
 
-figure;
-plot(dates_EU, fun_eval(1:13), '*-'); grid on;
-datetick('x','dd-mmm-yyyy','keepticks');
-title('EU - Obj func minimum');
-ylabel('Obj function value');
+% figure;
+% plot(dates_EU, fun_eval(1:13), '*-'); grid on;
+% datetick('x','dd-mmm-yyyy','keepticks');
+% title('EU - Obj func minimum');
+% ylabel('Obj function value');
+% 
+% figure;
+% plot(dates_USA, fun_eval(14:33), '*-'); grid on;
+% datetick('x','dd-mmm-yyyy','keepticks');
+% title('USA Obj func minimum');
+% ylabel('Obj function value');
 
-figure;
-plot(dates_USA, fun_eval(14:33), '*-'); grid on;
-datetick('x','dd-mmm-yyyy','keepticks');
-title('USA Obj func minimum');
-ylabel('Obj function value');
+%% Multi-calibration comparison 2nd round
+% WATCH OUT: to run these calibration feasibility test takes lot of time.
+% The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 38
+% minutes. This is due to the 32 consequent calibrations necessary: mean
+% time for each calibration is 70 seconds.
+
+% We remove the last date on the American side due to the 1st results
+% [data_calib_USA, F0_USA, B_USA] = removal_expiry(data_calib_USA, F0_USA, B_USA, 20);
+% 
+% [params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
+
+%% Plots of the multicalib results 2nd round
+
+% figure;
+% plot(dates_EU, fun_eval(1:13), '*-'); grid on;
+% datetick('x','dd-mmm-yyyy','keepticks');
+% title('EU - Obj func minimum');
+% ylabel('Obj function value');
+% 
+% figure;
+% plot(dates_USA(1:19), fun_eval(14:32), '*-'); grid on;
+% datetick('x','dd-mmm-yyyy','keepticks');
+% title('USA Obj func minimum');
+% ylabel('Obj function value');
 
 %%
 
