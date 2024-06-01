@@ -117,7 +117,27 @@ if flag == 1
     surface_vols(data_calib_USA,F0_USA);
 end
 
+%%
+
 %% Multi-calibration comparison
+
+[params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
+
+%% Plots of the multicalib results 1st round
+
+figure;
+plot(dates_EU, fun_eval(1:13), '*-'); grid on;
+datetick('x','dd-mmm-yyyy','keepticks');
+title('EU - Obj func minimum');
+ylabel('Obj function value');
+
+figure;
+plot(dates_USA, fun_eval(14:33), '*-'); grid on;
+datetick('x','dd-mmm-yyyy','keepticks');
+title('USA Obj func minimum');
+ylabel('Obj function value');
+
+%%
 
 %% Calibration of the model parameters
 
