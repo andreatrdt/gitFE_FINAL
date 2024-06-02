@@ -82,8 +82,6 @@ if flag == 1
     plot_returns(SP500_EUR50,date_settlement)
 end
 
-%%
-
 %% POINT 5: Forward Prices
 % Computation of the forward prices through the Synthetic Forwards
 % procedure
@@ -121,7 +119,7 @@ end
 %%
 
 %% Multi-calibration comparison 1st round
-% WATCH OUT: to run these calibration feasibility test takes lot of time.
+% WARNING:  calibration feasibility tests take a lot of computation time.
 % The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 40
 % minutes. This is due to the 33 consequent calibrations necessary: mean
 % time for each calibration is 72 seconds.
@@ -130,20 +128,22 @@ end
 
 %% Plots of the multicalib results 1st round
 
-% figure;
-% plot(dates_EU, fun_eval(1:13), '*-'); grid on;
-% datetick('x','dd-mmm-yyyy','keepticks');
-% title('EU - Obj func minimum');
-% ylabel('Obj function value');
-% 
-% figure;
-% plot(dates_USA, fun_eval(14:33), '*-'); grid on;
-% datetick('x','dd-mmm-yyyy','keepticks');
-% title('USA Obj func minimum');
-% ylabel('Obj function value');
+if flag == 1
+    % figure;
+    % plot(dates_EU, fun_eval(1:13), '*-'); grid on;
+    % datetick('x','dd-mmm-yyyy','keepticks');
+    % title('EU - Obj func minimum');
+    % ylabel('Obj function value');
+    % 
+    % figure;
+    % plot(dates_USA, fun_eval(14:33), '*-'); grid on;
+    % datetick('x','dd-mmm-yyyy','keepticks');
+    % title('USA Obj func minimum');
+    % ylabel('Obj function value');
+end
 
 %% Multi-calibration comparison 2nd round
-% WATCH OUT: to run these calibration feasibility test takes lot of time.
+% WARNING:  calibration feasibility tests take a lot of computation time.
 % The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 38
 % minutes. This is due to the 32 consequent calibrations necessary: mean
 % time for each calibration is 70 seconds.
@@ -154,19 +154,19 @@ end
 % [params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
 
 %% Plots of the multicalib results 2nd round
-
-% figure;
-% plot(dates_EU, fun_eval(1:13), '*-'); grid on;
-% datetick('x','dd-mmm-yyyy','keepticks');
-% title('EU - Obj func minimum');
-% ylabel('Obj function value');
-% 
-% figure;
-% plot(dates_USA(1:19), fun_eval(14:32), '*-'); grid on;
-% datetick('x','dd-mmm-yyyy','keepticks');
-% title('USA Obj func minimum');
-% ylabel('Obj function value');
-
+if flag == 1
+    % figure;
+    % plot(dates_EU, fun_eval(1:13), '*-'); grid on;
+    % datetick('x','dd-mmm-yyyy','keepticks');
+    % title('EU - Obj func minimum');
+    % ylabel('Obj function value');
+    % 
+    % figure;
+    % plot(dates_USA(1:19), fun_eval(14:32), '*-'); grid on;
+    % datetick('x','dd-mmm-yyyy','keepticks');
+    % title('USA Obj func minimum');
+    % ylabel('Obj function value');
+end
 %%
 
 %% Calibration of the model parameters
@@ -200,7 +200,7 @@ options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration
 params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
-    F0_EU, B_EU, F0_USA, B_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params));%, options);
+    F0_EU, B_EU, F0_USA, B_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
 
 % Display of the parameters on the console
 params_USA = params_marginals(1:3);
@@ -208,19 +208,6 @@ params_EU = params_marginals(4:6);
 
 % Explicit useful params
 k1 = params_USA(1); k2 = params_EU(1);
-
-%% parameters group 2B
-
-% % sigma_EU = 0.11991
-% % kappa_EU = 0.0024632
-% % theta_EU = 0.021422
-% % sigma_US = 0.10851
-% % kappa_US = 0.0019843
-% % theta_US = 0.021599
-
-% params_USA = [0.0019843 , 0.021599 , 0.10851];
-% params_EU = [0.0024632 , 0.021422 , 0.11991];
-
 
 %% Plots of the prices with calibrated values
 
@@ -274,10 +261,10 @@ x0 = ones(1, 3);
 %    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
 params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
-    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2));%, options);
+    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
-nu_1 = params(1);
-nu_2 = params(2);
+nu_USA = params(1);
+nu_EU = params(2);
 nu_z = params(3);
 
 %% disp the calibrated parameters
@@ -292,6 +279,10 @@ disp_params(params_marginals, initial_cond, save_results);
 % Compute the rho obtained from the model
 rho_model_Levy = sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3))));
 
+error_rho = abs(rho_model_Levy - rho_historical);
+disp('error for rho calibration: \n ')
+disp(error_rho);
+
 % Compute the solution of the system
 sol =  marginal_param(params_USA,params_EU , nu_z , rho_model_Levy);
 
@@ -303,21 +294,17 @@ beta_z = sol.x(3); gamma_z = sol.x(4);
 beta_USA = params_USA(2) - a_USA * beta_z;                       % From condition (10.1)
 gamma_USA = sqrt((params_USA(3)^2) - (a_USA^2) * (gamma_z^2));   % From condition (10.2)
 % nu_USA = (nu_z * params_USA(1))/(nu_z - params_USA(1)); 
-nu_USA = nu_1;
 
 beta_EU = params_EU(2) - a_EU * beta_z;
 gamma_EU = sqrt(params_EU(3)^2 - a_EU ^ 2 * gamma_z^2);
 % nu_EU = (nu_z * params_EU(1))/(nu_z - params_EU(1));
-nu_EU = nu_2;
 
 % Creation of zipped vectors
 
 % Idiosyncratic parameters USA
-% sol_USA = [a_USA, beta_USA, gamma_USA];
 idiosync_USA = [nu_USA, beta_USA, gamma_USA, a_USA];
 
 % Idiosyncratic parameters EU
-% sol_EU = [a_EU , beta_EU, gamma_EU];
 idiosync_EU = [nu_EU, beta_EU, gamma_EU, a_EU];
 
 % Systematic parameters
@@ -327,19 +314,19 @@ syst_Z = [nu_z , beta_z, gamma_z];
 
 disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z, nu_z, save_results);
 
-%%
-
 %% Point 8: Black model calibration
 
 %% Calibration of the model parameters
 
 % Initialization of the parameters
-x0 = 0.5;
 x0 = 1e-4;
+
 % Linear inequality constraints
 A = []; b = [];
+
 % Linear equality constraints
 Aeq = []; beq = [];
+
 % Lower and upper bounds
 lb = 0; ub = [];
 
@@ -383,7 +370,7 @@ year_to_maturity = 1;
 yf = yearfrac(date_settlement, data_USA.datesExpiry, conv_ACT365);
 interp_date = datenum(busdate(datetime(date_settlement, 'ConvertFrom', 'datenum') - caldays(1) + calyears(year_to_maturity), 1, eurCalendar));
 
-if flag
+if flag == 1
     figure;
     plot(dates_USA, -log(B_USA)./yf, '-*', 'Color', 'b'); hold on;
     plot(interp_date, rate_USA, 'o', 'Color', 'r'); grid on;
@@ -436,7 +423,7 @@ F01_EU = S0_EU*exp(rate_EU*TTM);
 % Computation of the discount at 1y
 B0_black = exp(-rate_USA * TTM);
 
-%% NORMAL
+%% NORMAL MC method
 
 % Unpacking the results
 St_USA_Black = St_Black(:, 1); St_EU_Black = St_Black(:, 2);
@@ -448,7 +435,7 @@ certificate_payoff_Black = max(St_USA_Black - S0_USA, 0) .* indicator_Black;
 % Mean price and confidence interval
 [mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black);
 
-%% ANTITHETIC
+%% ANTITHETIC MC method
 
 % Unpacking the results
 St_USA_Black_AV = St_Black_AV(:, 1); St_EU_Black_AV = St_Black_AV(:, 2);
@@ -469,6 +456,9 @@ price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, s
 
 %% Display of the prices:
 
-% mean_price_Levy = 0;
-% IC_Levy = [0; 0];
 disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
+
+%% End run time computation
+elapsedTime = toc;
+elapsedTimeMinutes = floor(elapsedTime / 60);
+fprintf('Loop execution time: %.2f minutes and %.2f seconds \n', elapsedTimeMinutes , floor(elapsedTime-elapsedTimeMinutes*60));

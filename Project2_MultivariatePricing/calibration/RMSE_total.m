@@ -34,7 +34,7 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
     %% Computation 
     
     % for ii = 1:length(dataset.datesExpiry)
-    for ii = 1:length(dataset.datesExpiry)
+    for ii = 1:min(length(dataset.datesExpiry),19)
 
         %% Initialization
         put_length = length(dataset.putAsk(ii).prices);
