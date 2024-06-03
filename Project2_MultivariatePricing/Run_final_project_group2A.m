@@ -105,7 +105,6 @@ data_USA_OTM = OTM_preprocessing(data_USA, F0_USA);
 
 % Computing the Delta of Black & Scholes over the OTM Call/Put in order to
 % clean dataset from too far from the ATM point prices
-
 data_calib_EU = dataset_preprocessing(data_EU_OTM, F0_EU, B_EU, date_settlement, flag);
 data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_USA, date_settlement, flag);
 
@@ -129,17 +128,17 @@ end
 %% Plots of the multicalib results 1st round
 
 if flag == 1
-    % figure;
-    % plot(dates_EU, fun_eval(1:13), '*-'); grid on;
-    % datetick('x','dd-mmm-yyyy','keepticks');
-    % title('EU - Obj func minimum');
-    % ylabel('Obj function value');
-    % 
-    % figure;
-    % plot(dates_USA, fun_eval(14:33), '*-'); grid on;
-    % datetick('x','dd-mmm-yyyy','keepticks');
-    % title('USA Obj func minimum');
-    % ylabel('Obj function value');
+    figure;
+    plot(dates_EU, fun_eval(1:13), '*-'); grid on;
+    datetick('x','dd-mmm-yyyy','keepticks');
+    title('EU - Obj func minimum');
+    ylabel('Obj function value');
+
+    figure;
+    plot(dates_USA, fun_eval(14:33), '*-'); grid on;
+    datetick('x','dd-mmm-yyyy','keepticks');
+    title('USA Obj func minimum');
+    ylabel('Obj function value');
 end
 
 %% Multi-calibration comparison 2nd round
@@ -155,19 +154,27 @@ end
 
 %% Plots of the multicalib results 2nd round
 if flag == 1
-    % figure;
-    % plot(dates_EU, fun_eval(1:13), '*-'); grid on;
-    % datetick('x','dd-mmm-yyyy','keepticks');
-    % title('EU - Obj func minimum');
-    % ylabel('Obj function value');
-    % 
-    % figure;
-    % plot(dates_USA(1:19), fun_eval(14:32), '*-'); grid on;
-    % datetick('x','dd-mmm-yyyy','keepticks');
-    % title('USA Obj func minimum');
-    % ylabel('Obj function value');
+    figure;
+    plot(dates_EU, fun_eval(1:13), '*-'); grid on;
+    datetick('x','dd-mmm-yyyy','keepticks');
+    title('EU - Obj func minimum');
+    ylabel('Obj function value');
+
+    figure;
+    plot(dates_USA(1:19), fun_eval(14:32), '*-'); grid on;
+    datetick('x','dd-mmm-yyyy','keepticks');
+    title('USA Obj func minimum');
+    ylabel('Obj function value');
 end
 
+%%
+
+%% Removal of last american maturity
+% Remove the last american maturity due to the appendix considerations
+
+[data_calib_USA, F0_USA, B_USA] = removal_expiry(data_calib_USA, F0_USA, B_USA, 20);
+
+%%
 
 %% Calibration of the model parameters
 

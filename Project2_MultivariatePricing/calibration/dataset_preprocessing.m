@@ -76,8 +76,8 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         
         if flag
             figure();
-            plot(strikes(idx_call_OTM), impvol_call_i, 'o-'); hold on;
-            plot(strikes(idx_put_OTM), impvol_put_i, '*-'); grid on;
+            plot(strikes([idx_call_OTM(1)-1 idx_call_OTM]), [impvol_put_i(end) impvol_call_i], 'o-'); hold on;
+            plot(strikes(idx_put_OTM ), impvol_put_i, '*-'); grid on;
 
             title('Implied volatilities');
             xlabel('Strikes'); ylabel('Volatilities');

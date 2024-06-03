@@ -105,7 +105,6 @@ data_USA_OTM = OTM_preprocessing(data_USA, F0_USA);
 
 % Computing the Delta of Black & Scholes over the OTM Call/Put in order to
 % clean dataset from too far from the ATM point prices
-
 data_calib_EU = dataset_preprocessing(data_EU_OTM, F0_EU, B_EU, date_settlement, flag);
 data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_USA, date_settlement, flag);
 
@@ -168,6 +167,14 @@ if flag == 1
     % ylabel('Obj function value');
 end
 
+%%
+
+%% Removal of last american maturity
+% Remove the last american maturity due to the appendix considerations
+
+[data_calib_USA, F0_USA, B_USA] = removal_expiry(data_calib_USA, F0_USA, B_USA, 20);
+
+%%
 
 %% Calibration of the model parameters
 
@@ -255,8 +262,6 @@ Aeq = []; beq = [];
 lb = zeros(1, 3); ub = [];
 
 x0 = ones(1, 3);
-k1 = 1.9039;
-k2 =  0.5128;
 
 % Calibration of the nu parameters
 % params = fmincon(@(params) abs(sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical), ...
