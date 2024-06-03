@@ -1,13 +1,14 @@
 function plot_returns(data,date_settlement)
-%
+% Plotting of the data returns
+% 
 % INPUTS:
 % data: struct od the DATA used
 % date_settlement: the date of the settlement
-
+% 
 % OUTPUTS:
 % plot the returns of the options
 
-    % Load the data
+    %% Load the data
     returns_EU = flip(data.Daily(:,1));
 
     returns_USA = flip(data.Daily(:,2));
@@ -15,7 +16,7 @@ function plot_returns(data,date_settlement)
     % Create the dates
     days = [date_settlement : date_settlement+length(returns_USA)-1];
 
-    % Plot the returns
+    %% Plot the returns
     figure
     subplot(3,1,1)
     plot(days,returns_EU)
@@ -28,8 +29,7 @@ function plot_returns(data,date_settlement)
     datetick('x','dd-mmm-yyyy','keepticks')
     
     subplot(3,1,3)
-    plot(days,returns_EU)
-    hold on
+    plot(days,returns_EU); hold on;
     plot(days,returns_USA)
     title('EU and USA returns')
     legend('EU returns', 'USA returns')
