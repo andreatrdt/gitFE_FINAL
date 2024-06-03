@@ -24,7 +24,7 @@ idx1_call =  model_call_prices > mkt_call_prices_ask;
 idx2_call = model_call_prices < mkt_call_prices_bid;
 
 % Computation of the error on the call prices:
-error_call_prices = (model_call_prices-mkt_call_prices_ask)*idx1_call' + (mkt_call_prices_bid-model_call_prices)*idx2_call';
+error_call_prices = 100*((model_call_prices-mkt_call_prices_ask)./mkt_call_prices_ask*idx1_call' + (mkt_call_prices_bid-model_call_prices)./mkt_call_prices_bid*idx2_call');
 
 %% Put prices error
 
@@ -33,6 +33,6 @@ idx1_put =  model_put_prices > mkt_put_prices_ask;
 idx2_put = model_put_prices < mkt_put_prices_bid;
 
 % Computation of the error on the put prices:
-error_put_prices = (model_put_prices-mkt_put_prices_ask)*idx1_put' + (mkt_put_prices_bid-model_put_prices)*idx2_put';
+error_put_prices = 100*((model_put_prices-mkt_put_prices_ask)./mkt_put_prices_ask*idx1_put' + (mkt_put_prices_bid-model_put_prices)./mkt_put_prices_bid*idx2_put');
 
 end
