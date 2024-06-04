@@ -287,7 +287,7 @@ disp_params(params_marginals, initial_cond, save_results);
 rho_model_Levy = sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3))));
 
 error_rho = abs(rho_model_Levy - rho_historical);
-disp('error for rho calibration: \n ')
+disp('error for rho calibration:  ')
 disp(error_rho);
 
 % Compute the solution of the system
