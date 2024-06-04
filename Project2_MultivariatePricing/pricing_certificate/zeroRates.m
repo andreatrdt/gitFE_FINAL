@@ -8,7 +8,7 @@ function zRates = zeroRates(dates, discounts)
 % OUTPUT
 % zRates:       vector of the zero rates
 %
-% USES: yearfrac()
+% USES: zeroRates()
 
     % Computation of the year fraction
     yf_dates = yearfrac(dates(1), dates, 3);

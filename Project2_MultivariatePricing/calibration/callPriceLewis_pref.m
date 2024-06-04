@@ -1,7 +1,7 @@
 function price = callPriceLewis_pref(B0, F0, log_moneyness, sigma, k, theta, TTM, M, dz)
 % Call prices with Lewis formula
 %
-%INPUT
+% INPUT:
 % B0:                 [SCALAR] discount factor B(t0, t)
 % F0:                 [SCALAR] initial fwd price
 % log_moneyness:      [VECTOR] vector of values of moneyness
@@ -11,6 +11,11 @@ function price = callPriceLewis_pref(B0, F0, log_moneyness, sigma, k, theta, TTM
 % TTM:                [SCALAR} time to maturity
 % M:                  [SCALAR] parameter for FFT
 % dz:                 [SCALAR] parameter of the moneyness grid
+%
+% OUTPUT:
+% price:               [VECTOR] call prices
+%
+% USES: callPriceLewis_pref()
 
 
     %% Introduction of the FFT parameters

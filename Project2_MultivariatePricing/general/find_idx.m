@@ -2,11 +2,13 @@ function idx = find_idx(data, date)
 % Computation that finds the index in a struct given a certain date
 %
 % INPUT:
-% data: struct containing the data
-% date: date to be found
+% data:         [STRUCT]struct containing the data
+% date:         [DATENUM]date to be found
 % 
 % OUTPUT:
 % idx: index of the date in the struct
+%
+% USES: find_idx()
 
     idx = find(data == date);
 

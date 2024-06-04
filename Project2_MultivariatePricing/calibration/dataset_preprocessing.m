@@ -11,6 +11,8 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 % 
 % OUTPUT:
 % dataset:            modified version of the dataset
+%
+% USES:     dataset_preprocessing()
 
     %% Conventions
     conv_ACT365 = 3;

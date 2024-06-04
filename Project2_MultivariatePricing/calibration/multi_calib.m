@@ -15,6 +15,8 @@ function [params_removal, fun_eval, exit_condition] = multi_calib(data_EU, data_
 % params_removal:     [MATRIX] parameters for each calibration
 % fun_eval:           [VECTOR] RMSE for each calibration
 % exit_condition:     [VECTOR] exit condition of the solver
+%
+% USES:           multi_calib()
 
     %% Initialization of the calib parameters
 

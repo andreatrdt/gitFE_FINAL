@@ -7,6 +7,8 @@ function dataset = OTM_preprocessing(dataset, F0)
 % 
 % OUTPUT:
 % dataset:          [STRUCT] dataset modified for the OTM options 
+%
+% USES:             OTM_preprocessing()
     
     for ii=1:length(dataset.datesExpiry)
 

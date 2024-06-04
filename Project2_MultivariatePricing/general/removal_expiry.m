@@ -11,6 +11,8 @@ function [dataset_renovated, F0_renovated, B0_renovated] = removal_expiry(datase
 % dataset_renovated:       [STRUCT] dataset modified
 % F0_renovated:            [VECTOR] initial fwd modified
 % B0_renovated:            [VECTOR] initial discount modified
+%
+% USES: removal_expiry()
 
     %% Introductive values
     length_dataset = length(dataset.datesExpiry);

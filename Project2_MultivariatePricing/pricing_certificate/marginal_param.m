@@ -3,8 +3,9 @@ function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
 % USA and EU markets
 %
 % INPUTS
-% params:      the calibrated parameters
-% nu_z: the calibrated nu_z
+% params_USA:      [VECTOR]the calibrated parameters for USA mkt
+% params_EU:       [VECTOR]calibrated parameters for EU mkt
+% nu_z:            [SCALAR]the calibrated nu_z
 %
 % OUTPUTS
 % sol: the solution of the optimization problem

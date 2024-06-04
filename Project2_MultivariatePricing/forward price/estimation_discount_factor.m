@@ -7,6 +7,8 @@ function B_bar = estimation_discount_factor(Gi, Ki)
 % 
 % OUTPUT:
 % B_bar:            estimated discount factor for the forward computation
+%
+% USES: estimation_discount_factor()
 
     %% Computation of the mean values
     % Mean values of the strikes and synthetic forwards

@@ -1,12 +1,12 @@
 function disp_params(params_marginals, initial_cond, flag)
 %
 % INPUTS
-% params_marginals: the calibrated parameters for the marginals
-% nu_1: the calibrated nu_1
-% nu_2: the calibrated nu_2
-% nu_z: the calibrated nu_z
-% initial_cond: the initial condition used
-% flag: a boolean to save the results to a text file
+% params_marginals:     [VECTOR]the calibrated parameters for the marginals
+% nu_1:                 [SCALAR]the calibrated nu_1
+% nu_2:                 [SCALAR]the calibrated nu_2
+% nu_z:                 [SCALAR]the calibrated nu_z
+% initial_cond:         [VECTOR]the initial condition used
+% flag:                 [BOOLEAN]a boolean to save the results to a text file
 %
 % OUTPUTS
 % None

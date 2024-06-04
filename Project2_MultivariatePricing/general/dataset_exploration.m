@@ -2,9 +2,14 @@ function dataset_exploration(data_EU, data_USA, date_settlement)
 % Exploration of the dataset and consequent plots
 % 
 % INPUT:
-% data_EU:               dataset EU
-% data_USA:              dataset USA
-% date_settlement:       initial date of the computation
+% data_EU:               [STRUCT]dataset EU
+% data_USA:              [STRUCT]dataset USA
+% date_settlement:       èDATENUM]initial date of the computation
+%
+% OUTPUT:
+% None
+%
+% USES: dataset_exploration()
 
     %% Plot of the European Call Prices
 

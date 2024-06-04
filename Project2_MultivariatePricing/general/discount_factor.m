@@ -1,13 +1,13 @@
 function discount =  discount_factor(B_bar , data , date_settlement)
 %
 % INPUT
-% B_bar : scalar [1x1] : discount factor at time 0
-% data : structure : market data
-% date_settlement : scalar [1x1] : settlement date
+% B_bar             [SCALAR]discount factor at time 0
+% data :            [STRUCT]market data
+% date_settlement   [SCALAR]settlement date
 % OUTPUT
-% discount : vector [1xN] : discount factor
+% discount
 %
-% USES : discount_factor(B_bar , data , date_settlement)
+% USES : discount_factor()
 
 dates = datenum(data.datesExpiry);
 

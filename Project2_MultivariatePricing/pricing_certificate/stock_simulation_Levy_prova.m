@@ -1,11 +1,10 @@
-function [prices , S0] = stock_simulation_Levy_prova( params, rate , TTM , S0)
+function [prices , S0] = stock_simulation_Levy_prova( params, rates , TTM , S0)
 % 
 % INPUT:
-% dataset:              initial dataset
 % params:               calibration NIG parameters [k, theta, sigma]
-% F0:                   initial forward value
-% B0:                   initial discount value
-% date_settlement:      initial date of the certificate
+% rate                  rate
+% TTM                   time to maturity
+% SO                    initial value of the stocks
 % 
 % OUTPUT:
 % prices:               underlying stock to be simulated
@@ -44,6 +43,6 @@ function [prices , S0] = stock_simulation_Levy_prova( params, rate , TTM , S0)
 
     %% Computation of the initial stock
 
-    prices = S0 .* exp(rate - drift_compensator * TTM + Xt);
+    prices = S0 .* exp(rates - drift_compensator * TTM + Xt);
 
 end % function stock_simulation

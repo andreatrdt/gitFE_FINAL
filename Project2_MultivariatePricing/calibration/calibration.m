@@ -1,4 +1,4 @@
-function distance = new_calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA, B0_USA, date_settlement)
+function distance = calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA, B0_USA, date_settlement)
 % Computation of the function handle for the calibration procedure
 % 
 % INPUT:
@@ -15,8 +15,7 @@ function distance = new_calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_
 % OUTPUT:
 % distance:           value to be reduced to 0
 % 
-% USES:
-% function RMSE_total()
+% USES:              calibration()
 
     %% Unpacking of the parameters
 

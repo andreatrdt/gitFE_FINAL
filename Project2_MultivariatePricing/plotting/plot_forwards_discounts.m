@@ -9,6 +9,12 @@ function plot_forwards_discounts(data_EU, data_USA, B_EU, B_USA, F0_EU, F0_USA, 
 % F0_EU:              [VECTOR] initial forwards EU
 % F0_USA.             [VECTOR] initial forwards USA
 % date_settlement:    [DATENUM] initial date
+%
+% OUTPUT:
+% None
+%
+% USES:
+% plot_forwards_discounts()
 
     %% Conventions
 

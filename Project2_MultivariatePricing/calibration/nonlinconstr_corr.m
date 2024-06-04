@@ -10,6 +10,8 @@ function [c, ceq] = nonlinconstr_corr(params, k1, k2)
 % OUTPUT:
 % c:            inequality constraints
 % ceq:          equality constraints
+%
+% USES:        nonlinconstr_corr()
 
     %% Unpacking the constraints
     nu_1 = params(1);

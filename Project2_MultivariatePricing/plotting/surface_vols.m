@@ -8,6 +8,8 @@ function surface_vols(data,F0)
 %
 % OUTPUTS:
 % plot the surface of the volatilities
+%
+% USES: surface_vols()
     % Initialize vector to store the number of strikes for each expiry date
     strikes = [];
 

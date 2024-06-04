@@ -93,8 +93,6 @@ if flag == 1
     plot_forwards_discounts(data_EU, data_USA, B_EU, B_USA, F0_EU, F0_USA, date_settlement);
 end
 
-%%
-
 %% POINT 6: Calibration
 
 %% Options selection
@@ -103,8 +101,7 @@ end
 data_EU_OTM = OTM_preprocessing(data_EU, F0_EU);
 data_USA_OTM = OTM_preprocessing(data_USA, F0_USA);
 
-% Computing the Delta of Black & Scholes over the OTM Call/Put in order to
-% clean dataset from too far from the ATM point prices
+% Computing the Delta of Black & Scholes over the OTM Call/Put in order to remove from dataset the OTM options
 data_calib_EU = dataset_preprocessing(data_EU_OTM, F0_EU, B_EU, date_settlement, flag);
 data_calib_USA = dataset_preprocessing(data_USA_OTM, F0_USA, B_USA, date_settlement, flag);
 
@@ -115,10 +112,9 @@ if flag == 1
     surface_vols(data_calib_USA,F0_USA);
 end
 
-%%
-
 %% Multi-calibration comparison 1st round
-% WARNING:  calibration feasibility tests take a lot of computation time.
+
+%! WARNING:  calibration feasibility tests take a lot of computation time.
 % The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 40
 % minutes. This is due to the 33 consequent calibrations necessary: mean
 % time for each calibration is 72 seconds.
@@ -142,7 +138,7 @@ if flag == 1
 end
 
 %% Multi-calibration comparison 2nd round
-% WARNING:  calibration feasibility tests take a lot of computation time.
+%! WARNING:  calibration feasibility tests take a lot of computation time.
 % The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 38
 % minutes. This is due to the 32 consequent calibrations necessary: mean
 % time for each calibration is 70 seconds.
@@ -167,21 +163,16 @@ if flag == 1
     ylabel('Obj function value');
 end
 
-%%
-
 %% Removal of last american maturity
 % Remove the last american maturity due to the appendix considerations
 
 [data_calib_USA, F0_USA, B_USA] = removal_expiry(data_calib_USA, F0_USA, B_USA, 20);
 
-%%
 
 %% Calibration of the model parameters
 
 % Quantities of interest
-% x0 = [10 2 0.5 10 2 0.5];
-% x0 = 0.09 * [1 1 0.5 1 1 0.5];
-% x0 = [32 0.04 0.36 11.8 0.09 0.37];
+
 % x0 = 0.1 * ones(1, 6);
 x0 = [0.3 -0.5 0.15 0.3 -0.5 0.15];
 
@@ -206,7 +197,7 @@ ub = [];
 options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration
-params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
+params_marginals = fmincon(@(params) calibration(params, data_calib_EU, data_calib_USA, ...
     F0_EU, B_EU, F0_USA, B_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
 
 % Display of the parameters on the console
@@ -234,25 +225,7 @@ if flag == 1
 
 end
 
-%%
-
 %% POINT 7: comparison with the historical correlation
-
-%% Calibration over the rho - OLD
-
-% % Initialization of the parameters
-% A = []; b = []; Aeq = []; beq = [];
-% lb = 0; ub = [];
-% x0 = 1;
-% 
-% % Calibration of the nuZ parameter
-% params = fmincon(@(params) abs(sqrt( k1 * k2)/ params - rho_historical), ...
-%     x0, A, b, Aeq, beq, lb, ub, [], options);
-% 
-% nu_z = params;
-% 
-% nu_1 = k1*nu_z/(nu_z-k1);
-% nu_2 = k2*nu_z/(nu_z-k2);
 
 %% Calibration over the rho - MISMATCH CORR
 
@@ -262,10 +235,6 @@ Aeq = []; beq = [];
 lb = zeros(1, 3); ub = [];
 
 x0 = ones(1, 3);
-
-% Calibration of the nu parameters
-% params = fmincon(@(params) abs(sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical), ...
-%    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
 params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
@@ -279,9 +248,6 @@ nu_z = params(3);
 disp_params(params_marginals, initial_cond, save_results);
 
 %% Common and idiosynchratic parameters
-
-% kappa_1 = params_USA(1); theta_1 = params_USA(2); sigma_1 = params_USA(3);
-% kappa_2 = params_EU(1); theta_2 = params_EU(2); sigma_2 = params_EU(3);
 
 % Compute the rho obtained from the model
 rho_model_Levy = sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3))));
@@ -306,7 +272,7 @@ beta_EU = params_EU(2) - a_EU * beta_z;
 gamma_EU = sqrt(params_EU(3)^2 - a_EU ^ 2 * gamma_z^2);
 % nu_EU = (nu_z * params_EU(1))/(nu_z - params_EU(1));
 
-% Creation of zipped vectors
+% Creation of vectors
 
 % Idiosyncratic parameters USA
 idiosync_USA = [nu_USA, beta_USA, gamma_USA, a_USA];
@@ -365,7 +331,14 @@ if flag == 1
 
 end
 
-%%
+%% Point 9: Pricing of the certificate
+
+% Computation of the pricing of the certificate
+% The certificate is a derivative between the S&P500 and the EURO50 markets
+% The payoff is the following:
+% - If the EURO50 is below 95% of the initial value, the payoff is 0
+% - Otherwise, the payoff is the difference between the S&P500 and the initial value
+
 
 %% Point 9: Pricing of the certificate - LEVY
 
@@ -386,7 +359,6 @@ if flag == 1
     datetick('x','dd-mmm-yyyy','keepticks');
 end
 
-    
 S0_USA = data_USA.spot; S0_EU = data_EU.spot;
 
 % Computation of the discount at 1y
@@ -396,8 +368,9 @@ S0_Levy = [S0_USA S0_EU];
 rates_Levy = [rate_USA rate_EU];
 
 St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
-
-% Unpacking the results
+% St_USA_Levy = stock_simulation_Levy_prova( params_USA, rate_USA , TTM , S0_USA);
+% St_EU_Levy = stock_simulation_Levy_prova(params_EU, rate_EU , TTM , S0_EU);
+% % Unpacking the results
 St_USA_Levy = St_Levy(:, 1);
 St_EU_Levy = St_Levy(:, 2);
 
@@ -410,6 +383,7 @@ certificate_payoff_Levy = max(St_USA_Levy - S0_USA, 0) .* indicator_Levy;
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 
+% set the time to maturity for the contract
 year_to_maturity = 1;
 
 % Computation of the rates and the time to maturity

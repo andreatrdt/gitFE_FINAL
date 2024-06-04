@@ -2,11 +2,13 @@ function plot_returns(data,date_settlement)
 % Plotting of the data returns
 % 
 % INPUTS:
-% data: struct od the DATA used
-% date_settlement: the date of the settlement
+% data:                 [STRUCT]struct od the DATA used
+% date_settlement:      [DATENUM]the date of the settlement
 % 
 % OUTPUTS:
 % plot the returns of the options
+%
+% USES: plot_returns()
 
     %% Load the data
     returns_EU = flip(data.Daily(:,1));

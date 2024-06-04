@@ -8,6 +8,8 @@ function [c, ceq] = nonlinconstr(x)
 % OUTPUT:
 % c:            inequality constraints
 % ceq:          equality constraints
+%
+% USES:           nonlinconstr()
 
     %% Unpacking the parameters
     k1 = x(1); theta1 = x(2); sigma1 = x(3);

@@ -16,6 +16,11 @@ function [error_call_prices, error_put_prices]=error_calibration(model_call_pric
 % mkt_put_prices_ask:   [VECTOR] put prices of the ask taken from the
 %                       market for the considered expiry
 % 
+% OUTPUT:
+% error_call_prices:    [VECTOR] error in the pricing of the call options
+% error_put_prices:     [VECTOR] error in the pricing of the put options
+%
+% USES: error_calibration()
 
 %% Call prices error
 
