@@ -336,28 +336,11 @@ options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration of sigma EU
 sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, []);%, options);
+    x0, A, b, Aeq, beq, lb, ub, [], options);
 
 % Calibration of sigma USA
 sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, []);%, options);
-
-%% Plots of the prices with calibrated values
-
-if flag == 1
-    % Plot over the entire curve
-    blk_plot_calls_puts_total(data_EU, F0_EU, B_EU, sigma_EU, date_settlement);
-    blk_plot_calls_puts_total(data_USA, F0_USA, B_USA, sigma_USA, date_settlement);
-
-    % Plot over the filtered options
-    blk_plot_calls_puts(data_calib_EU, F0_EU, B_EU, sigma_EU, date_settlement);
-    blk_plot_calls_puts(data_calib_USA, F0_USA, B_USA, sigma_USA, date_settlement);
-
-    % Plot the implied volatilities over the Calls
-    blk_plot_volatility_smiles(data_calib_EU, F0_EU, B_EU, sigma_EU, date_settlement)
-    blk_plot_volatility_smiles(data_calib_USA, F0_USA, B_USA, sigma_USA, date_settlement)
-
-end
+    x0, A, b, Aeq, beq, lb, ub, [], options);
 
 %% Point 9: Pricing of the certificate
 
@@ -375,18 +358,6 @@ year_to_maturity = 1;
 [rate_USA, TTM] = interp_pricing_params(datenum(data_calib_USA.datesExpiry), B_USA, date_settlement, year_to_maturity);
 [rate_EU, ~] = interp_pricing_params(datenum(data_calib_EU.datesExpiry), B_EU, date_settlement, year_to_maturity);
 
-yf = yearfrac(date_settlement, data_USA.datesExpiry, conv_ACT365);
-interp_date = datenum(busdate(datetime(date_settlement, 'ConvertFrom', 'datenum') - caldays(1) + calyears(year_to_maturity), 1, eurCalendar));
-
-if flag == 1
-    figure;
-    plot(dates_USA, -log(B_USA)./yf, '-*', 'Color', 'b'); hold on;
-    plot(interp_date, rate_USA, 'o', 'Color', 'r'); grid on;
-    title('Rates USA');
-    ylabel('Rates');
-    datetick('x','dd-mmm-yyyy','keepticks');
-end
-
 S0_USA = data_USA.spot; S0_EU = data_EU.spot;
 
 % Computation of the discount at 1y
@@ -395,9 +366,8 @@ B0_Levy = exp(-rate_USA * TTM);
 S0_Levy = [S0_USA S0_EU];
 rates_Levy = [rate_USA rate_EU];
 
-St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
-% St_USA_Levy = stock_simulation_Levy_prova( params_USA, rate_USA , TTM , S0_USA);
-% St_EU_Levy = stock_simulation_Levy_prova(params_EU, rate_EU , TTM , S0_EU);
+% St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
+St_Levy = stock_simulation_Levy_prova( params_USA, params_EU, rates_Levy , TTM , S0_Levy, rho_historical);
 % % Unpacking the results
 St_USA_Levy = St_Levy(:, 1);
 St_EU_Levy = St_Levy(:, 2);

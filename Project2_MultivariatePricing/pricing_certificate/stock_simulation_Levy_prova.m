@@ -52,9 +52,9 @@ function [prices , S0] = stock_simulation_Levy_prova( params_USA,params_EU, rate
     G=[G_1 G_2];
     % Creation of Xt dynamic
 
-    X_1 =-(0.5 + theta_1).*G_1.*sigma_1^2+ sigma_1 .* sqrt(TTM .* G_1) .* g(:,1);
+    X_1 =-(0.5+theta_1).*G_1.*sigma_1^2.*TTM+ sigma_1 .* sqrt(TTM .* G_1) .* g(:,1);
 
-    X_2 =-(0.5 + theta_2).*G_2.*sigma_2^2+ sigma_2 .* sqrt(TTM .* G_2) .* g(:,2);
+    X_2 =-(0.5+theta_2).*G_2.*sigma_2^2.*TTM+ sigma_2 .* sqrt(TTM .* G_2) .* g(:,2);
 
 
     Xt = [X_1 X_2];

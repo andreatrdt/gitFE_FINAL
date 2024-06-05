@@ -34,3 +34,39 @@ nu_1: 8.4769
 nu_2: 0.9367 
 nu_z: 6.9851 
 ----------------------------
+PARAMETERS obtained by calibration:
+X0 used :
+0.300000 
+-0.500000 
+0.150000 
+0.300000 
+-0.500000 
+0.150000 
+-----------------------
+Calibrated parameters for the USA market: 
+kappa_USA: 3.829510 
+theta_USA: -0.094116 
+sigma_USA: 0.155781 
+-----------------------
+Calibrated parameters for the EU market: 
+kappa_EU: 0.825924 
+theta_EU: -0.162083 
+sigma_EU: 0.124591 
+-----------------------
+PARAMETERS obtained by convolution:
+----------------------------
+a_USA: -0.1161
+a_EU: -0.0431
+----------------------------
+Beta_z: 0.6520
+Beta_USA: -0.0184
+Beta_EU: -0.1340
+----------------------------
+gamma_z: 1.2035
+gamma_USA: 0.0690
+gamma_EU: 0.1133
+----------------------------
+nu_1: 19.5467 
+nu_2: 0.9992 
+nu_z: 4.7626 
+----------------------------
