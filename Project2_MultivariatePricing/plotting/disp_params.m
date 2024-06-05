@@ -26,7 +26,7 @@ function disp_params(params_marginals, initial_cond, flag)
 
     if flag == 1
 
-        fileID = fopen('results.txt', 'w');
+        fileID = fopen('results.txt', 'a');
 
         % Writing and displaying the initial condition
         fprintf(fileID,'PARAMETERS obtained by calibration:\n');
