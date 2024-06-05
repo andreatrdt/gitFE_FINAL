@@ -52,6 +52,8 @@ function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
     x0.x = ones(4,1);
 
     % Solution
+    options = optimset('MaxFunEval', 5e3);
+    
     sol = solve(prob,x0);
 
 end % function marginal_param(params,nu_z)

@@ -112,6 +112,17 @@ if flag == 1
     surface_vols(data_calib_USA,F0_USA);
 end
 
+%%
+
+%% Branch out calibration:
+% Calibration and Levy Pricing using dates up to 1y
+% branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
+
+% Calibration and Levy Pricing using dates up to 1y (same USA/EU dates)
+% branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
+
+%%
+
 %% Multi-calibration comparison 1st round
 
 %! WARNING:  calibration feasibility tests take a lot of computation time.
