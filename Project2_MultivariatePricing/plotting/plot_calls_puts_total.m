@@ -10,7 +10,10 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
 % 
 % USES:
 % function callPriceLewis()
+% function error_calibration()
 
+
+%% Initialization of the error vectors:
 error_call_prices_vec = zeros(length(dataset.datesExpiry),1);
 error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
 
@@ -46,9 +49,12 @@ error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
         mean_put = (dataset.putBid(ii).prices + dataset.putAsk(ii).prices)/2;
 
         %% Computation and update of the error:
+
+        % Computation of the errors:
         [error_call_prices, error_put_prices] = error_calibration(call_prices, put_prices, ...
            dataset.callBid(ii).prices, dataset.callAsk(ii).prices, dataset.putBid(ii).prices, dataset.putAsk(ii).prices);
         
+        % Update of the mean error vector:
         error_call_prices_vec(ii) = mean(error_call_prices);
         error_put_prices_vec(ii) = mean(error_put_prices);
 
@@ -75,7 +81,11 @@ error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
         legend('Calibrated prices', 'Mean prices', 'Put Ask', 'Put Bid', 'Strike ATM');
         
     end
-    if length(dataset.datesExpiry)>13
+
+    %% Display of the errors in the prices:
+
+    % For American options
+    if length(dataset.datesExpiry)>13 
         fprintf('\nMEAN ERROR USA PRICES:\n')
         disp('--------------------------------------------------------------')
         fprintf('Expiry         | Call Prices error | Put prices error\n')
@@ -83,6 +93,8 @@ error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
         for ii=1:length(dataset.datesExpiry)
             fprintf('%s     |  %f%%       |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
         end
+
+    % For European options
     else
         fprintf('\nMEAN ERROR EU PRICES:\n')
         disp('--------------------------------------------------------------')
