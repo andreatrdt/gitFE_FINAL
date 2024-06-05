@@ -1,4 +1,7 @@
 function find_x0(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
+
+
+
 vect = [0.1:0.1:1]';
 matrix = repmat(vect,1,6);
 
@@ -9,7 +12,7 @@ matrix(:,5) = -matrix(:,5);
 
 
 for i = 1:length(vect)
-    x0 = matrix(i,:);
+    x0 = matrix(i,:)
     % Linear inequality constraints
     A = [-1 0 0 0 0 0;
         0 0 -1 0 0 0;
@@ -37,6 +40,24 @@ for i = 1:length(vect)
     params_EU = params_marginals(4:6);
 
     disp_params(params_marginals, x0, 1);
+
+    % Initialization of the parameters
+    A = [-1 0 0; 0 -1 0; 0 0 -1]; b = [0; 0; 0];
+    Aeq = []; beq = [];
+    lb = zeros(1, 3); ub = [];
+    
+    x0 = ones(1, 3);
+    
+    k1 = params_USA(1); k2 = params_EU(1);
+    rho_historical = 0.801;
+
+    params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
+        x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+    
+    nu_USA = params(1);
+    nu_EU = params(2);
+    nu_z = params(3);
+
 
     % Compute the rho obtained from the model
     rho_model_Levy = sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3))));
@@ -68,6 +89,6 @@ for i = 1:length(vect)
     % Systematic parameters
     syst_Z = [nu_z , beta_z, gamma_z];
 
-    disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z, nu_z, save_results);
+    disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z, nu_z, 1);
 
 end

@@ -1,4 +1,4 @@
-function [prices , S0] = stock_simulation_Levy_prova( params_USA,params_EU, rates , TTM , S0, rho)
+function [prices , S0] = stock_simulation_Levy_reduced( params_USA,params_EU, rates , TTM , S0, rho)
 % 
 % INPUT:
 % params:               calibration NIG parameters [k, theta, sigma]
@@ -38,12 +38,8 @@ function [prices , S0] = stock_simulation_Levy_prova( params_USA,params_EU, rate
 
     % Stochastic part
     covarianceMatrix = [TTM rho*TTM; rho*TTM TTM];
-    
-
     meanVector = [0; 0];
-
-    rng(2);
-
+    
     g = mvnrnd(meanVector, covarianceMatrix, nSim);
         
     G_1 = random('InverseGaussian', 1, TTM/k_1, [nSim, 1]);
@@ -52,9 +48,9 @@ function [prices , S0] = stock_simulation_Levy_prova( params_USA,params_EU, rate
     G=[G_1 G_2];
     % Creation of Xt dynamic
 
-    X_1 =-(0.5+theta_1).*G_1.*sigma_1^2.*TTM+ sigma_1 .* sqrt(TTM .* G_1) .* g(:,1);
+    X_1 =-(theta_1).*G_1.*sigma_1^2.*TTM+ sigma_1 .* sqrt(TTM .* G_1) .* g(:,1);
 
-    X_2 =-(0.5+theta_2).*G_2.*sigma_2^2.*TTM+ sigma_2 .* sqrt(TTM .* G_2) .* g(:,2);
+    X_2 =-(theta_2).*G_2.*sigma_2^2.*TTM+ sigma_2 .* sqrt(TTM .* G_2) .* g(:,2);
 
 
     Xt = [X_1 X_2];

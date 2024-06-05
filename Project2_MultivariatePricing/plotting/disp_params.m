@@ -10,8 +10,6 @@ function disp_params(params_marginals, initial_cond, flag)
 %
 % OUTPUTS
 % None
-%
-% USES disp_params()
 
     params_USA = params_marginals(1:3);
     params_EU = params_marginals(4:6);
@@ -26,7 +24,7 @@ function disp_params(params_marginals, initial_cond, flag)
 
     if flag == 1
 
-        fileID = fopen('results.txt', 'a');
+        fileID = fopen('results.txt', 'w');
 
         % Writing and displaying the initial condition
         fprintf(fileID,'PARAMETERS obtained by calibration:\n');

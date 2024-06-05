@@ -8,65 +8,29 @@ X0 used :
 0.150000 
 -----------------------
 Calibrated parameters for the USA market: 
-kappa_USA: 3.829511 
+kappa_USA: 3.829509 
 theta_USA: -0.094116 
 sigma_USA: 0.155781 
 -----------------------
 Calibrated parameters for the EU market: 
-kappa_EU: 0.825924 
-theta_EU: -0.162083 
+kappa_EU: 0.825923 
+theta_EU: -0.162084 
 sigma_EU: 0.124591 
 -----------------------
 PARAMETERS obtained by convolution:
 ----------------------------
-a_USA: -0.7185
-a_EU: -0.2669
+a_USA: -0.1022
+a_EU: -0.0379
 ----------------------------
-Beta_z: 0.0718
-Beta_USA: -0.0425
-Beta_EU: -0.1429
+Beta_z: 0.5776
+Beta_USA: -0.0351
+Beta_EU: -0.1402
 ----------------------------
-gamma_z: -0.1605
-gamma_USA: 0.1047
-gamma_EU: 0.1170
+gamma_z: 1.2072
+gamma_USA: 0.0952
+gamma_EU: 0.1159
 ----------------------------
-nu_1: 8.4769 
-nu_2: 0.9367 
-nu_z: 6.9851 
-----------------------------
-PARAMETERS obtained by calibration:
-X0 used :
-0.300000 
--0.500000 
-0.150000 
-0.300000 
--0.500000 
-0.150000 
------------------------
-Calibrated parameters for the USA market: 
-kappa_USA: 3.829510 
-theta_USA: -0.094116 
-sigma_USA: 0.155781 
------------------------
-Calibrated parameters for the EU market: 
-kappa_EU: 0.825924 
-theta_EU: -0.162083 
-sigma_EU: 0.124591 
------------------------
-PARAMETERS obtained by convolution:
-----------------------------
-a_USA: -0.1161
-a_EU: -0.0431
-----------------------------
-Beta_z: 0.6520
-Beta_USA: -0.0184
-Beta_EU: -0.1340
-----------------------------
-gamma_z: 1.2035
-gamma_USA: 0.0690
-gamma_EU: 0.1133
-----------------------------
-nu_1: 19.5467 
-nu_2: 0.9992 
-nu_z: 4.7626 
+nu_1: 10.2638 
+nu_2: 0.9550 
+nu_z: 6.1087 
 ----------------------------

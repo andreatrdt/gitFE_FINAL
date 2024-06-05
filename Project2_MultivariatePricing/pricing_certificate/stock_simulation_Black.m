@@ -21,13 +21,7 @@ function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rates, rho, TTM
 
     % Stochastic part
     covarianceMatrix = [TTM rho*TTM; rho*TTM TTM];
-    cholesky_matrix = chol(covarianceMatrix)';
-
-    % A = (cholesky_matrix * randn(2, nSim))';
-
     meanVector = [0; 0];
-
-    rng(2);
 
     g = mvnrnd(meanVector, covarianceMatrix, nSim);
     
@@ -38,17 +32,14 @@ function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rates, rho, TTM
 
     %% Computation of the initial stock
 
-    % prices = S0' .* exp(rates'*TTM + Xt);
-
     prices = F0' .* exp(Xt);
     
     %% Computation for the antithetic behaviour
 
-    Xt_AV = -0.5 .* sigmas'.^2 .* TTM - sigmas' .* sqrt(TTM) .* g;
-    % Xt_AV = -0.5 .* sigmas'.^2 .* TTM - sigmas' .* A;
-    % pricesAV = S0' .* exp(rates'*TTM + Xt_AV);
+    Xt_AV = [-0.5 .* sigmas'.^2 .* TTM + sigmas' .* sqrt(TTM) .* g(1:nSim/2, :); ...
+        -0.5 .* sigmas'.^2 .* TTM - sigmas' .* sqrt(TTM) .* g(nSim/2+1:end, :)] ;
+
     pricesAV = F0' .* exp(Xt_AV);
     
-    % pricesAV = (prices + pricesAV)/2;
 
 end % function stock_simulation_Black

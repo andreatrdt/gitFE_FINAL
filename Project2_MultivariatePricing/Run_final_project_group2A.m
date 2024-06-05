@@ -29,6 +29,11 @@ rng(42);
 
 flag = 0;
 
+% flag_levy = 1 for pricing with Y1, Y2, Z enabled
+% flag_levy = 0 for pricing with X1, X2 enabled
+
+flag_levy = 1;
+
 % save_results = 1 for text saving enabled
 % save_results = 0 for text saving disabled
 
@@ -118,19 +123,18 @@ end
 %%
 
 %% Branch out calibration:
+
 % Calibration and Levy Pricing using dates up to 1y
 % branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
 
 % Calibration and Levy Pricing using dates up to 1y (same USA/EU dates)
 % branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
 
-% branch_out_procedure_1y(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
-
 %%
 
 %% Multi-calibration comparison 1st round
 
-%! WARNING:  calibration feasibility tests take a lot of computation time.
+% !WARNING:  calibration feasibility tests take a lot of computation time.
 % The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 40
 % minutes. This is due to the 33 consequent calibrations necessary: mean
 % time for each calibration is 72 seconds.
@@ -154,7 +158,7 @@ end
 % end
 
 %% Multi-calibration comparison 2nd round
-%! WARNING:  calibration feasibility tests take a lot of computation time.
+% !WARNING:  calibration feasibility tests take a lot of computation time.
 % The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 38
 % minutes. This is due to the 32 consequent calibrations necessary: mean
 % time for each calibration is 70 seconds.
@@ -189,15 +193,12 @@ end
 
 %%
 
-%% Calibration changing the initial condition
-% Changing th initial conditions in order to find the global minimum
-% (possibly not the global but the best minimum in the space considered)
-
-
-
 %% Calibration of the Xt model parameters
 
 % Quantities of interest
+% The initial parameters collected after various trials that minimizes the
+% most the obj fun are the following ones; the structure is a bit specific
+% but the fmincon is not able to find the global minimum otherwise
 x0 = [0.3 -0.5 0.15 0.3 -0.5 0.15];
 
 initial_cond = x0;
@@ -214,12 +215,10 @@ b = [0; 0; 0; 0];
 Aeq = []; beq = [];
 
 % Lower and upper bounds
-% >>> Constraints of volvol on lb are required to stop a collapse of the 
-% impvol structure <<<
-% >>> Constraint of the ub are related to the equity market, we're working
-% into <<<
+% Constraints of volvol on lb are required to stop a collapse of the 
+% impvol structure if the volvol is too low
 lb = [0.01; -Inf; 0; 0.01; -Inf; 0];
-ub = [Inf; 0; Inf; Inf; 0; Inf];
+ub = [];
 
 % Options for the visualization
 options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
@@ -253,9 +252,9 @@ if flag == 1
 
 end
 
-%% POINT 7: comparison with the historical correlation
+%%
 
-%% Calibration over the rho - MISMATCH CORR
+%% POINT 7: Calibration of the historical correlation
 
 % Initialization of the parameters
 A = [-1 0 0; 0 -1 0; 0 0 -1]; b = [0; 0; 0];
@@ -267,12 +266,11 @@ x0 = ones(1, 3);
 params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
 
-nu_USA = params(1);
-nu_EU = params(2);
+% Extraction of the parameters
+nu_USA = params(1); nu_EU = params(2);
 nu_z = params(3);
 
-%% disp the calibrated parameters
-
+% Console print of the calibration
 disp_params(params_marginals, initial_cond, save_results);
 
 %% Common and idiosynchratic parameters
@@ -294,13 +292,9 @@ beta_z = sol.x(3); gamma_z = sol.x(4);
 % Remaining parameters computation
 beta_USA = params_USA(2) - a_USA * beta_z;                       % From condition (10.1)
 gamma_USA = sqrt((params_USA(3)^2) - (a_USA^2) * (gamma_z^2));   % From condition (10.2)
-% nu_USA = (nu_z * params_USA(1))/(nu_z - params_USA(1)); 
 
 beta_EU = params_EU(2) - a_EU * beta_z;
 gamma_EU = sqrt(params_EU(3)^2 - a_EU ^ 2 * gamma_z^2);
-% nu_EU = (nu_z * params_EU(1))/(nu_z - params_EU(1));
-
-% Creation of vectors
 
 % Idiosyncratic parameters USA
 idiosync_USA = [nu_USA, beta_USA, gamma_USA, a_USA];
@@ -311,13 +305,12 @@ idiosync_EU = [nu_EU, beta_EU, gamma_EU, a_EU];
 % Systematic parameters
 syst_Z = [nu_z , beta_z, gamma_z];
 
-%% Display of the parameters over the command window
-
+% Display of the parameters over the command window
 disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z, nu_z, save_results);
 
-%% Point 8: Black model calibration
+%%
 
-%% Calibration of the model parameters
+%% Point 8: Black model calibration
 
 % Initialization of the parameters
 x0 = 1e-4;
@@ -342,6 +335,8 @@ sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, d
 sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), ...
     x0, A, b, Aeq, beq, lb, ub, [], options);
 
+%%
+
 %% Point 9: Pricing of the certificate
 
 % Computation of the pricing of the certificate
@@ -349,7 +344,6 @@ sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_US
 % The payoff is the following:
 % - If the EURO50 is below 95% of the initial value, the payoff is 0
 % - Otherwise, the payoff is the difference between the S&P500 and the initial value
-
 
 %% Point 9: Pricing of the certificate - LEVY
 
@@ -366,9 +360,13 @@ B0_Levy = exp(-rate_USA * TTM);
 S0_Levy = [S0_USA S0_EU];
 rates_Levy = [rate_USA rate_EU];
 
-% St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
-St_Levy = stock_simulation_Levy_prova( params_USA, params_EU, rates_Levy , TTM , S0_Levy, rho_historical);
-% % Unpacking the results
+if flag_levy == 1
+    St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
+else
+    St_Levy = stock_simulation_Levy_reduced(params_USA, params_EU, rates_Levy , TTM , S0_Levy, rho_model_Levy);
+end
+
+% Unpacking the results
 St_USA_Levy = St_Levy(:, 1);
 St_EU_Levy = St_Levy(:, 2);
 
@@ -378,6 +376,8 @@ certificate_payoff_Levy = max(St_USA_Levy - S0_USA, 0) .* indicator_Levy;
 
 % Mean price and confidence interval
 [mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy);
+
+%%
 
 %% Point 9: Pricing of the certificate - Brownian Motion
 
@@ -423,7 +423,7 @@ St_USA_Black_AV = St_Black_AV(:, 1); St_EU_Black_AV = St_Black_AV(:, 2);
 indicator_Black_AV = St_EU_Black_AV < (0.95 * S0_EU);
 certificate_payoff_Black_AV = max(St_USA_Black_AV - S0_USA, 0) .* indicator_Black_AV;
 
-certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_Black)/2;
+% certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_Black)/2;
 
 % Mean price and confidence interval
 [mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV);
