@@ -120,7 +120,7 @@ data_calib_USA = calib_fun.dataset_preprocessing(data_USA_OTM, F0_USA, B_USA, da
 #####################################################################################
 ####################           CALIBRATION MARGINALS            #####################
 #####################################################################################
-'''
+
 # Calibration of the model
 x0 = np.array([0.3, -0.5, 0.15, 0.3, -0.5, 0.15])
 # x0 = np.array([0.1, -0.1, 0.1, 0.1, -0.1, 0.1])
@@ -157,6 +157,25 @@ k1 = params_USA[0]
 k2 = params_EU[0]
 
 #####################################################################################
+################              DISPLAY PARAMETERS                    #################
+#####################################################################################
+
+print('k_USA:')
+print(params_USA[0])
+print('theta_USA:')
+print(params_USA[1])
+print('sigma_USA:')
+print(params_USA[2])
+
+print('k_EU:')
+print(params_EU[0])
+print('theta_EU:')
+print(params_EU[1])
+print('sigma_EU:')
+print(params_EU[2])
+
+
+#####################################################################################
 ################         CALIBRATION IDIOSYNC & SYSTEMIC            #################
 #####################################################################################
 
@@ -177,47 +196,6 @@ x0 = 0.2 * np.ones(3)
 sol = fsolve(equations, x0)
 
 nu_USA, nu_EU, nu_z = sol
-'''
-
-
-'''
-# Compute rho obtained from the model
-rho_model_Levy = np.sqrt(params[0] * params[1] / ((params[0] + params[2]) * (params[1] + params[2])))
-error_rho = abs(rho_model_Levy - rho_historical)
-print('Error for rho calibration:')
-print(error_rho)
-'''
-
-'''
-kappa_USA: 3.829509
-theta_USA: -0.094116
-sigma_USA: 0.155781
------------------------
-kappa_EU: 0.825923
-theta_EU: -0.162084
-sigma_EU: 0.124591
-----------------------------
-a_USA: -0.1022
-a_EU: -0.0379
-----------------------------
-Beta_z: 0.5776
-Beta_USA: -0.0351
-Beta_EU: -0.1402
-----------------------------
-gamma_z: 1.2072
-gamma_USA: 0.0952
-gamma_EU: 0.1159
-----------------------------
-nu_1: 10.2638 
-nu_2: 0.9550 
-nu_z: 6.1087 
-'''
-
-params_USA = [3.829509, -0.094116, 0.155781]
-params_EU = [0.825923, -0.162084, 0.124591]
-nu_z = 6.1087
-nu_USA = 10.2638
-nu_EU = 0.9550
 
 # Compute the solution of the system
 sol = calib_fun.marginal_param(params_USA, params_EU, nu_z)
@@ -242,6 +220,31 @@ idiosync_EU = [nu_EU, beta_EU, gamma_EU, a_EU]
 
 # Systematic parameters
 syst_Z = [nu_z , beta_z, gamma_z]
+
+#####################################################################################
+################              DISPLAY PARAMETERS                    #################
+#####################################################################################
+
+print('nu_USA:')
+print(nu_USA)
+print('nu_EU:')
+print(nu_EU)
+print('nu_z:')
+print(nu_z)
+
+print('beta_USA:')
+print(beta_USA)
+print('beta_EU:')
+print(beta_EU)
+print('beta_z:')
+print(beta_z)
+
+print('gamma_USA:')
+print(gamma_USA)
+print('gamma_EU:')
+print(gamma_EU)
+print('gamma_z:')
+print(gamma_z)
 
 #####################################################################################
 ################                  CALIBRATION BLACK                 #################
@@ -333,6 +336,13 @@ IC_Black = (mean_price_Black - margin_of_error, mean_price_Black + margin_of_err
 #####################################################################################
 ################                  DISPLAY PRICES                    #################
 #####################################################################################
+
+print('Levy Model')
+print('Mean price: ', mean_price_Levy)
+print('Confidence interval: ', IC_Levy)
+print('Black Model')
+print('Mean price: ', mean_price_Black)
+print('Confidence interval: ',IC_Black)
 
 # End run time computation and display it
 end_time = time.time()
