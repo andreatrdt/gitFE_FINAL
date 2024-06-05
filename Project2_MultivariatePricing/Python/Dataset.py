@@ -122,4 +122,3 @@ class Dataset:
 
     def _remove_last_element(self):
         self._list_obj = self._list_obj[:-1]
-

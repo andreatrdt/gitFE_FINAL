@@ -3,9 +3,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.io as sio
-import datetime
-import warnings
-import os
+
 
 # Requirements for the Black computation
 import math
@@ -23,7 +21,9 @@ from scipy.interpolate import interp1d
 
 
 
-# GENERALS
+#####################################################################################################
+#################################          GENERAL FUNCTIONS          ###############################
+#####################################################################################################
 
 # Historical correlation
 def hist_corr(returns_data):
@@ -36,17 +36,6 @@ def hist_corr(returns_data):
 
 # OTM preprocessing
 def OTM_preprocessing(dataset, F0):
-    """
-    Computation of the OTM options only
-    
-    INPUT:
-    dataset:          [DICT] initial dataset
-    F0:               [ARRAY] forward price at time 0
-    
-    OUTPUT:
-    dataset:          [DICT] dataset modified for the OTM options 
-    """
-
     # Introduction
     length_dataset = dataset._length_dates()
 
@@ -76,11 +65,7 @@ def yearfrac(start_date, end_date, basis):
         raise NotImplementedError("Other day count conventions are not implemented.")
 
 # REFINEMENT DATASET
-
 def blsdelta(S, K, r, T, sigma):
-    """
-    Compute Black-Scholes delta. Placeholder function using simplified calculations.
-    """
     S = np.array(S, dtype=np.float64)
     K = np.array(K, dtype=np.float64)
     T = np.array(T, dtype=np.float64)
@@ -92,14 +77,6 @@ def blsdelta(S, K, r, T, sigma):
     return delta_call, delta_put
 
 def black_price(option_type, F, K, T, r, sigma):
-    """ Calculate the Black-Scholes option price.
-    option_type: 'call' or 'put'
-    S: spot price
-    K: strike price
-    T: time to maturity (in years)
-    r: risk-free rate
-    sigma: volatility
-    """
     d1 = (math.log(F / K) + (0.5 * sigma ** 2) * T) / (sigma * math.sqrt(T))
     d2 = d1 - sigma * math.sqrt(T)
 
@@ -113,14 +90,6 @@ def black_price(option_type, F, K, T, r, sigma):
     return price
 
 def implied_volatility(option_type, F, K, T, r, market_price):
-    """ Calculate the implied volatility using the Brent method.
-    option_type: 'call' or 'put'
-    S: spot price
-    K: strike price
-    T: time to maturity (in years)
-    r: risk-free rate
-    market_price: market price of the option
-    """
     def objective_function(sigma):
         return black_price(option_type, F, K, T, r, sigma) - market_price
 
@@ -129,21 +98,6 @@ def implied_volatility(option_type, F, K, T, r, market_price):
     return implied_vol
 
 def dataset_preprocessing(dataset, F0, B0, date_settlement):
-    """
-    Preprocessing of the dataset for each maturity in order to remove all
-    those options without delta_Black between [10%, 90%]
-    
-    INPUT:
-    dataset:            [DICT] initial dataset
-    F0:                 [ARRAY] initial forward F(0, T)
-    B0:                 [ARRAY] initial discount B(0, T)
-    date_settlement:    [DATETIME] settlement date
-    flag:               [0: no plots, 1: with plots]
-    
-    OUTPUT:
-    dataset:            modified version of the dataset
-    """
-
     # Introduction
     conv_ACT365 = 3
     spot_ATM = dataset._spot
@@ -206,7 +160,9 @@ def dataset_preprocessing(dataset, F0, B0, date_settlement):
     return dataset
 
 
-# CALIBRATION
+#####################################################################################################
+#################################          CALIBRATION FUNCTIONS          ############################
+#####################################################################################################
 
 def callPriceLewis_pref(B0, F0, log_moneyness, sigma, k, theta, TTM, M, dz):
     # Introduction of the FFT parameters
@@ -251,6 +207,7 @@ def callPriceLewis_pref(B0, F0, log_moneyness, sigma, k, theta, TTM, M, dz):
 
     return price
 
+# compute the RMSE
 def RMSE_total(params, dataset, F0, B0, date_settlement):
 
     # Unpack the parameters
@@ -298,7 +255,8 @@ def RMSE_total(params, dataset, F0, B0, date_settlement):
 
     return RMSE_total
 
-def new_calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA, B0_USA, date_settlement):
+# Calibration function
+def calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA, B0_USA, date_settlement):
     # Unpacking of the parameters
     params_USA = params[:3]
     params_EU = params[3:]
@@ -316,6 +274,7 @@ def new_calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA, B0_USA, dat
 
     return distance
 
+# non linear constraints
 def nonlinconstr(x):
     # Unpacking the parameters
     k1, theta1, sigma1, k2, theta2, sigma2 = x
@@ -329,6 +288,7 @@ def nonlinconstr(x):
 
     return c, ceq
 
+# non linear constraints for the correlation
 def nonlinconstr_corr(params, k1, k2):
 
     # Unpacking the constraints
@@ -347,6 +307,7 @@ def nonlinconstr_corr(params, k1, k2):
 
     return c, ceq
 
+# marginal parameters
 def marginal_param(params_USA, params_EU, nu_z):
 
     def equations(x):
@@ -366,7 +327,9 @@ def marginal_param(params_USA, params_EU, nu_z):
     
     return sol
 
-# BLACK PROCESS CALIBRATION
+#####################################################################################################
+#################################          BLACK FUNCTIONS          ###############################
+#####################################################################################################
 
 def blk_calibration(sigma, dataset, F0, B0, date_settlement):
 

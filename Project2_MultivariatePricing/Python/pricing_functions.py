@@ -4,9 +4,6 @@ import numpy as np
 import scipy.io as sio
 from scipy.interpolate import interp1d
 
-import datetime
-import warnings
-import os
 
 from scipy.stats import norm
 from dateutil.relativedelta import relativedelta
@@ -24,7 +21,7 @@ from scipy.stats import multivariate_normal
 import calibration_functions as calib_fun
 import forward_functions as fwd_fun
 
-
+# Function to interpolate interest rates
 def interp_pricing_params(dates, B0, date_settlement, year_to_maturity):
     conv_ACT365 = 3  # Assuming ACT/365 convention
 
@@ -72,6 +69,7 @@ def interp_pricing_params(dates, B0, date_settlement, year_to_maturity):
 
     return rate, TTM
 
+# Function to simulate stock prices
 def stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0, rates, TTM):
 
     # Unpacking parameters
@@ -119,6 +117,7 @@ def stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_
     
     return stock
 
+# Function to simulate stock prices
 def stock_simulation_Black(sigmas, F0, rates, rho, TTM):
     nSim = int(1e6)
 
@@ -135,12 +134,3 @@ def stock_simulation_Black(sigmas, F0, rates, rho, TTM):
     prices = F0 * np.exp(Xt)
 
     return prices
-
-def disp_contract_prices(price_Levy, CI_Levy, price_Blk, CI_Blk, price_Blk_AV, CI_Blk_AV, price_SemiclosedBlk):
-    print("Prices of the derivative")
-    print("-----------------------------------------------------------------------------------------------------")
-    print("| Model              |  Price               |  Confidence Interval                       |")
-    print("-----------------------------------------------------------------------------------------------------")
-    print("| Levy:              |  {:.8f}%    |  [ {:.8f}% ,  {:.8f}% ]".format(price_Levy, CI_Levy[0], CI_Levy[1]))
-    print("| Black:             |  {:.8f}%    |  [ {:.8f}% ,  {:.8f}% ]".format(price_Blk, CI_Blk[0], CI_Blk[1]))
-    print("-----------------------------------------------------------------------------------------------------")

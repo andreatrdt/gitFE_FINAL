@@ -16,10 +16,7 @@
 import numpy as np
 import datetime as dt
 import scipy.io as sio
-
-import datetime
 import warnings
-import os
 
 from scipy.optimize import minimize, fsolve
 from datetime import datetime, timedelta
@@ -122,8 +119,8 @@ data_calib_USA = calib_fun.dataset_preprocessing(data_USA_OTM, F0_USA, B_USA, da
 #####################################################################################
 
 # Calibration of the model
-x0 = np.array([0.3, -0.5, 0.15, 0.3, -0.5, 0.15])
-# x0 = np.array([0.1, -0.1, 0.1, 0.1, -0.1, 0.1])
+# x0 = np.array([0.3, -0.5, 0.15, 0.3, -0.5, 0.15])
+x0 = np.array([0.1, -0.1, 0.1, 0.1, -0.1, 0.1])
 
 # Lower and upper bounds for the parameters
 lb = np.array([0.01, -np.inf, 0, 0.01, -np.inf, 0])
@@ -140,7 +137,7 @@ nonlinear_constraints = {
 
 # The calibration function should be passed without calling it
 def calibration_function(params):
-    return calib_fun.new_calibration(params, data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
+    return calib_fun.calibration(params, data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
 
 # Minimize the calibration function with constraints and bounds
 res = minimize(calibration_function, x0, method='SLSQP', bounds=[(lb[i], ub[i]) for i in range(len(lb))],
@@ -160,13 +157,14 @@ k2 = params_EU[0]
 ################              DISPLAY PARAMETERS                    #################
 #####################################################################################
 
+print('---------------------------------')
 print('k_USA:')
 print(params_USA[0])
 print('theta_USA:')
 print(params_USA[1])
 print('sigma_USA:')
 print(params_USA[2])
-
+print('---------------------------------')
 print('k_EU:')
 print(params_EU[0])
 print('theta_EU:')
@@ -225,6 +223,7 @@ syst_Z = [nu_z , beta_z, gamma_z]
 ################              DISPLAY PARAMETERS                    #################
 #####################################################################################
 
+print('---------------------------------')
 print('nu_USA:')
 print(nu_USA)
 print('nu_EU:')
@@ -232,6 +231,7 @@ print(nu_EU)
 print('nu_z:')
 print(nu_z)
 
+print('---------------------------------')
 print('beta_USA:')
 print(beta_USA)
 print('beta_EU:')
@@ -239,6 +239,7 @@ print(beta_EU)
 print('beta_z:')
 print(beta_z)
 
+print('---------------------------------')
 print('gamma_USA:')
 print(gamma_USA)
 print('gamma_EU:')
@@ -337,13 +338,16 @@ IC_Black = (mean_price_Black - margin_of_error, mean_price_Black + margin_of_err
 ################                  DISPLAY PRICES                    #################
 #####################################################################################
 
+print('---------------------------------')
 print('Levy Model')
 print('Mean price: ', mean_price_Levy)
 print('Confidence interval: ', IC_Levy)
+print('---------------------------------')
 print('Black Model')
 print('Mean price: ', mean_price_Black)
 print('Confidence interval: ',IC_Black)
 
 # End run time computation and display it
 end_time = time.time()
+print('---------------------------------')
 print(f"Run time: {end_time - start_time} seconds")
