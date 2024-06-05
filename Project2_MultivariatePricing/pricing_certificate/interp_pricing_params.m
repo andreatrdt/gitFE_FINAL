@@ -12,7 +12,11 @@ function [rate, TTM] = interp_pricing_params(dates, B0, date_settlement, year_to
 % TTM:                  [SCALAR] time to maturity
 % 
 % USES:
-% function rate_interpolation()
+% function none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Conventions
 

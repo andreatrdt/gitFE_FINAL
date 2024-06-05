@@ -14,6 +14,12 @@ function [stock , S0] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z,
 % OUTPUT:
 % stock:                underlying stock to be simulated
 % S0:                   initial value of the stock
+%
+% USES:            none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
     %% Unpacking of the parameters
 
     kappa_USA = params_USA(1);

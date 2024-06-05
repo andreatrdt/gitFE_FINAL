@@ -4,8 +4,29 @@ function branch_out_procedure_1y(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_
 % 
 % INPUT:
 % 
+% data_calib_EU:        [STRUCT] dataset of the options used for the
+%                       calibration for the EU market
+% data_calib_USA:       [STRUCT] dataset of the options used for the
+%                       calibration for the USA market
+% F0_EU:                [VECTOR] initial forward value F(0, T) for the EU
+%                       market
+% B_EU:                 [VECTOR] initial discounts B(0, T) for the EU
+%                       market
+% F0_USA:               [VECTOR] initial forward value F(0, T) for the USA
+%                       market
+% B_USA:                [VECTOR] initial discounts B(0, T) for the USA
+%                       market
+% date_settlement:      [DATENUM] initial date
+%
 % OUTPUT:
 % 
+% None
+%
+% USES:  removal_expiry(), calibration(), nonlinconstr(), marginal_param(),
+%        nonlinconstr_corr(), stock_simulation_Levy()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
 
     %% Removal unused dates
     % In order to simplify the calibration we tried to remove the dates

@@ -10,8 +10,11 @@ function rate = rate_interpolation(dates, discounts, date_settlement, interp_dat
 % OUTPUT:
 % rate:                  zero rate for the GK formula
 % 
-% USES:
-% function rate_interpolation()
+% USES:             zeroRates()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Creation of the required support vector
 

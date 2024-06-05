@@ -8,7 +8,11 @@ function dataset = OTM_preprocessing(dataset, F0)
 % OUTPUT:
 % dataset:          [STRUCT] dataset modified for the OTM options 
 %
-% USES:             OTM_preprocessing()
+% USES:             none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
     
     for ii=1:length(dataset.datesExpiry)
 

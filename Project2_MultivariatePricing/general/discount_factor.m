@@ -7,7 +7,11 @@ function discount =  discount_factor(B_bar , data , date_settlement)
 % OUTPUT
 % discount
 %
-% USES : discount_factor()
+% USES : none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
 dates = datenum(data.datesExpiry);
 

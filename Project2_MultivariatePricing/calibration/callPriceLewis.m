@@ -11,6 +11,14 @@ function price = callPriceLewis(B0, F0, log_moneyness, sigma, k, theta, TTM, M, 
 % TTM:                [SCALAR} time to maturity
 % M:                  [SCALAR] parameter for FFT
 % dz:                 [SCALAR] parameter of the moneyness grid
+%
+%OUTPUT
+% price:               [VECTOR] call prices
+%
+%USES:                  fft()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
 
 
     %% Introduction of the FFT parameters

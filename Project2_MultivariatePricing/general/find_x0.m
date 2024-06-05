@@ -1,4 +1,28 @@
 function find_x0(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
+% Find the initial parameters for the calibration
+%
+% INPUT:
+% data_calib_EU:        [STRUCT] dataset of the options used for the
+%                       calibration for the EU market   
+% data_calib_USA:       [STRUCT] dataset of the options used for the
+%                       calibration for the USA market
+% F0_EU:                [VECTOR] initial forward value F(0, T) for the EU
+%                       market
+% B_EU:                 [VECTOR] initial discounts B(0, T) for the EU
+%                       market
+% F0_USA:               [VECTOR] initial forward value F(0, T) for the USA
+%                       market
+% B_USA:                [VECTOR] initial discounts B(0, T) for the USA
+%                       market
+% date_settlement:      [DATENUM] initial date
+% OUTPUT:
+% None
+% USES:  calibration(), nonlinconstr(), disp_params(), nonlinconstr_corr(),
+%        marginal_param(), disp_marginal_params()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
 
 

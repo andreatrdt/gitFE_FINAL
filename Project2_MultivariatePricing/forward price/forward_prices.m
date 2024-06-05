@@ -10,8 +10,11 @@ function [F_vector, B_bar_vector] = forward_prices(dataset, flag)
 % F_vector:          [VECTOR] forwards value F(0, T)
 % B_bar_vector:      [VECTOR] market calibrated discount B(0, T)
 % 
-% USES:
-% function synthethic_forward()
+% USES:     synthethic_forward(), estimation_discount_factor()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Introduction of the return vectors
 

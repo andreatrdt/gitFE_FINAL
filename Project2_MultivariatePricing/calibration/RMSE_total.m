@@ -11,7 +11,12 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
 % OUTPUT:
 % RMSE:              error to minimize
 % 
-% USES:              RMSE_total()
+% USES:              callPriceLewis_pref(), 
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
+
     %% Unpack the parameters
     k = params(1);
     theta = params(2);

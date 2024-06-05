@@ -8,9 +8,11 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
 % params:             [VECTOR] [k, theta, sigma]
 % date_settlement:    [DATENUM] initial date
 % 
-% USES:
-% function callPriceLewis()
-% function error_calibration()
+% USES:     none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
 
 %% Initialization of the error vectors:

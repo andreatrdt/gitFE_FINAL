@@ -10,7 +10,11 @@ function disp_marginal_params(sol_USA , sol_EU ,Beta_z, gamma_z,nu_z, save_resul
 % OUTPUTS
 % None
 %
-% USES disp_marginal_params()
+% USES none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
 
 

@@ -16,7 +16,11 @@ function [params_removal, fun_eval, exit_condition] = multi_calib(data_EU, data_
 % fun_eval:           [VECTOR] RMSE for each calibration
 % exit_condition:     [VECTOR] exit condition of the solver
 %
-% USES:           multi_calib()
+% USES:           calibration() , removal_expiry()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Initialization of the calib parameters
 
@@ -57,7 +61,7 @@ function [params_removal, fun_eval, exit_condition] = multi_calib(data_EU, data_
 
         [data, F0, B0] = removal_expiry(data_EU, F_EU, B0_EU, ii);
         
-        [parameters_removal_EU(ii, :), function_eval_EU(ii), exit_condition_EU(ii), ~]  = fmincon(@(params) new_calibration(params, data, data_USA, ...
+        [parameters_removal_EU(ii, :), function_eval_EU(ii), exit_condition_EU(ii), ~]  = fmincon(@(params) calibration(params, data, data_USA, ...
             F0, B0, F_USA, B0_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
     end
 
@@ -65,7 +69,7 @@ function [params_removal, fun_eval, exit_condition] = multi_calib(data_EU, data_
 
         [data, F0, B0] = removal_expiry(data_USA, F_USA, B0_USA, ii);
         
-        [parameters_removal_USA(ii, :), function_eval_USA(ii), exit_condition_USA(ii), ~]  = fmincon(@(params) new_calibration(params, data_EU, data, ...
+        [parameters_removal_USA(ii, :), function_eval_USA(ii), exit_condition_USA(ii), ~]  = fmincon(@(params) calibration(params, data_EU, data, ...
             F_EU, B0_EU, F0, B0, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
     end
 

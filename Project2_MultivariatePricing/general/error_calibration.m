@@ -20,7 +20,11 @@ function [error_call_prices, error_put_prices]=error_calibration(model_call_pric
 % error_call_prices:    [VECTOR] error in the pricing of the call options
 % error_put_prices:     [VECTOR] error in the pricing of the put options
 %
-% USES: error_calibration()
+% USES:     none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
 %% Call prices error
 

@@ -15,7 +15,11 @@ function distance = calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA,
 % OUTPUT:
 % distance:           value to be reduced to 0
 % 
-% USES:              calibration()
+% USES:              RMSE_total()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Unpacking of the parameters
 

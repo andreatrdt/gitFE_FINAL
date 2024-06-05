@@ -12,7 +12,10 @@ function disp_contract_prices(price_Levy,CI_Levy,price_Blk,CI_Blk,price_Blk_AV,C
 % OUTPUT:
 % Display the prices of the derivative and their confidence intervals
 %
-% USES: disp_contract_prices()
+% USES: none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
 
     disp('Prices of the derivative')
     disp('-----------------------------------------------------------------------------------------------------')

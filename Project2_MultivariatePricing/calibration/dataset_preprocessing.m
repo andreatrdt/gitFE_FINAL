@@ -12,7 +12,11 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
 % OUTPUT:
 % dataset:            modified version of the dataset
 %
-% USES:     dataset_preprocessing()
+% USES:     blkimpv() , blsdelta()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Conventions
     conv_ACT365 = 3;

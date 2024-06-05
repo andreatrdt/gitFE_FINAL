@@ -10,7 +10,11 @@ function price = blk_semiclosed(s1_0, rate1, rate2, sigma1, sigma2, rho, TTM)
 % TTM           [SCALAR] time to maturity
 % OUTPUT:
 % price : price od the option obtained via the semiclosed formula
-% USES : blk_semiclosed()
+% USES : none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
 
     % discount = exp(-rate*TTM);

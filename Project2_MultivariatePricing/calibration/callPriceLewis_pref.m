@@ -15,7 +15,11 @@ function price = callPriceLewis_pref(B0, F0, log_moneyness, sigma, k, theta, TTM
 % OUTPUT:
 % price:               [VECTOR] call prices
 %
-% USES: callPriceLewis_pref()
+% USES: fft()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
 
     %% Introduction of the FFT parameters

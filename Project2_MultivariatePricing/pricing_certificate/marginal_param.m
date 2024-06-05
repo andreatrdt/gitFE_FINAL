@@ -10,7 +10,11 @@ function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
 % OUTPUTS
 % sol: the solution of the optimization problem
 %
-% USES: marginal_param()
+% USES: none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Unpacking of the parameters
     kappa_1 = params_USA(1);

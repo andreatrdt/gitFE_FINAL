@@ -10,6 +10,12 @@ function disp_params(params_marginals, initial_cond, flag)
 %
 % OUTPUTS
 % None
+%
+% USES      none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     params_USA = params_marginals(1:3);
     params_EU = params_marginals(4:6);

@@ -13,8 +13,11 @@ function plot_forwards_discounts(data_EU, data_USA, B_EU, B_USA, F0_EU, F0_USA, 
 % OUTPUT:
 % None
 %
-% USES:
-% plot_forwards_discounts()
+% USES:     none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Conventions
 

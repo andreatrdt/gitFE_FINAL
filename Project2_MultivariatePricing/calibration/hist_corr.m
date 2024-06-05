@@ -7,7 +7,11 @@ function rho = hist_corr(dataset)
 % OUTPUT:
 % rho:            correlation coefficient between USA and EU
 %
-% USES:        hist_corr()
+% USES:        none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Computation of the returns
 

@@ -13,7 +13,11 @@ function [Gi, Gi_ask, Gi_bid] = synthethic_forward(call_bid, call_ask, put_bid, 
 % Gi_ask:            Synthetic Forward Ask for each strike
 % Gi_bid:            Synthetic Forward Bid for each strike
 %
-% USES: synthethic_forward()
+% USES: none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Computation Synthetic Forward Bid
 

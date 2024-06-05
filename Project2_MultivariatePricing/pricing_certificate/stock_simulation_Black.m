@@ -11,6 +11,12 @@ function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rates, rho, TTM
 % OUTPUT:
 % prices:               [MATRIX] underlying stock to be simulated
 % S0:                   [VECTOR] initial value of the stock
+%
+% USES:      none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
 
     %% Initialization

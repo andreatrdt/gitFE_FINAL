@@ -9,7 +9,11 @@ function dataset_exploration(data_EU, data_USA, date_settlement)
 % OUTPUT:
 % None
 %
-% USES: dataset_exploration()
+% USES:         none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Plot of the European Call Prices
 

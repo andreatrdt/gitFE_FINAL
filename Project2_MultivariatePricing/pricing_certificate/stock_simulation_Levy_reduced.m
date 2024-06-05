@@ -9,8 +9,10 @@ function [prices , S0] = stock_simulation_Levy_reduced( params_USA,params_EU, ra
 % OUTPUT:
 % prices:               underlying stock to be simulated
 % 
-% USES:
-% function rate_interpolation()
+% USES:     none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
 
     %% unpack parameters
 

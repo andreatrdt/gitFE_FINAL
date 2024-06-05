@@ -11,7 +11,11 @@ function [c, ceq] = nonlinconstr_corr(params, k1, k2)
 % c:            inequality constraints
 % ceq:          equality constraints
 %
-% USES:        nonlinconstr_corr()
+% USES:        none
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
 
     %% Unpacking the constraints
     nu_1 = params(1);

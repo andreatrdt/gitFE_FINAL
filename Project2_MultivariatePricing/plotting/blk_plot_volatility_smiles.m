@@ -8,8 +8,10 @@ function blk_plot_volatility_smiles(dataset, F0, B0, sigma, date_settlement)
 % params:             [VECTOR] [k, theta, sigma]
 % date_settlement:    [DATENUM] initial date
 % 
-% USES:
-% function callPriceLewis()
+% USES:         blkimpv() , blkprice()
+
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
 
     for ii = 1:length(dataset.datesExpiry)
 

@@ -10,6 +10,10 @@ function idx = find_idx(data, date)
 %
 % USES: find_idx()
 
+% Authors:
+% M.Maspes, A.Tarditi, M.Torba
+
+
     idx = find(data == date);
 
 end % function find_idx
