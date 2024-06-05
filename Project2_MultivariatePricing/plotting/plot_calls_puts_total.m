@@ -11,7 +11,10 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
 % USES:
 % function callPriceLewis()
 
-    for ii = 1:length(dataset.datesExpiry)
+error_call_prices_vec = zeros(length(dataset.datesExpiry),1);
+error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
+
+    for ii = 1:min(length(dataset.datesExpiry),19)
 
         %% Initialization
     
@@ -43,8 +46,11 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         mean_put = (dataset.putBid(ii).prices + dataset.putAsk(ii).prices)/2;
 
         %% Computation and update of the error:
-        % [error_call_prices, error_put_prices] = error_calibration(call_prices, put_prices, ...
-        %    dataset.callBid(ii).prices, dataset.callAsk(ii).prices, dataset.putBid(ii).prices, dataset.putAsk(ii).prices);
+        [error_call_prices, error_put_prices] = error_calibration(call_prices, put_prices, ...
+           dataset.callBid(ii).prices, dataset.callAsk(ii).prices, dataset.putBid(ii).prices, dataset.putAsk(ii).prices);
+        
+        error_call_prices_vec(ii) = mean(error_call_prices);
+        error_put_prices_vec(ii) = mean(error_put_prices);
 
         %% Plots
 
@@ -69,5 +75,21 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         legend('Calibrated prices', 'Mean prices', 'Put Ask', 'Put Bid', 'Strike ATM');
         
     end
-
+    if length(dataset.datesExpiry)>13
+        fprintf('\nMEAN ERROR USA PRICES:\n')
+        disp('--------------------------------------------------------------')
+        fprintf('Expiry         | Call Prices error | Put prices error\n')
+        disp('--------------------------------------------------------------')
+        for ii=1:length(dataset.datesExpiry)
+            fprintf('%s     |  %f%%       |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
+        end
+    else
+        fprintf('\nMEAN ERROR EU PRICES:\n')
+        disp('--------------------------------------------------------------')
+        fprintf('Expiry         | Call Prices error | Put prices error\n')
+        disp('--------------------------------------------------------------')
+        for ii=1:length(dataset.datesExpiry)
+            fprintf('%s     |  %f%%       |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
+        end
+    end
 end % function plot_calls_puts_total
