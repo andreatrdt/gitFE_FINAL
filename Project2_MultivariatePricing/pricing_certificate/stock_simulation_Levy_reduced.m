@@ -1,4 +1,4 @@
-function [prices , S0] = stock_simulation_Levy_reduced( params_USA,params_EU, rates , TTM , S0, rho)
+function [prices , S0] = stock_simulation_Levy_reduced(params_USA,params_EU, rates , TTM , S0, rho)
 % 
 % INPUT:
 % params:               calibration NIG parameters [k, theta, sigma]

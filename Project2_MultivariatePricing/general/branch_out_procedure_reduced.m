@@ -55,7 +55,7 @@ function branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU
     options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
     
     % Calibration
-    params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
+    params_marginals = fmincon(@(params) calibration(params, data_calib_EU, data_calib_USA, ...
         F0_EU, B_EU, F0_USA, B_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
     
     % Display of the parameters on the console
