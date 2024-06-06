@@ -26,7 +26,7 @@ function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rates, rho, TTM
     %% Simulation of the NIG process
 
     % Stochastic part
-    covarianceMatrix = [TTM rho*TTM; rho*TTM TTM];
+    covarianceMatrix = [1 rho; rho 1];
     meanVector = [0; 0];
 
     g = mvnrnd(meanVector, covarianceMatrix, nSim);
