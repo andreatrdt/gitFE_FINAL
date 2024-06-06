@@ -105,9 +105,8 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
             fprintf('%s     |  %f%%       |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
         end
         disp('--------------------------------------------------------------')
-        fprintf('\n AVERAGE MEAN ERROR USA PRICES:\n')
-        fprintf('Call Prices error | Put prices error\n')
-        fprintf(' %f%%       |    %f%%\n', mean(error_call_prices_vec), mean(error_put_prices_vec))
+        disp('The average pricing error is')
+        disp(mean)
 
     % For European options
     else
@@ -122,9 +121,5 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         for ii=1:length(dataset.datesExpiry)
             fprintf('%s     |  %f%%       |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
         end
-        disp('--------------------------------------------------------------')
-        fprintf('\n AVERAGE MEAN ERROR EU PRICES:\n')
-        fprintf('Call Prices error | Put prices error\n')
-        fprintf(' %f%%       |    %f%%\n', mean(error_call_prices_vec), mean(error_put_prices_vec))
     end
 end % function plot_calls_puts_total
