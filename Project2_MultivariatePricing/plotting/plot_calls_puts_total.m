@@ -15,9 +15,11 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
 
 
 
-%% Initialization of the error vectors:
-error_call_prices_vec = zeros(length(dataset.datesExpiry),1);
-error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
+    %% Initialization of the error vectors:
+    error_call_prices_vec = zeros(length(dataset.datesExpiry),1);
+    error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
+    
+    count_prices_neg = 0;
 
     for ii = 1:min(length(dataset.datesExpiry),19)
 
@@ -46,6 +48,8 @@ error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
         call_prices = callPriceLewis_pref(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
         put_prices = call_prices - B0(ii)*(F0(ii) - strikes);
         
+        count_prices_neg = count_prices_neg + length(find(call_prices < 0));
+
         % Parameters comparison
         mean_call = (dataset.callBid(ii).prices + dataset.callAsk(ii).prices)/2;
         mean_put = (dataset.putBid(ii).prices + dataset.putAsk(ii).prices)/2;
@@ -88,8 +92,13 @@ error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
 
     % For American options
     if length(dataset.datesExpiry)>13 
+
         fprintf('\nMEAN ERROR USA PRICES:\n')
         disp('--------------------------------------------------------------')
+        disp('The number of negative prices in the USA mkt is: ')
+        disp(count_prices_neg)
+        disp('--------------------------------------------------------------')
+        
         fprintf('Expiry         | Call Prices error | Put prices error\n')
         disp('--------------------------------------------------------------')
         for ii=1:length(dataset.datesExpiry)
@@ -98,7 +107,11 @@ error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
 
     % For European options
     else
+
         fprintf('\nMEAN ERROR EU PRICES:\n')
+        disp('--------------------------------------------------------------')
+        disp('The number of negative prices in the EU mkt is: ')
+        disp(count_prices_neg)
         disp('--------------------------------------------------------------')
         fprintf('Expiry         | Call Prices error | Put prices error\n')
         disp('--------------------------------------------------------------')

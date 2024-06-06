@@ -22,7 +22,7 @@ function branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA
 % 
 % None
 %
-% USES:  removal_expiry(), new_calibration(), nonlinconstr(), marginal_param(),
+% USES:  removal_expiry(), calibration(), nonlinconstr(), marginal_param(),
 %        nonlinconstr_corr(), stock_simulation_Levy()
 
 % Authors:
@@ -56,7 +56,7 @@ function branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA
     options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
     
     % Calibration
-    params_marginals = fmincon(@(params) new_calibration(params, data_calib_EU, data_calib_USA, ...
+    params_marginals = fmincon(@(params) calibration(params, data_calib_EU, data_calib_USA, ...
         F0_EU, B_EU, F0_USA, B_USA, date_settlement), x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr(params), options);
     
     % Display of the parameters on the console
