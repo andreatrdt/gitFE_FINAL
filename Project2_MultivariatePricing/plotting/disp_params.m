@@ -1,5 +1,6 @@
 function disp_params(params_marginals, initial_cond, flag)
-%
+% Disply on the console of the 1st calibration params
+% 
 % INPUTS
 % params_marginals:     [VECTOR]the calibrated parameters for the marginals
 % nu_1:                 [SCALAR]the calibrated nu_1
@@ -79,7 +80,5 @@ function disp_params(params_marginals, initial_cond, flag)
     fprintf('theta_EU: %f\n', theta_EU)
     fprintf('sigma_EU: %f\n', sigma_EU)
     disp('-----------------------')
-        
 
-
-end
+end % function disp_params

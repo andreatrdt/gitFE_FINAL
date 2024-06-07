@@ -1,11 +1,12 @@
 function rho = hist_corr(dataset)
-% Computation of the historical correlation
+% Computation of the historical correlation through the Annualy returns on
+% the S&P500 and EUROSTOXX50 dataset
 % 
 % INPUT:
 % dataset:        [STRUCT] initial dataset of the returns
 % 
 % OUTPUT:
-% rho:            correlation coefficient between USA and EU
+% rho:            [SCALAR] correlation coefficient between USA and EU
 %
 % USES:        none
 

@@ -1,4 +1,4 @@
-function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
+function [sol] = marginal_param(params_USA,params_EU,nu_z)
 % This function computes the common and idiosyncratic parameters for the
 % USA and EU markets
 %
@@ -60,4 +60,4 @@ function [sol] = marginal_param(params_USA,params_EU,nu_z,rho)
     
     sol = solve(prob,x0);
 
-end % function marginal_param(params,nu_z)
+end % function marginal_param()

@@ -8,9 +8,9 @@
 % Moreover, the project requires the pricing of an exotic derivative
 % between the S&P500 and the EURO50 markets.
 
-% Marco Maspes
-% Andrea Tarditi
-% Matteo Torba
+% Maspes Marco
+% Tarditi Andrea
+% Torba Matteo
 
 %% Clearing the workspace
 clear all; close all; clc;
@@ -77,7 +77,7 @@ conv_ACT360 = 2; conv_ACT365 = 3; conv_30360_EU = 6;
 %% Plot of initial options
 
 if flag == 1
-    dataset_exploration(data_EU, data_USA, date_settlement)
+    dataset_exploration(data_EU, data_USA)
 end
 
 %% Plot of the returns
@@ -128,7 +128,7 @@ end
 % branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
 
 % Calibration and Levy Pricing using dates up to 1y (same USA/EU dates)
-branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
+% branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
 
 %%
 
@@ -141,20 +141,10 @@ branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA,
 
 % [params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
 
-%% Plots of the multicalib results 1st round
+% Plots of the multicalib results 1st round
 
 % if flag == 1
-%     figure;
-%     plot(dates_EU, fun_eval(1:13), '*-'); grid on;
-%     datetick('x','dd-mmm-yyyy','keepticks');
-%     title('EU - Obj func minimum');
-%     ylabel('Obj function value');
-% 
-%     figure;
-%     plot(dates_USA, fun_eval(14:33), '*-'); grid on;
-%     datetick('x','dd-mmm-yyyy','keepticks');
-%     title('USA Obj func minimum');
-%     ylabel('Obj function value');
+%     plot_multi_calib(dates_EU, dates_USA, fun_eval, 13, 20);
 % end
 
 %% Multi-calibration comparison 2nd round
@@ -168,20 +158,10 @@ branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA,
 % 
 % [params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
 
-%% Plots of the multicalib results 2nd round
+% Plots of the multicalib results 2nd round
 
 % if flag == 1
-%     figure;
-%     plot(dates_EU, fun_eval(1:13), '*-'); grid on;
-%     datetick('x','dd-mmm-yyyy','keepticks');
-%     title('EU - Obj func minimum');
-%     ylabel('Obj function value');
-% 
-%     figure;
-%     plot(dates_USA(1:19), fun_eval(14:32), '*-'); grid on;
-%     datetick('x','dd-mmm-yyyy','keepticks');
-%     title('USA Obj func minimum');
-%     ylabel('Obj function value');
+%     plot_multi_calib(dates_EU, dates_USA, fun_eval, 13, 19);
 % end
 
 %% Multi-calibration comparison 3rd round
@@ -195,28 +175,24 @@ branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA,
 % 
 % [params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
 
-%% Plots of the multicalib results 2nd round
+% Plots of the multicalib results 2nd round
 
 % if flag == 1
-%     figure;
-%     plot(dates_EU, fun_eval(1:13), '*-'); grid on;
-%     datetick('x','dd-mmm-yyyy','keepticks');
-%     title('EU - Obj func minimum');
-%     ylabel('Obj function value');
-% 
-%     figure;
-%     plot(dates_USA(1:18), fun_eval(14:31), '*-'); grid on;
-%     datetick('x','dd-mmm-yyyy','keepticks');
-%     title('USA Obj func minimum');
-%     ylabel('Obj function value');
+%     plot_multi_calib(dates_EU, dates_USA, fun_eval, 13, 18);
 % end
 
 %%
 
 %% Removal of last american maturity
-% Remove the last american maturity due to the appendix considerations
+% Remove the last american maturity due to the appendix 3 considerations
+% about the multi-calibration procedure
+F = F0_USA; B = B_USA;
 
 [data_calib_USA, F0_USA, B_USA] = removal_expiry(data_calib_USA, F0_USA, B_USA, 20);
+[data_USA_OTM, ~] = removal_expiry(data_USA_OTM, F, B, 20);
+[data_USA, ~] = removal_expiry(data_USA, F, B, 20);
+
+clear F B;
 
 %%
 
@@ -226,8 +202,8 @@ branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA,
 % The initial parameters collected after various trials that minimizes the
 % most the obj fun are the following ones; the structure is a bit specific
 % but the fmincon is not able to find the global minimum otherwise
-x0 = [0.3 -0.5 0.15 0.3 -0.5 0.15];
 
+x0 = [0.3 -0.5 0.15 0.3 -0.5 0.15];
 initial_cond = x0;
 
 % Linear inequality constraints
@@ -293,8 +269,6 @@ x0 = [0.75 0.8 1];
 
 params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
-% params = lsqnonlin(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical), x0, lb, ub,A,b,Aeq,beq,@(params) nonlinconstr_corr(params, k1, k2),options);
-
 
 % Extraction of the parameters
 nu_USA = params(1); nu_EU = params(2);
@@ -313,7 +287,7 @@ disp('error for rho calibration:  ')
 disp(error_rho);
 
 % Compute the solution of the system
-sol =  marginal_param(params_USA,params_EU , nu_z , rho_model_Levy);
+sol =  marginal_param(params_USA,params_EU , nu_z);
 
 % Explicitate the parameters
 a_USA = sol.x(1); a_EU = sol.x(2);
@@ -436,7 +410,7 @@ F01_EU = S0_EU*exp(rate_EU*TTM);
 
 % % Simulation of the underlying stock prices
 [St_Black, St_Black_AV] = stock_simulation_Black([sigma_USA; sigma_EU], [F01_USA; F01_EU], ...
-    [rate_USA; rate_EU], rho_historical, TTM);
+    rho_historical, TTM);
 
 % Computation of the discount at 1y
 B0_black = exp(-rate_USA * TTM);
@@ -461,8 +435,6 @@ St_USA_Black_AV = St_Black_AV(:, 1); St_EU_Black_AV = St_Black_AV(:, 2);
 % Computation of the pricing certificate payoff 
 indicator_Black_AV = St_EU_Black_AV < (0.95 * S0_EU);
 certificate_payoff_Black_AV = max(St_USA_Black_AV - S0_USA, 0) .* indicator_Black_AV;
-
-% certificate_payoff_Black_AV = (certificate_payoff_Black_AV + certificate_payoff_Black)/2;
 
 % Mean price and confidence interval
 [mean_price_Black_AV, ~, IC_Black_AV] = normfit(B0_black * certificate_payoff_Black_AV);

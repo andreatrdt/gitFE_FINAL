@@ -8,6 +8,8 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
 % params:             [VECTOR] [k, theta, sigma]
 % date_settlement:    [DATENUM] initial date
 % 
+% OUTPUT: none
+% 
 % USES:         callPriceLewis_pref() , blkimpv()
 
 % Authors:
@@ -32,7 +34,6 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         M = 15;
         dz = 0.001;
 
-
         % Parameters pricing
         strikes = dataset.strikes(ii).value;
         put_length = length(dataset.putAsk(ii).prices);
@@ -52,19 +53,13 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         impvol_OLD = blkimpv(F0(ii), strikes, interest_rate, TTM, [mid_price_put mid_price_call], 'Class', {'Call'});
 
         % Compute the implied volatilities NEW
-        impvol_NEW = blkimpv(F0(ii), strikes, interest_rate, TTM, call_prices, 'Class', {'Call'});
-        
-        % figure()
-        % plot(strikes,[mid_price_put mid_price_call], strikes, call_prices)
-        % legend('Mkt','Model')
+        impvol_NEW = blkimpv(F0(ii), strikes, interest_rate, TTM, call_prices, 'Class', {'Call'});  
         
         %% Plot of the volatilities
 
         figure();
         plot(strikes, impvol_OLD, 'o-'); hold on;
         plot(strikes, impvol_NEW, '*-'); grid on;
-%         plot(log_moneyness, impvol_OLD, 'o-'); hold on;
-%         plot(log_moneyness, impvol_NEW, '*-'); grid on;
 
         title(['Implied volatilities at expiry ', datestr(dataset.datesExpiry(ii))]);
         xlabel('Log-moneyness'); ylabel('Volatilities');

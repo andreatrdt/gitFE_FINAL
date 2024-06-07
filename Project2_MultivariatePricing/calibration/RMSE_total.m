@@ -9,7 +9,7 @@ function RMSE_total = RMSE_total(params, dataset, F0, B0, date_settlement)
 % date_settlement:   [DATENUM] initial date
 % 
 % OUTPUT:
-% RMSE:              error to minimize
+% RMSE:              [SCALAR] error to minimize
 % 
 % USES:              callPriceLewis_pref(), 
 

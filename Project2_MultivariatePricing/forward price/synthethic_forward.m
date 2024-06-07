@@ -9,15 +9,14 @@ function [Gi, Gi_ask, Gi_bid] = synthethic_forward(call_bid, call_ask, put_bid, 
 % put_ask:           [VECTOR] ask prices of the Put
 % 
 % OUTPUT:
-% Gi:                Synthetic Forward for each strike
-% Gi_ask:            Synthetic Forward Ask for each strike
-% Gi_bid:            Synthetic Forward Bid for each strike
+% Gi:                [VECTOR] Synthetic Forward for each strike
+% Gi_ask:            [VECTOR] Synthetic Forward Ask for each strike
+% Gi_bid:            [VECTOR] Synthetic Forward Bid for each strike
 %
 % USES: none
 
 % Authors:
 % M.Maspes, A.Tarditi, M.Torba
-
 
     %% Computation Synthetic Forward Bid
 

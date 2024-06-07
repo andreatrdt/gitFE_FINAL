@@ -54,7 +54,6 @@ function [F_vector, B_bar_vector] = forward_prices(dataset, flag)
             plot(Ki, F_i_vector, 'o-');
             plot(Ki, F_bid__i_vector, '*-'); grid on;
         
-            % title('Forward prices at Expiry ', date);
             xlabel('Strikes'); ylabel('Forwards prices');
             legend('Ask', 'Mid', 'Bid')
             grid on; hold off;

@@ -49,14 +49,14 @@ function [prices , S0] = stock_simulation_Levy_reduced(params_USA,params_EU, rat
 
     % Creation of Xt dynamic
 
-    X_1 =-(theta_1).*G_1.*sigma_1^2.*TTM+ sigma_1 .* sqrt(TTM .* G_1) .* g(:,1);
+    X_1 =-(1/2 + theta_1).*G_1.*sigma_1^2.*TTM+ sigma_1 .* sqrt(TTM .* G_1) .* g(:,1);
 
-    X_2 =-(theta_2).*G_2.*sigma_2^2.*TTM+ sigma_2 .* sqrt(TTM .* G_2) .* g(:,2);
+    X_2 =-(1/2 + theta_2).*G_2.*sigma_2^2.*TTM+ sigma_2 .* sqrt(TTM .* G_2) .* g(:,2);
 
     Xt = [X_1 X_2];
     
     %% Computation of the initial stock
 
-    prices = S0 .* exp((rates + drift_compensator) * TTM + Xt);
+    prices = real(S0 .* exp((rates + drift_compensator) * TTM + Xt));
 
-end % function stock_simulation
+end % function stock_simulation_Levy_reduced

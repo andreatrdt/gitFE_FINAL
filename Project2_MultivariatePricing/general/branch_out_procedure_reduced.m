@@ -77,10 +77,6 @@ function branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU
     
     x0 = ones(1, 3);
     
-    % Calibration of the nu parameters
-    % params = fmincon(@(params) abs(sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical), ...
-    %    x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
-    
     params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
         x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
     
@@ -154,4 +150,4 @@ function branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU
     % Mean price and confidence interval
     [mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy);
 
-end
+end % function branch_out_procedure_reduced()

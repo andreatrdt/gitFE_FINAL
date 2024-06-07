@@ -8,7 +8,9 @@ function plot_calls_puts(dataset, F0, B0, params, date_settlement)
 % params:             [VECTOR] [k, theta, sigma]
 % date_settlement:    [DATENUM] initial date
 % 
-% USES:         none
+% OUTPUT: none
+% 
+% USES: callPriceLewis_pref(), 
 % 
 % Authors:
 % M.Maspes, A.Tarditi, M.Torba
@@ -39,7 +41,7 @@ function plot_calls_puts(dataset, F0, B0, params, date_settlement)
         log_moneyness = log(F0(ii) ./ strikes);
         TTM = yearfrac(date_settlement, datenum(dataset.datesExpiry(ii)), conv_ACT365);
         
-        prices = callPriceLewis(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
+        prices = callPriceLewis_pref(B0(ii), F0(ii), log_moneyness, sigma, k, theta, TTM, M, dz);
         
         call_prices = prices(put_length+1:end);
         

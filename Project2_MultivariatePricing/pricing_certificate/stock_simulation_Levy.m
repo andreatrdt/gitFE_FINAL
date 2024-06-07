@@ -53,9 +53,9 @@ function [stock , S0] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z,
     drift_compensator_EU = - 1/kappa_EU * (1 - sqrt(1 - 2*kappa_EU*theta_EU - kappa_EU*sigma_EU^2));
     drift_compensator = [drift_compensator_USA drift_compensator_EU];
 
-    drift_compensator_Y_USA = - 1/nu_USA * (1 - sqrt(1 - 2*nu_USA*Beta_USA - nu_USA*gamma_USA^2));
-    drift_compensator_Y_EU = - 1/nu_EU * (1 - sqrt(1 - 2*nu_EU*Beta_EU - nu_EU*gamma_EU^2));
-    drift_compensator_Z = - 1/nu_z * (1 - sqrt(1 - 2*nu_z*Beta_z - nu_z*gamma_z^2));
+    % drift_compensator_Y_USA = - 1/nu_USA * (1 - sqrt(1 - 2*nu_USA*Beta_USA - nu_USA*gamma_USA^2));
+    % drift_compensator_Y_EU = - 1/nu_EU * (1 - sqrt(1 - 2*nu_EU*Beta_EU - nu_EU*gamma_EU^2));
+    % drift_compensator_Z = - 1/nu_z * (1 - sqrt(1 - 2*nu_z*Beta_z - nu_z*gamma_z^2));
     
     
     %% Simulation of the NIG process
@@ -85,6 +85,6 @@ function [stock , S0] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z,
     % General vector
     Xt = [X_1 X_2];
 
-    stock = S0 .* exp((rates + drift_compensator) * TTM + Xt);
+    stock = real(S0 .* exp((rates + drift_compensator) * TTM + Xt));
 
 end % function stock_simulation

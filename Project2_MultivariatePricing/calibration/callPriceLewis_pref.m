@@ -13,14 +13,12 @@ function price = callPriceLewis_pref(B0, F0, log_moneyness, sigma, k, theta, TTM
 % dz:                 [SCALAR] parameter of the moneyness grid
 %
 % OUTPUT:
-% price:               [VECTOR] call prices
+% price:              [VECTOR] call prices
 %
 % USES: fft()
 
 % Authors:
 % M.Maspes, A.Tarditi, M.Torba
-
-
 
     %% Introduction of the FFT parameters
     
@@ -60,4 +58,4 @@ function price = callPriceLewis_pref(B0, F0, log_moneyness, sigma, k, theta, TTM
     
     price = B0 * F0 * (1 - exp(-log_moneyness./2) .* IntLewis);
     
-end % function callPriceLewis
+end % function callPriceLewis_pref

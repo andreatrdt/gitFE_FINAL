@@ -1,12 +1,11 @@
 function plot_returns(data,date_settlement)
-% Plotting of the data returns
+% Plotting of the data returns from the S&P500 and EUROSTOXX50 dataset
 % 
 % INPUTS:
-% data:                 [STRUCT]struct od the DATA used
-% date_settlement:      [DATENUM]the date of the settlement
+% data:                 [STRUCT] struct od the DATA used
+% date_settlement:      [DATENUM] the date of the settlement
 % 
-% OUTPUTS:
-% plot the returns of the options
+% OUTPUTS: none
 %
 % USES: none
 

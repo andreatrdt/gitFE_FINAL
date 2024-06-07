@@ -1,4 +1,4 @@
-function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rates, rho, TTM)
+function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rho, TTM)
 % Pricing of the underlying process Si(t)
 % 
 % INPUT:
@@ -16,7 +16,6 @@ function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rates, rho, TTM
 
 % Authors:
 % M.Maspes, A.Tarditi, M.Torba
-
 
 
     %% Initialization
@@ -46,6 +45,5 @@ function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rates, rho, TTM
         -0.5 .* sigmas'.^2 .* TTM - sigmas' .* sqrt(TTM) .* g(nSim/2+1:end, :)] ;
 
     pricesAV = F0' .* exp(Xt_AV);
-    
 
 end % function stock_simulation_Black

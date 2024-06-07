@@ -155,4 +155,4 @@ function branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA
     % Mean price and confidence interval
     [mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy);
 
-end
+end % function branch_out_procedure()

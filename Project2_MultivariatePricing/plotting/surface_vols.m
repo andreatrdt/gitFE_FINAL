@@ -1,20 +1,19 @@
 function surface_vols(data,F0)
-%
-% plot surface volatilities
+% Plot surface volatilities in 3D for better comprehension of the
+% distributions
 %
 % INPUTS:
 % data    [STRUCT]  structure containing the data
-% F0      [DOUBLE]  forward price
+% F0      [SCALAR]  forward price
 %
-% OUTPUTS:
-% plot the surface of the volatilities
+% OUTPUTS: none
 %
-% USES:     none
+% USES: none
 
 % Authors:
 % M.Maspes, A.Tarditi, M.Torba
 
-    % Initialize vector to store the number of strikes for each expiry date
+    %% Initialize vector to store the number of strikes for each expiry date
     strikes = [];
 
     % Consolidate all unique strikes across all expiry dates
@@ -25,7 +24,7 @@ function surface_vols(data,F0)
     % Sort the strikes array
     strikes = sort(strikes);
 
-    % Initialize the complete volatility matrix with NaNs
+    %% Initialize the complete volatility matrix with NaNs
     vols = NaN(length(data.datesExpiry), length(strikes));
 
     index_matrix = NaN(length(data.datesExpiry), length(strikes));
@@ -44,7 +43,7 @@ function surface_vols(data,F0)
     end
 
 
-    % Perform 2D interpolation to fill missing values
+    %% Perform 2D interpolation to fill missing values
     [X, Y] = meshgrid(strikes, datenum(data.datesExpiry));
     validMask = ~isnan(vols);
     interpolatedVols = griddata(X(validMask), Y(validMask), vols(validMask), X, Y, 'linear');
@@ -54,17 +53,13 @@ function surface_vols(data,F0)
     % Convert dates to strings for the y-axis labels
     dateStrings = data.datesExpiry;
 
-    % Plot the surface
+    %% Plot the surface
     figure();
     surf(log_moneyness, datenum(data.datesExpiry),interpolatedVols,'FaceAlpha',0.5);
     hold on
     mesh(log_moneyness, datenum(data.datesExpiry),interpolatedVols);
     hold off
     
-
-    % surf(strikes, datenum(data.datesExpiry),index_matrix);
-
-
     % Label the axes
     xlabel('Strikes');
     ylabel('Dates');
@@ -74,5 +69,6 @@ function surface_vols(data,F0)
     % Set the y-axis ticks and labels
     datetick('y','dd-mmm-yyyy','keepticks')
     colormap("parula")
-end
+
+end % function surface_vols()
 

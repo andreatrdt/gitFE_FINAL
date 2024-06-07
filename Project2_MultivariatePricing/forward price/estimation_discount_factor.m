@@ -6,7 +6,7 @@ function B_bar = estimation_discount_factor(Gi, Ki)
 % Ki:               [VECTOR] strikes for the estimation
 % 
 % OUTPUT:
-% B_bar:            estimated discount factor for the forward computation
+% B_bar:            [SCALAR] estimated discount factor for the forward computation
 %
 % USES:     none
 

@@ -47,6 +47,11 @@ function [dataset] = dataset_preprocessing(dataset, F0, B0, date_settlement, fla
         mid_price_put = mid_price_put(idx_put_OTM);
 
         %% Comparison for the last implied volatility
+        % We modified the strikes of the last American maturity in order to
+        % find a better shape of the implied volatilities (the code is
+        % brute force since we need to work directly on this specific
+        % dataset)
+        
         if length(dataset.datesExpiry) == 20 && ii == length(dataset.datesExpiry)
 
             % Strikes to remove the jumps

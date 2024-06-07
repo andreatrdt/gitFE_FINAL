@@ -80,4 +80,5 @@ function disp_marginal_params(sol_USA , sol_EU ,Beta_z, gamma_z,nu_z, save_resul
         % Close the file
         fclose(fileID);
     end
-end
+
+end % function disp_marginal_params

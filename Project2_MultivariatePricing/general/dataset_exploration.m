@@ -1,10 +1,9 @@
-function dataset_exploration(data_EU, data_USA, date_settlement)
+function dataset_exploration(data_EU, data_USA)
 % Exploration of the dataset and consequent plots
 % 
 % INPUT:
 % data_EU:               [STRUCT]dataset EU
 % data_USA:              [STRUCT]dataset USA
-% date_settlement:       èDATENUM]initial date of the computation
 %
 % OUTPUT:
 % None
@@ -20,6 +19,7 @@ function dataset_exploration(data_EU, data_USA, date_settlement)
     figure();
 
     for ii = 1:length(data_EU.datesExpiry)
+
         % Compute the mid prices
         mid_call = (data_EU.callAsk(ii).prices + data_EU.callBid(ii).prices)/2;
         plot(data_EU.strikes(ii).value, mid_call); hold on;
@@ -33,6 +33,7 @@ function dataset_exploration(data_EU, data_USA, date_settlement)
     figure();
 
     for ii = 1:length(data_EU.datesExpiry)
+
         % Compute the mid prices
         mid_put = (data_EU.putAsk(ii).prices + data_EU.putBid(ii).prices)/2;
         plot(data_EU.strikes(ii).value, mid_put); hold on;
@@ -46,6 +47,7 @@ function dataset_exploration(data_EU, data_USA, date_settlement)
     figure();
 
     for ii = 1:length(data_USA.datesExpiry)
+
         % Compute the mid prices
         mid_call = (data_USA.callAsk(ii).prices + data_USA.callBid(ii).prices)/2;
         plot(data_USA.strikes(ii).value, mid_call); hold on;
@@ -59,6 +61,7 @@ function dataset_exploration(data_EU, data_USA, date_settlement)
     figure();
 
     for ii = 1:length(data_USA.datesExpiry)
+
         % Compute the mid prices
         mid_put = (data_USA.putAsk(ii).prices + data_USA.putBid(ii).prices)/2;
         plot(data_USA.strikes(ii).value, mid_put); hold on;
@@ -116,6 +119,8 @@ function dataset_exploration(data_EU, data_USA, date_settlement)
     disp(count_USA_call_ask+count_USA_call_bid+count_USA_put_ask+count_USA_put_bid);
 
     %% Study of the liquidity criterion
+    % The liquidity criterion ask for the bid/ask difference to be lower
+    % than the ratio (ask - bid)/ask
 
     % European
 
@@ -153,4 +158,4 @@ function dataset_exploration(data_EU, data_USA, date_settlement)
     disp('The number of illiquid options in the USA mkt is:');
     disp(indicator_liq_call + indicator_liq_put);
     
-end
+end % function dataset_exploration

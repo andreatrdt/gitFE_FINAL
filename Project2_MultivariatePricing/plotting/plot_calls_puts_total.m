@@ -8,7 +8,7 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
 % params:             [VECTOR] [k, theta, sigma]
 % date_settlement:    [DATENUM] initial date
 % 
-% USES:     none
+% USES: callPriceLewis_pref(), error_calibration()
 
 % Authors:
 % M.Maspes, A.Tarditi, M.Torba
@@ -129,4 +129,5 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         fprintf('Call Prices error | Put prices error\n')
         fprintf(' %f%%       |    %f%%\n', mean(error_call_prices_vec), mean(error_put_prices_vec))
     end
+    
 end % function plot_calls_puts_total

@@ -13,7 +13,7 @@ function distance = calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA,
 % date_settlement:    [DATENUM] settlement date of the computation
 % 
 % OUTPUT:
-% distance:           value to be reduced to 0
+% distance:           [SCALAR] value to be reduced to 0
 % 
 % USES:              RMSE_total()
 
@@ -33,8 +33,6 @@ function distance = calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA,
 
     %% Computation of the weights
 
-    % SONO QUELLI CORRETTI ??
-    
     weight_USA = data_USA.spot/(data_EU.spot+data_USA.spot);
     weight_EU = data_EU.spot/(data_EU.spot+data_USA.spot);
    
@@ -42,4 +40,4 @@ function distance = calibration(params, data_EU, data_USA, F0_EU, B0_EU, F0_USA,
 
     distance = weight_EU*RMSE_EU + weight_USA*RMSE_USA;
 
-end % function new_calibration
+end % function calibration
