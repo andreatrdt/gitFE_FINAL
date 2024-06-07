@@ -52,6 +52,11 @@ function [stock , S0] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z,
     drift_compensator_USA = - 1/kappa_USA * (1 - sqrt(1 - 2*kappa_USA*theta_USA - kappa_USA*sigma_USA^2));
     drift_compensator_EU = - 1/kappa_EU * (1 - sqrt(1 - 2*kappa_EU*theta_EU - kappa_EU*sigma_EU^2));
     drift_compensator = [drift_compensator_USA drift_compensator_EU];
+
+    drift_compensator_Y_USA = - 1/nu_USA * (1 - sqrt(1 - 2*nu_USA*Beta_USA - nu_USA*gamma_USA^2));
+    drift_compensator_Y_EU = - 1/nu_EU * (1 - sqrt(1 - 2*nu_EU*Beta_EU - nu_EU*gamma_EU^2));
+    drift_compensator_Z = - 1/nu_z * (1 - sqrt(1 - 2*nu_z*Beta_z - nu_z*gamma_z^2));
+    
     
     %% Simulation of the NIG process
 
@@ -64,9 +69,12 @@ function [stock , S0] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z,
     G_2 = random('InverseGaussian', 1, TTM/nu_EU, [nSim, 1]);
     G_z = random('InverseGaussian', 1, TTM/nu_z, [nSim, 1]);
 
-    Y_1 = -Beta_USA .* gamma_USA^2 .*G_1 * TTM + gamma_USA .* sqrt(TTM .* G_1) .* g_1;
-    Y_2 = -Beta_EU .* gamma_EU^2.* G_2 * TTM + gamma_EU .* sqrt(TTM .* G_2) .* g_2;
-    Z = -Beta_z .* gamma_z^2.* G_z * TTM + gamma_z .* sqrt(TTM .* G_z) .* g_z;
+    Y_1 = -(0.5+Beta_USA) * gamma_USA^2 .*G_1 * TTM + gamma_USA .* sqrt(TTM .* G_1) .* g_1;
+    Y_2 = -(0.5+Beta_EU) * gamma_EU^2 .* G_2 * TTM + gamma_EU .* sqrt(TTM .* G_2) .* g_2;
+    Z = -(0.5+Beta_z) * gamma_z^2 .* G_z * TTM + gamma_z .* sqrt(TTM .* G_z) .* g_z;
+    % Y_1 = Beta_USA .*G_1 * TTM + gamma_USA .* sqrt(TTM .* G_1) .* g_1;
+    % Y_2 = Beta_EU .* G_2 * TTM + gamma_EU .* sqrt(TTM .* G_2) .* g_2;
+    % Z = Beta_z .* G_z * TTM + gamma_z .* sqrt(TTM .* G_z) .* g_z;
 
     %% Conjunction of the processes
 

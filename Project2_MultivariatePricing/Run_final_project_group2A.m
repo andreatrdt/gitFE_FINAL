@@ -288,10 +288,13 @@ A = [-1 0 0; 0 -1 0; 0 0 -1]; b = [0; 0; 0];
 Aeq = []; beq = [];
 lb = zeros(1, 3); ub = [];
 
-x0 = ones(1, 3);
+% x0 = ones(1, 3);
+x0 = [0.75 0.8 1];
 
 params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
+% params = lsqnonlin(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical), x0, lb, ub,A,b,Aeq,beq,@(params) nonlinconstr_corr(params, k1, k2),options);
+
 
 % Extraction of the parameters
 nu_USA = params(1); nu_EU = params(2);
