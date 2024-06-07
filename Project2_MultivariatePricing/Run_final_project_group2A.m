@@ -128,7 +128,7 @@ end
 % branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
 
 % Calibration and Levy Pricing using dates up to 1y (same USA/EU dates)
-% branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
+branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
 
 %%
 
@@ -179,6 +179,33 @@ end
 % 
 %     figure;
 %     plot(dates_USA(1:19), fun_eval(14:32), '*-'); grid on;
+%     datetick('x','dd-mmm-yyyy','keepticks');
+%     title('USA Obj func minimum');
+%     ylabel('Obj function value');
+% end
+
+%% Multi-calibration comparison 3rd round
+% !WARNING:  calibration feasibility tests take a lot of computation time.
+% The time used on a HP 64 bit, 16 GB RAM, Intel Core i7 was about 36
+% minutes. This is due to the 31 consequent calibrations necessary: mean
+% time for each calibration is 68 seconds.
+
+% We remove the last two dates on the American side due to the 2nd results
+% [data_calib_USA, F0_USA, B_USA] = removal_expiry(data_calib_USA, F0_USA, B_USA, [19:20]);
+% 
+% [params_removal, fun_eval, exit_condition] = multi_calib(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement);
+
+%% Plots of the multicalib results 2nd round
+
+% if flag == 1
+%     figure;
+%     plot(dates_EU, fun_eval(1:13), '*-'); grid on;
+%     datetick('x','dd-mmm-yyyy','keepticks');
+%     title('EU - Obj func minimum');
+%     ylabel('Obj function value');
+% 
+%     figure;
+%     plot(dates_USA(1:18), fun_eval(14:31), '*-'); grid on;
 %     datetick('x','dd-mmm-yyyy','keepticks');
 %     title('USA Obj func minimum');
 %     ylabel('Obj function value');
