@@ -56,7 +56,7 @@ function surface_vols(data,F0)
 
     % Plot the surface
     figure();
-    surf(log_moneyness, datenum(data.datesExpiry),interpolatedVols,'FaceAlpha',0.8,'EdgeColor','interp');
+    surf(log_moneyness, datenum(data.datesExpiry),interpolatedVols,'FaceAlpha',0.5);
     hold on
     mesh(log_moneyness, datenum(data.datesExpiry),interpolatedVols);
     hold off
@@ -73,9 +73,6 @@ function surface_vols(data,F0)
 
     % Set the y-axis ticks and labels
     datetick('y','dd-mmm-yyyy','keepticks')
- 
-    colormap('jet')
-    
-    shading interp;
-    colorbar;
+    colormap("parula")
 end
+
