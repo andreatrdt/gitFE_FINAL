@@ -359,17 +359,11 @@ options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration of sigma EU
 sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, date_settlement), ...
-     x0, A, b, Aeq, beq, lb, ub, @(sigma) blk_nonlinconstr(data_EU, date_settlement, B_EU, F0_EU, sigma), options);
-
-% PER USARE lsqnonlin VA MODIFICATA blk_calibration!!!
-% sigma_EU = lsqnonlin(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, date_settlement), x0, lb, ub, ...
-%    A, b, Aeq, beq, @(sigma) blk_nonlinconstr(data_EU, date_settlement, B_EU, F0_EU, sigma), options);
+     x0, A, b, Aeq, beq, lb, ub, [], options);
 
 % Calibration of sigma USA
 sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, @(sigma) blk_nonlinconstr(data_USA, date_settlement, B_USA, F0_USA, sigma), options);
-% sigma_USA = lsqnonlin(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), x0, lb, ub, ...
-%    A, b, Aeq, beq, @(sigma) blk_nonlinconstr(data_USA, date_settlement, B_USA, F0_USA, sigma), options);
+    x0, A, b, Aeq, beq, lb, ub, [], options);
 
 %% Plots of the Black model prices with calibrated volatilities
 

@@ -42,9 +42,9 @@ function blk_plot_calls_puts_total(dataset, F0, B0, sigma, date_settlement)
         %% Pricing 
         
         % Price of Call/Puts through the Black formula
-        call_prices = blkprice(F0(ii), strikes, interest_rate, TTM, sigma);
-        put_prices = call_prices - B0(ii)*(F0(ii) - strikes);
-
+        [call_prices,put_prices] = blkprice(F0(ii), strikes, interest_rate, TTM, sigma);
+        
+        % Check for negative prices
         count_prices_neg = count_prices_neg + length(find(call_prices < 0));
         count_prices_neg_put = count_prices_neg_put + length(find(put_prices < 0));
         

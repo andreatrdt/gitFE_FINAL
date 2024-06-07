@@ -39,11 +39,13 @@ function MSE_total = blk_calibration(sigma, dataset, F0, B0, date_settlement)
         %% Pricing 
         
         % Price of Call/Puts through the Black formula
-        prices = blkprice(F0(ii), dataset.strikes(ii).value, interest_rate, TTM, sigma);
+        [call_prices, put_prices] = blkprice(F0(ii), dataset.strikes(ii).value, interest_rate, TTM, sigma);
         
-        call_prices = prices(put_length+1:end);
-        put_prices = prices(1:put_length) - F0(ii).* B0(ii) + dataset.strikes(ii).value(1:put_length) .* B0(ii); 
+        % Selection of the OTM options
+        call_prices = call_prices(put_length+1:end);
+        put_prices = put_prices(1:put_length);
         
+        % Mid market prices
         mean_call_price = (dataset.callAsk(ii).prices + dataset.callBid(ii).prices)/2;
         mean_put_price = (dataset.putAsk(ii).prices + dataset.putBid(ii).prices)/2;
 
