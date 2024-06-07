@@ -20,6 +20,7 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
     error_put_prices_vec = zeros(length(dataset.datesExpiry),1);
     
     count_prices_neg = 0;
+    count_prices_neg_put = 0;
 
     for ii = 1:min(length(dataset.datesExpiry),19)
 
@@ -49,6 +50,7 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
         put_prices = call_prices - B0(ii)*(F0(ii) - strikes);
         
         count_prices_neg = count_prices_neg + length(find(call_prices < 0));
+        count_prices_neg_put = count_prices_neg_put + length(find(put_prices < 0));
 
         % Parameters comparison
         mean_call = (dataset.callBid(ii).prices + dataset.callAsk(ii).prices)/2;
@@ -93,37 +95,37 @@ function plot_calls_puts_total(dataset, F0, B0, params, date_settlement)
     % For American options
     if length(dataset.datesExpiry)>13 
 
-        fprintf('\nMEAN ERROR USA PRICES:\n')
+        fprintf('\nMEAN ERROR USA PRICES WITH LEVY MODEL:\n')
         disp('--------------------------------------------------------------')
-        disp('The number of negative prices in the USA mkt is: ')
-        disp(count_prices_neg)
+        fprintf('The number of negative prices in the USA mkt is: %d\n', count_prices_neg)
+        fprintf('The number of negative Put prices in the USA mkt is: %d\n', count_prices_neg_put)
         disp('--------------------------------------------------------------')
         
-        fprintf('Expiry         | Call Prices error | Put prices error\n')
+        fprintf('Expiry         | Levy Call Prices error | Levy Put prices error\n')
         disp('--------------------------------------------------------------')
         for ii=1:length(dataset.datesExpiry)
-            fprintf('%s     |  %f%%       |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
+            fprintf('%s     |  %f%%           |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
         end
         disp('--------------------------------------------------------------')
-        fprintf('\n AVERAGE MEAN ERROR USA PRICES:\n')
+        fprintf('\n AVERAGE MEAN ERROR USA PRICES WITH LEVY MODEL:\n')
         fprintf('Call Prices error | Put prices error\n')
         fprintf(' %f%%       |    %f%%\n', mean(error_call_prices_vec), mean(error_put_prices_vec))
 
     % For European options
     else
 
-        fprintf('\nMEAN ERROR EU PRICES:\n')
+        fprintf('\nMEAN ERROR EU PRICES WITH LEVY MODEL:\n')
         disp('--------------------------------------------------------------')
-        disp('The number of negative prices in the EU mkt is: ')
-        disp(count_prices_neg)
+        fprintf('The number of negative prices in the EU mkt is: %d\n', count_prices_neg)
+        fprintf('The number of negative Put prices in the EU mkt is: %d\n', count_prices_neg_put)
         disp('--------------------------------------------------------------')
-        fprintf('Expiry         | Call Prices error | Put prices error\n')
+        fprintf('Expiry         | Levy Call Prices error | Levy Put prices error\n')
         disp('--------------------------------------------------------------')
         for ii=1:length(dataset.datesExpiry)
-            fprintf('%s     |  %f%%       |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
+            fprintf('%s     |  %f%%           |    %f%%\n', datestr(dataset.datesExpiry(ii)), error_call_prices_vec(ii), error_put_prices_vec(ii))
         end
         disp('--------------------------------------------------------------')
-        fprintf('\n AVERAGE MEAN ERROR EU PRICES:\n')
+        fprintf('\n AVERAGE MEAN ERROR EU PRICES WITH LEVY MODEL:\n')
         fprintf('Call Prices error | Put prices error\n')
         fprintf(' %f%%       |    %f%%\n', mean(error_call_prices_vec), mean(error_put_prices_vec))
     end

@@ -261,7 +261,7 @@ params_EU = params_marginals(4:6);
 % Explicit useful params
 k1 = params_USA(1); k2 = params_EU(1);
 
-%% Plots of the prices with calibrated values
+%% Plots of the Levy model prices with calibrated values
 
 if flag == 1
 
@@ -343,7 +343,7 @@ disp_marginal_params(idiosync_USA , idiosync_EU , beta_z, gamma_z, nu_z, save_re
 %% Point 8: Black model calibration
 
 % Initialization of the parameters
-x0 = 1e-4;
+x0 = 0.13;
 
 % Linear inequality constraints
 A = []; b = [];
@@ -359,13 +359,28 @@ options = optimset('MaxFunEvals', 3e3, 'Display', 'iter');
 
 % Calibration of sigma EU
 sigma_EU = fmincon(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, [], options);
+     x0, A, b, Aeq, beq, lb, ub, @(sigma) blk_nonlinconstr(data_EU, date_settlement, B_EU, F0_EU, sigma), options);
+
+% PER USARE lsqnonlin VA MODIFICATA blk_calibration!!!
+% sigma_EU = lsqnonlin(@(sigma) blk_calibration(sigma, data_calib_EU, F0_EU, B_EU, date_settlement), x0, lb, ub, ...
+%    A, b, Aeq, beq, @(sigma) blk_nonlinconstr(data_EU, date_settlement, B_EU, F0_EU, sigma), options);
 
 % Calibration of sigma USA
 sigma_USA = fmincon(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), ...
-    x0, A, b, Aeq, beq, lb, ub, [], options);
+    x0, A, b, Aeq, beq, lb, ub, @(sigma) blk_nonlinconstr(data_USA, date_settlement, B_USA, F0_USA, sigma), options);
+% sigma_USA = lsqnonlin(@(sigma) blk_calibration(sigma, data_calib_USA, F0_USA, B_USA, date_settlement), x0, lb, ub, ...
+%    A, b, Aeq, beq, @(sigma) blk_nonlinconstr(data_USA, date_settlement, B_USA, F0_USA, sigma), options);
 
-%%
+%% Plots of the Black model prices with calibrated volatilities
+
+if flag == 1
+  
+    % Plot over the entire curve
+    blk_plot_calls_puts_total(data_EU, F0_EU, B_EU, sigma_EU, date_settlement);
+    blk_plot_calls_puts_total(data_USA, F0_USA, B_USA, sigma_USA, date_settlement);
+
+end
+
 
 %% Point 9: Pricing of the certificate
 
