@@ -88,7 +88,7 @@ def stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_
     a_USA, a_EU = idiosync_USA[3], idiosync_EU[3]
     
     # Computation of the support parameters
-    nSim = 1000000
+    nSim = 10000000
     
     drift_compensator_USA = - 1/kappa_USA * (1 - np.sqrt(1 - 2*kappa_USA*theta_USA - kappa_USA*sigma_USA**2))
     drift_compensator_EU = - 1/kappa_EU * (1 - np.sqrt(1 - 2*kappa_EU*theta_EU - kappa_EU*sigma_EU**2))
@@ -103,9 +103,9 @@ def stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_
     G_2 = np.random.wald(1, TTM/nu_EU, size=nSim)
     G_z = np.random.wald(1, TTM/nu_z, size=nSim)
     
-    Y_1 = -Beta_USA * gamma_USA**2 * G_1 * TTM + gamma_USA * np.sqrt(TTM * G_1) * g_1
-    Y_2 = -Beta_EU * gamma_EU**2 * G_2 * TTM + gamma_EU * np.sqrt(TTM * G_2) * g_2
-    Z = -Beta_z * gamma_z**2 * G_z * TTM + gamma_z * np.sqrt(TTM * G_z) * g_z
+    Y_1 = -(0.5 + Beta_USA) * gamma_USA**2 * G_1 * TTM + gamma_USA * np.sqrt(TTM * G_1) * g_1
+    Y_2 = -(0.5 + Beta_EU) * gamma_EU**2 * G_2 * TTM + gamma_EU * np.sqrt(TTM * G_2) * g_2
+    Z = -(0.5 + Beta_z) * gamma_z**2 * G_z * TTM + gamma_z * np.sqrt(TTM * G_z) * g_z
     
     # Marginal processes
     X_1 = Y_1 + a_USA * Z
@@ -119,7 +119,7 @@ def stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_
 
 # Function to simulate stock prices
 def stock_simulation_Black(sigmas, F0, rates, rho, TTM):
-    nSim = int(1e6)
+    nSim = 10000000
 
     # Simulation of the NIG process
     meanVector = np.array([0, 0])

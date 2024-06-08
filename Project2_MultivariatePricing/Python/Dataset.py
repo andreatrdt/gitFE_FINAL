@@ -16,9 +16,6 @@ class Data_maturity:
 
         self._strikes = np.squeeze(data_structure[0, 0]['strikes'][0, idx]['value'])
 
-        '''self._Volume_call = data_structure['Volume_call'][idx]['value']
-        self._Volume_put = data_structure['Volume_put'][idx]['value']'''
-
     # Getters:
     def _callAsk(self):
         return self._callAsk
