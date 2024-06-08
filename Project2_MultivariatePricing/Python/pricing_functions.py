@@ -123,7 +123,7 @@ def stock_simulation_Black(sigmas, F0, rates, rho, TTM):
 
     # Simulation of the NIG process
     meanVector = np.array([0, 0])
-    covarianceMatrix = np.array([[TTM, rho * TTM], [rho * TTM, TTM]])
+    covarianceMatrix = np.array([[1, rho * 1], [rho * 1, 1]])
 
     g = multivariate_normal.rvs(mean=meanVector, cov=covarianceMatrix, size=nSim)
 
