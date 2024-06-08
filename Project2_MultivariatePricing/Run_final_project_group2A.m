@@ -122,16 +122,6 @@ end
 
 %%
 
-%% Branch out calibration:
-
-% Calibration and Levy Pricing using dates up to 1y
-% branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
-
-% Calibration and Levy Pricing using dates up to 1y (same USA/EU dates)
-% branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
-
-%%
-
 %% Multi-calibration comparison 1st round
 
 % !WARNING:  calibration feasibility tests take a lot of computation time.
@@ -372,10 +362,12 @@ S0_Levy = [S0_USA S0_EU];
 rates_Levy = [rate_USA rate_EU];
 
 if flag_levy == 1
-    St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
+    [St_Levy, St_Levy_AV] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
 else
     St_Levy = stock_simulation_Levy_reduced(params_USA, params_EU, rates_Levy , TTM , S0_Levy, rho_model_Levy);
 end
+
+%% Normal Levy
 
 % Unpacking the results
 St_USA_Levy = St_Levy(:, 1);
@@ -387,6 +379,19 @@ certificate_payoff_Levy = max(St_USA_Levy - S0_USA, 0) .* indicator_Levy;
 
 % Mean price and confidence interval
 [mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy);
+
+%% Antithetic Levy
+
+% Unpacking the results
+St_USA_Levy_AV = St_Levy_AV(:, 1);
+St_EU_Levy_AV = St_Levy_AV(:, 2);
+
+% Computation of the pricing certificate payoff 
+indicator_Levy_AV = St_EU_Levy_AV < (0.95 * S0_EU);
+certificate_payoff_Levy_AV = max(St_USA_Levy_AV - S0_USA, 0) .* indicator_Levy_AV;
+
+% Mean price and confidence interval
+[mean_price_Levy_AV, ~, IC_Levy_AV] = normfit(B0_Levy * certificate_payoff_Levy_AV);
 
 %%
 
@@ -444,7 +449,7 @@ price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, s
 
 %% Display of the prices:
 
-disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
+disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Levy_AV, IC_Levy_AV,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
 
 %% End run time computation
 elapsedTime = toc;
