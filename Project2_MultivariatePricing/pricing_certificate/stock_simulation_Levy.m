@@ -47,7 +47,7 @@ function [stock , S0] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z,
 
     %% Computation of the support params
 
-    nSim = 1e6;
+    nSim = 1e7;
 
     drift_compensator_USA = - 1/kappa_USA * (1 - sqrt(1 - 2*kappa_USA*theta_USA - kappa_USA*sigma_USA^2));
     drift_compensator_EU = - 1/kappa_EU * (1 - sqrt(1 - 2*kappa_EU*theta_EU - kappa_EU*sigma_EU^2));
