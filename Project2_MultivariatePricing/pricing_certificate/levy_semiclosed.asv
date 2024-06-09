@@ -40,10 +40,6 @@ function price = levy_semiclosed(s1_0, rate1, rate2, params_USA, params_EU, idio
 
     a_USA = idiosync_USA(4);
     a_EU = idiosync_EU(4);
-    
-    % beta_z = -(1/2+beta_z)*gamma_z^2;
-    % beta_USA = -(1/2+beta_USA)*gamma_USA^2;
-    % beta_EU = -(1/2+beta_EU)*gamma_EU^2;
 
     %% Drift compensators:
 
@@ -64,7 +60,7 @@ function price = levy_semiclosed(s1_0, rate1, rate2, params_USA, params_EU, idio
 
     supp_USA = @(x) sqrt(x.^2 + TTM^2 * gamma_USA^2/nu_USA);
 
-    density_NIG_USA = @(x) C_USA .* exp(A_USA.*x) .* besselk(1,B_USA .* supp_USA(x))./supp_USA(x);
+    density_NIG_EU = @(x) C_USA .* exp(A_USA.*x) .* besselk(1,B_USA .* supp_USA(x))./supp_USA(x);
 
     % EU
 
@@ -72,9 +68,9 @@ function price = levy_semiclosed(s1_0, rate1, rate2, params_USA, params_EU, idio
     B_EU = sqrt(beta_EU^2 + (gamma_EU^2)/nu_EU)/(gamma_EU^2);
     C_EU = TTM/pi * exp(TTM/nu_EU) * sqrt(beta_EU^2/(nu_EU * gamma_EU^2) + 1/nu_EU^2);
 
-    supp_EU = @(x) sqrt(x.^2 + TTM^2 * gamma_EU^2/nu_EU);
+    supp_EU = @(x) sqrt(x.^2 + TTM^2 * gamma_USA^2/nu_USA);
 
-    density_NIG_EU = @(x) C_EU .* exp(A_EU.*x) .* besselk(1,B_EU .* supp_EU(x))./supp_EU(x);
+    density_NIG_EU = @(x) C_USA .* exp(A_USA.*x) .* besselk(1,B_USA .* supp_USA(x))./supp_USA(x);
 
     % Z process
 
@@ -94,14 +90,14 @@ function price = levy_semiclosed(s1_0, rate1, rate2, params_USA, params_EU, idio
     % 
     % integrand = @(z) ( ( exp(rate1*TTM + drift_compensator_USA*TTM + a_USA.*z) .* d1(z) - d2(z) ) .* d3(z) .* density_NIG_z(z));
     
-    d1 = @(z) arrayfun(@(zval) integral(@(y) exp(y).*density_NIG_USA(y),-drift_compensator_USA*TTM-a_USA.*zval-rate1*TTM, 100), z);
-    d2 = @(z) 1 - arrayfun(@(zval) integral(@(y) density_NIG_USA(y),-100, -drift_compensator_USA*TTM - a_USA*zval - rate1*TTM), z); 
-    d3 = @(z) arrayfun(@(zval) integral(@(y) density_NIG_EU(y),-60, log(0.95) - drift_compensator_EU*TTM - a_EU*zval - rate2*TTM), z);
+    d1 = @(z) arrayfun(@(zval) integral(@(y) exp(y).*density_NIG_EU(y),-drift_compensator_USA*TTM-a_USA.*zval-rate1*TTM, 1000), z);
+    d2 = @(z) 1 - arrayfun(@(zval) integral(@(y) density_NIG_EU(y),-1000, -drift_compensator_USA*TTM - a_USA*zval - rate1*TTM), z); 
+    d3 = @(z) arrayfun(@(zval) integral(@(y) density_NIG_EU(y),-1000, log(0.95) - drift_compensator_EU*TTM - a_EU*zval - rate2*TTM), z);
 
-    integrand = @(z) ( ( exp(rate1*TTM + drift_compensator_USA*TTM + a_USA.*z) .* d1(z) - d2(z) ) .* d3(z) .*  density_NIG_z(z));
+    integrand = @(z) ( ( exp(rate1*TTM + drift_compensator_USA*TTM + a_USA.z) .* d1(z) - d2(z) ) .* d3(z) .*  density_NIG_z(z));
 
     %% Computation of the closed integral
     
-    price = s1_0*discount* integral( integrand, -80, 80);
+    price = s1_0*discount* integral( integrand, -1000, 1000);
 
 end % function blk_semiclosed

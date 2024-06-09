@@ -394,8 +394,11 @@ certificate_payoff_Levy_AV = max(St_USA_Levy_AV - S0_USA, 0) .* indicator_Levy_A
 [mean_price_Levy_AV, ~, IC_Levy_AV] = normfit(B0_Levy * certificate_payoff_Levy_AV);
 
 %% Levy semi-closed
-
-price = levy_semiclosed(S0_USA, rate_USA, rate_EU, params_USA_2, params_EU_2, idiosync_USA_2, idiosync_EU_2, syst_Z_2, TTM);
+%clc
+params_USA_2 = [] 
+params_EU_2 = 
+idiosync_USA_2
+price = levy_semiclosed(S0_USA, rate_USA, rate_EU, params_USA_2, params_EU_2, idiosync_USA_2, idiosync_EU_2, syst_Z_2, TTM)
 
 %%
 
