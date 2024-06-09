@@ -1,3 +1,17 @@
+# Library of functions used to compute the forward and the discount factor
+#
+# USES:
+# estimation_discount_factor()
+# synthetic_forward()
+# forward_prices()
+
+# Authors :
+# M. Maspes
+# A. Tarditi
+# M. Torba
+
+#%%
+
 # Built in libraries
 
 import matplotlib.pyplot as plt

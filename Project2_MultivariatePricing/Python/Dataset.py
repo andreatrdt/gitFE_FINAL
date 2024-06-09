@@ -1,3 +1,11 @@
+# Data set class for the option data
+#
+# Authors :
+# M. Maspes
+# A. Tarditi
+# M. Torba
+
+#%%
 
 # Import of the required libraries
 import numpy as np

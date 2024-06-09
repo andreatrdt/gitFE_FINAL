@@ -1,3 +1,19 @@
+# Library of function used forthe ricing of our contract : max( St_USA - S0_USA, 0 ) * I{St_EU < (0.95 * S0_EU)}
+#
+# USES:
+# interp_pricing_params()
+# rate_interpolation()
+# interp_pricing_params()
+# stock_simulation_Levy()
+# stock_simulation_Black()
+#
+# Authors :
+# M. Maspes
+# A. Tarditi
+# M. Torba
+
+#%% 
+
 # Built in libraries
 # import matplotlib.pyplot as plt
 import numpy as np
