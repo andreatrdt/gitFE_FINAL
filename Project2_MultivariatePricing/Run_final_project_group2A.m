@@ -29,11 +29,6 @@ rng(42);
 
 flag = 0;
 
-% flag_levy = 1 for pricing with Y1, Y2, Z enabled
-% flag_levy = 0 for pricing with X1, X2 enabled
-
-flag_levy = 1;
-
 % save_results = 1 for text saving enabled
 % save_results = 0 for text saving disabled
 
@@ -361,11 +356,7 @@ B0_Levy = exp(-rate_USA * TTM);
 S0_Levy = [S0_USA S0_EU];
 rates_Levy = [rate_USA rate_EU];
 
-if flag_levy == 1
-    [St_Levy, St_Levy_AV] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
-else
-    St_Levy = stock_simulation_Levy_reduced(params_USA, params_EU, rates_Levy , TTM , S0_Levy, rho_model_Levy);
-end
+[St_Levy, St_Levy_AV] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
 
 %% Normal Levy
 
