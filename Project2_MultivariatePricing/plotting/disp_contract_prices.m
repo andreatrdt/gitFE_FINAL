@@ -1,4 +1,5 @@
-function disp_contract_prices(price_Levy,CI_Levy,price_Levy_AV, CI_Levy_AV, price_Blk,CI_Blk,price_Blk_AV,CI_Blk_AV,price_SemiclosedBlk)
+function disp_contract_prices(price_Levy,CI_Levy,price_Levy_AV, CI_Levy_AV, ...
+    price_Blk,CI_Blk,price_Blk_AV,CI_Blk_AV, price_Levy_closed, price_SemiclosedBlk)
 %
 % INPUT:
 % price_Levy:           [SCALAR] price of the derivative under the Levy model
@@ -25,6 +26,8 @@ function disp_contract_prices(price_Levy,CI_Levy,price_Levy_AV, CI_Levy_AV, pric
 
     fprintf('Levy AV:            |  %.8f        |  [ %.8f ,  %.8f] \n', price_Levy_AV, CI_Levy_AV(1), CI_Levy_AV(2))
     
+    fprintf('Levy semi-closed:   |  %.8f        |  -- \n', price_Levy_closed)
+
     fprintf('Black:              |  %.8f        |  [ %.8f ,  %.8f] \n', price_Blk, CI_Blk(1), CI_Blk(2))
     
     fprintf('Black AV:           |  %.8f        |  [ %.8f ,  %.8f] \n', price_Blk_AV, CI_Blk_AV(1), CI_Blk_AV(2))

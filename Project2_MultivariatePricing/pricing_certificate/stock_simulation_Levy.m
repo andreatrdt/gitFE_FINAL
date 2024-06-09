@@ -90,12 +90,20 @@ function [stock , stock_AV] = stock_simulation_Levy(idiosync_USA, idiosync_EU, s
 
     %% ANTITHETIC FRAMEWORK
 
+    % Y_1_AV = [Y_1(1:nSim/2, :); ...
+    %     -(0.5+Beta_USA) * gamma_USA^2 .*G_1(nSim/2 + 1:end, :) * TTM - gamma_USA .* sqrt(TTM .* G_1(nSim/2 + 1:end, :)) .* g_1(nSim/2 + 1:end, :)];
+    % Y_2_AV = [Y_2(1:nSim/2, :); ...
+    %     -(0.5+Beta_EU) * gamma_EU^2 .* G_2(nSim/2 + 1:end, :) * TTM - gamma_EU .* sqrt(TTM .* G_2(nSim/2 + 1:end, :)) .* g_2(nSim/2 + 1:end, :)];
+    % Z_AV = [Z(1:nSim/2, :); ...
+    %     -(0.5+Beta_z) * gamma_z^2 .* G_z(nSim/2 + 1:end, :) * TTM - gamma_z .* sqrt(TTM .* G_z(nSim/2 + 1:end, :)) .* g_z(nSim/2 + 1:end, :)];
+
+
     Y_1_AV = [Y_1(1:nSim/2, :); ...
-        -(0.5+Beta_USA) * gamma_USA^2 .*G_1(nSim/2 + 1:end, :) * TTM - gamma_USA .* sqrt(TTM .* G_1(nSim/2 + 1:end, :)) .* g_1(nSim/2 + 1:end, :)];
+        Beta_USA .*G_1(nSim/2 + 1:end, :) * TTM - gamma_USA .* sqrt(TTM .* G_1(nSim/2 + 1:end, :)) .* g_1(nSim/2 + 1:end, :)];
     Y_2_AV = [Y_2(1:nSim/2, :); ...
-        -(0.5+Beta_EU) * gamma_EU^2 .* G_2(nSim/2 + 1:end, :) * TTM - gamma_EU .* sqrt(TTM .* G_2(nSim/2 + 1:end, :)) .* g_2(nSim/2 + 1:end, :)];
+        Beta_EU .* G_2(nSim/2 + 1:end, :) * TTM - gamma_EU .* sqrt(TTM .* G_2(nSim/2 + 1:end, :)) .* g_2(nSim/2 + 1:end, :)];
     Z_AV = [Z(1:nSim/2, :); ...
-        -(0.5+Beta_z) * gamma_z^2 .* G_z(nSim/2 + 1:end, :) * TTM - gamma_z .* sqrt(TTM .* G_z(nSim/2 + 1:end, :)) .* g_z(nSim/2 + 1:end, :)];
+        Beta_z .* G_z(nSim/2 + 1:end, :) * TTM - gamma_z .* sqrt(TTM .* G_z(nSim/2 + 1:end, :)) .* g_z(nSim/2 + 1:end, :)];
 
     % Marginal processes
     X_1_AV = Y_1_AV + a_USA * Z_AV;

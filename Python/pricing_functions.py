@@ -119,10 +119,14 @@ def stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_
     G_2 = np.random.wald(1, TTM/nu_EU, size=nSim)
     G_z = np.random.wald(1, TTM/nu_z, size=nSim)
     
-    Y_1 = -(0.5 + Beta_USA) * gamma_USA**2 * G_1 * TTM + gamma_USA * np.sqrt(TTM * G_1) * g_1
-    Y_2 = -(0.5 + Beta_EU) * gamma_EU**2 * G_2 * TTM + gamma_EU * np.sqrt(TTM * G_2) * g_2
-    Z = -(0.5 + Beta_z) * gamma_z**2 * G_z * TTM + gamma_z * np.sqrt(TTM * G_z) * g_z
-    
+    # Y_1 = -(0.5 + Beta_USA) * gamma_USA**2 * G_1 * TTM + gamma_USA * np.sqrt(TTM * G_1) * g_1
+    # Y_2 = -(0.5 + Beta_EU) * gamma_EU**2 * G_2 * TTM + gamma_EU * np.sqrt(TTM * G_2) * g_2
+    # Z = -(0.5 + Beta_z) * gamma_z**2 * G_z * TTM + gamma_z * np.sqrt(TTM * G_z) * g_z
+
+    Y_1 = Beta_USA * G_1 * TTM + gamma_USA * np.sqrt(TTM * G_1) * g_1
+    Y_2 = Beta_EU * G_2 * TTM + gamma_EU * np.sqrt(TTM * G_2) * g_2
+    Z = Beta_z * G_z * TTM + gamma_z * np.sqrt(TTM * G_z) * g_z
+
     # Marginal processes
     X_1 = Y_1 + a_USA * Z
     X_2 = Y_2 + a_EU * Z

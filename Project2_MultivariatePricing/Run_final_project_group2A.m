@@ -395,7 +395,7 @@ certificate_payoff_Levy_AV = max(St_USA_Levy_AV - S0_USA, 0) .* indicator_Levy_A
 
 %% Levy semi-closed
 
-price = levy_semiclosed(S0_USA, rate_USA, rate_EU, params_USA_2, params_EU_2, idiosync_USA_2, idiosync_EU_2, syst_Z_2, TTM);
+price_Levy_closed = levy_semiclosed(S0_USA, rate_USA, rate_EU, params_USA, params_EU, idiosync_USA, idiosync_EU, syst_Z, TTM);
 
 %%
 
@@ -422,7 +422,7 @@ F01_EU = S0_EU*exp(rate_EU*TTM);
 % Computation of the discount at 1y
 B0_black = exp(-rate_USA * TTM);
 
-% NORMAL MC method
+%% NORMAL MC method
 
 % Unpacking the results
 St_USA_Black = St_Black(:, 1); St_EU_Black = St_Black(:, 2);
@@ -434,7 +434,7 @@ certificate_payoff_Black = max(St_USA_Black - S0_USA, 0) .* indicator_Black;
 % Mean price and confidence interval
 [mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black);
 
-% ANTITHETIC MC method
+%% ANTITHETIC MC method
 
 % Unpacking the results
 St_USA_Black_AV = St_Black_AV(:, 1); St_EU_Black_AV = St_Black_AV(:, 2);
@@ -453,7 +453,9 @@ price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, s
 
 %% Display of the prices:
 
-disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Levy_AV, IC_Levy_AV,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
+disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Levy_AV, IC_Levy_AV, ...
+    mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV, ...
+    price_Levy_closed, price_semiclosed);
 
 %% End run time computation
 elapsedTime = toc;
