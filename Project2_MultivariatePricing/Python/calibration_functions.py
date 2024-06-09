@@ -1,3 +1,28 @@
+# Library of functions dedicted to the calibration of the model
+# 
+# USES:
+# hist_corr()
+# OTM_preprocessing()
+# yearfrac()
+# blsdelta()
+# black_price()
+# implied_volatility()
+# dataset_preprocessing()
+# callPriceLewis_pref()
+# RMSE_total()
+# calibration()
+# nonlinconstr()
+# nonlinconstr_corr()
+# marginal_param()
+# blk_calibration()
+#
+# Authors :
+# M. Maspes
+# A. Tarditi
+# M. Torba
+
+#%%
+
 # Built in libraries
 
 import matplotlib.pyplot as plt
@@ -19,10 +44,10 @@ from scipy.optimize import OptimizeResult
 from datetime import datetime, timedelta
 from scipy.interpolate import interp1d
 
-
+#%%
 
 #####################################################################################################
-#################################          GENERAL FUNCTIONS          ###############################
+#################################          CORRELATION FUNCTIONS          ###########################
 #####################################################################################################
 
 # Historical correlation
@@ -33,6 +58,11 @@ def hist_corr(returns_data):
     rho = np.corrcoef(returns_EU, returns_USA)[0, 1]
     
     return rho
+
+#####################################################################################################
+##############################         DATA PROCESSING FUNCTIONS          ###########################
+#####################################################################################################
+
 
 # OTM preprocessing
 def OTM_preprocessing(dataset, F0):
@@ -57,12 +87,14 @@ def OTM_preprocessing(dataset, F0):
     
     return dataset
 
+
 def yearfrac(start_date, end_date, basis):
     # ACT/365 convention
     if basis == 3:
         return (end_date - start_date).days / 365.0
     else:
         raise NotImplementedError("Other day count conventions are not implemented.")
+    
 
 # REFINEMENT DATASET
 def blsdelta(S, K, r, T, sigma):
@@ -310,6 +342,7 @@ def nonlinconstr_corr(params, k1, k2):
 # marginal parameters
 def marginal_param(params_USA, params_EU, nu_z):
 
+    # sole system of equations
     def equations(x):
         kappa_1, theta_1, sigma_1 = params_USA
         kappa_2, theta_2, sigma_2 = params_EU

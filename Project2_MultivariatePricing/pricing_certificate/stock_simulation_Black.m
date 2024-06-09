@@ -20,7 +20,7 @@ function [prices, pricesAV] = stock_simulation_Black(sigmas, F0, rho, TTM)
 
     %% Initialization
 
-    nSim = 5 * 1e7;
+    nSim = 1e7;
 
     %% Simulation of the NIG process
 

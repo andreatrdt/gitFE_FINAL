@@ -122,16 +122,6 @@ end
 
 %%
 
-%% Branch out calibration:
-
-% Calibration and Levy Pricing using dates up to 1y
-% branch_out_procedure(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
-
-% Calibration and Levy Pricing using dates up to 1y (same USA/EU dates)
-% branch_out_procedure_reduced(data_calib_EU, data_calib_USA, F0_EU, B_EU, F0_USA, B_USA, date_settlement)
-
-%%
-
 %% Multi-calibration comparison 1st round
 
 % !WARNING:  calibration feasibility tests take a lot of computation time.
@@ -202,7 +192,6 @@ clear F B;
 % The initial parameters collected after various trials that minimizes the
 % most the obj fun are the following ones; the structure is a bit specific
 % but the fmincon is not able to find the global minimum otherwise
-
 x0 = [0.3 -0.5 0.15 0.3 -0.5 0.15];
 initial_cond = x0;
 
@@ -264,8 +253,7 @@ A = [-1 0 0; 0 -1 0; 0 0 -1]; b = [0; 0; 0];
 Aeq = []; beq = [];
 lb = zeros(1, 3); ub = [];
 
-% x0 = ones(1, 3);
-x0 = [0.75 0.8 1];
+x0 = ones(1, 3);
 
 params = fmincon(@(params) (sqrt(params(1) * params(2) / ((params(1) + params(3))*(params(2) + params(3)))) - rho_historical)^2, ...
     x0, A, b, Aeq, beq, lb, ub, @(params) nonlinconstr_corr(params, k1, k2), options);
@@ -374,10 +362,12 @@ S0_Levy = [S0_USA S0_EU];
 rates_Levy = [rate_USA rate_EU];
 
 if flag_levy == 1
-    St_Levy = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
+    [St_Levy, St_Levy_AV] = stock_simulation_Levy(idiosync_USA, idiosync_EU, syst_Z, params_USA, params_EU, S0_Levy, rates_Levy, TTM);
 else
     St_Levy = stock_simulation_Levy_reduced(params_USA, params_EU, rates_Levy , TTM , S0_Levy, rho_model_Levy);
 end
+
+%% Normal Levy
 
 % Unpacking the results
 St_USA_Levy = St_Levy(:, 1);
@@ -389,6 +379,19 @@ certificate_payoff_Levy = max(St_USA_Levy - S0_USA, 0) .* indicator_Levy;
 
 % Mean price and confidence interval
 [mean_price_Levy, ~, IC_Levy] = normfit(B0_Levy * certificate_payoff_Levy);
+
+%% Antithetic Levy
+
+% Unpacking the results
+St_USA_Levy_AV = St_Levy_AV(:, 1);
+St_EU_Levy_AV = St_Levy_AV(:, 2);
+
+% Computation of the pricing certificate payoff 
+indicator_Levy_AV = St_EU_Levy_AV < (0.95 * S0_EU);
+certificate_payoff_Levy_AV = max(St_USA_Levy_AV - S0_USA, 0) .* indicator_Levy_AV;
+
+% Mean price and confidence interval
+[mean_price_Levy_AV, ~, IC_Levy_AV] = normfit(B0_Levy * certificate_payoff_Levy_AV);
 
 %%
 
@@ -415,7 +418,7 @@ F01_EU = S0_EU*exp(rate_EU*TTM);
 % Computation of the discount at 1y
 B0_black = exp(-rate_USA * TTM);
 
-%% NORMAL MC method
+% NORMAL MC method
 
 % Unpacking the results
 St_USA_Black = St_Black(:, 1); St_EU_Black = St_Black(:, 2);
@@ -427,7 +430,7 @@ certificate_payoff_Black = max(St_USA_Black - S0_USA, 0) .* indicator_Black;
 % Mean price and confidence interval
 [mean_price_Black, ~, IC_Black] = normfit(B0_black * certificate_payoff_Black);
 
-%% ANTITHETIC MC method
+% ANTITHETIC MC method
 
 % Unpacking the results
 St_USA_Black_AV = St_Black_AV(:, 1); St_EU_Black_AV = St_Black_AV(:, 2);
@@ -446,7 +449,7 @@ price_semiclosed = blk_semiclosed(data_USA.spot, rate_USA, rate_EU, sigma_USA, s
 
 %% Display of the prices:
 
-disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
+disp_contract_prices(mean_price_Levy,IC_Levy,mean_price_Levy_AV, IC_Levy_AV,mean_price_Black,IC_Black,mean_price_Black_AV,IC_Black_AV,price_semiclosed)
 
 %% End run time computation
 elapsedTime = toc;

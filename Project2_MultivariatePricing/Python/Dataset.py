@@ -1,3 +1,11 @@
+# Data set class for the option data
+#
+# Authors :
+# M. Maspes
+# A. Tarditi
+# M. Torba
+
+#%%
 
 # Import of the required libraries
 import numpy as np
@@ -15,9 +23,6 @@ class Data_maturity:
         self._putBid = np.squeeze(data_structure[0, 0]['putBid'][0, idx]['prices'])
 
         self._strikes = np.squeeze(data_structure[0, 0]['strikes'][0, idx]['value'])
-
-        '''self._Volume_call = data_structure['Volume_call'][idx]['value']
-        self._Volume_put = data_structure['Volume_put'][idx]['value']'''
 
     # Getters:
     def _callAsk(self):

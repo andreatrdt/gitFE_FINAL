@@ -62,7 +62,7 @@ function plot_volatility_smiles(dataset, F0, B0, params, date_settlement)
         plot(strikes, impvol_NEW, '*-'); grid on;
 
         title(['Implied volatilities at expiry ', datestr(dataset.datesExpiry(ii))]);
-        xlabel('Log-moneyness'); ylabel('Volatilities');
+        xlabel('Strikes'); ylabel('Volatilities');
         legend('Imp Vol dataset', 'Imp Vol calibrated','Location','best');
 
     end
