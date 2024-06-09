@@ -52,32 +52,36 @@ function price = levy_semiclosed(s1_0, rate1, rate2, params_USA, params_EU, idio
     
     %% Density of the Normal Inverse Gaussian
 
+    % USA
+
     A = beta_USA/(gamma_USA^2);
     B = sqrt(beta_USA^2 + (gamma_USA^2)/nu_USA)/(gamma_USA^2);
     C = TTM/pi * exp(TTM/nu_USA) * sqrt(beta_USA^2/(nu_USA * gamma_USA^2) + 1/nu_USA^2);
 
-    supp = @(x) sqrt(x^2 + TTM^2 * gamma_USA^2/nu_USA);
+    supp = @(x) sqrt(x.^2 + TTM^2 * gamma_USA^2/nu_USA);
 
-    density_NIG = @(x) C * exp(A*x) * besselk(1,B * supp(x))/supp(x);
+    density_NIG = @(x) C .* exp(A.*x) .* besselk(1,B .* supp(x))./supp(x);
 
-    %%
+    % Z process
 
-    % d1 = @(z) integral(@(y) exp(y).*exp(TTM/nu_USA)/sqrt(2*pi*nu_USA/TTM).*y.^(-3/2).*exp(-TTM/(2*nu_USA)*(y.^(-1)+y)),-drift_compensator_USA*TTM-a_USA.*z-rate1*TTM, inf);
-    % d2 = @(z) 1-cdf('InverseGaussian',-drift_compensator_USA*TTM-a_USA*z-rate1*TTM, 1, TTM/nu_USA);
-    % d3 = @(z) cdf('InverseGaussian',log(0.95)-drift_compensator_EU*TTM-a_EU*z-rate2*TTM, 1, TTM/nu_EU); 
-    % 
-    % integrand = @(z) ( ( exp(rate1*TTM + drift_compensator_USA*TTM+a_USA.*z).*d1(z)-d2(z) ) * d3(z) * exp(TTM/nu_z)/sqrt(2*pi*nu_z/TTM).*z.^(-3/2).*exp(-TTM/(2*nu_z)*(z.^(-1)+z)) );
-    d1 = @(z) arrayfun(@(zval) integral(@(y) exp(y).*exp(TTM/nu_USA)/sqrt(2*pi*nu_USA/TTM).*y.^(-3/2).*exp(-TTM/(2*nu_USA)*(y.^(-1)+y)),-drift_compensator_USA*TTM-a_USA.*zval-rate1*TTM, inf), z);
+    A_z = beta_z/(gamma_z^2);
+    B_z = sqrt(beta_z^2 + (gamma_z^2)/nu_z)/(gamma_z^2);
+    C_z = TTM/pi * exp(TTM/nu_z) * sqrt(beta_z^2/(nu_z * gamma_z^2) + 1/nu_z^2);
+
+    supp_z = @(x) sqrt(x.^2 + TTM^2 * gamma_z^2/nu_z);
+
+    density_NIG_z = @(x) C_z * exp(A_z.*x) .* besselk(1,B_z .* supp_z(x))./supp_z(x);
+
+    %% Creation of the integrands
+
+    d1 = @(z) arrayfun(@(zval) integral(@(y) exp(y) .* density_NIG(y), -drift_compensator_USA * TTM - a_USA.*zval -rate1*TTM, 50), z);
     d2 = @(z) 1 - arrayfun(@(zval) cdf('InverseGaussian', -drift_compensator_USA*TTM - a_USA*zval - rate1*TTM, 1, TTM/nu_USA), z);
     d3 = @(z) arrayfun(@(zval) cdf('InverseGaussian', log(0.95) - drift_compensator_EU*TTM - a_EU*zval - rate2*TTM, 1, TTM/nu_EU), z);
 
-    integrand = @(z) ( ( exp(rate1*TTM + drift_compensator_USA*TTM + a_USA.*z) .* d1(z) - d2(z) ) .* d3(z) ...
-                      .* exp(TTM/nu_z)/sqrt(2*pi*nu_z/TTM) .* z.^(-3/2) .* exp(-TTM/(2*nu_z)*(z.^(-1)+z)) );
-
-    
+    integrand = @(z) ( ( exp(rate1*TTM + drift_compensator_USA*TTM + a_USA.*z) .* d1(z) - d2(z) ) .* d3(z) .* density_NIG_z(z));
     
     %% Computation of the closed integral
     
-    price = s1_0*discount* integral( integrand, -inf, inf);
+    price = s1_0*discount* integral( integrand, -50, 50);
 
 end % function blk_semiclosed
