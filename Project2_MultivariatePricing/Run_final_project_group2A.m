@@ -37,7 +37,7 @@ flag_levy = 1;
 % save_results = 1 for text saving enabled
 % save_results = 0 for text saving disabled
 
-save_results = 1;
+save_results = 0;
 
 %% Load folders
 % Introduced multiple folders for a better division of the scripts
